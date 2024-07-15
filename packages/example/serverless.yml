@@ -1,0 +1,44 @@
+service: convivio-example
+
+plugins:
+  - serverless-webpack
+  - '@convivio/serverless-plugin'
+  # - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    A: b
+
+custom: ${file(cvo/config.yml):custom}
+
+package:
+  individually: true
+
+functions:
+  rest:
+    handler: src/rest/index.handle
+    events:
+      - http:
+          method: any
+          path: '{proxy+}'
+    environment:
+      T: rest
+  listener:
+    handler: src/listener/index.handle
+    events:
+    #   - http:
+    #       method: get
+    #       path: second
+      - stream:
+          type: kinesis
+          arn: arn:aws:kinesis:region:XXXXXX:stream/foobar
+          batchSize: 100
+          startingPosition: TRIM_HORIZON
+          filterPatterns:
+            - data:
+                type:
+                   - prefix: 'thing-'
+    environment:
+      T: listener
