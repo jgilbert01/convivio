@@ -2,7 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 
 import { toKinesisRecords, toSqsEventRecords } from 'aws-lambda-stream';
-import lambdaTest from '../../../src/lambda-test';
+import { lambdaTest } from '@convivio/testing';
 
 const invoke = lambdaTest({ functionName: `${process.env.npm_package_name}-np-listener` });
 

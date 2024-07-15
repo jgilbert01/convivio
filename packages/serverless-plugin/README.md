@@ -1,1 +1,1 @@
-# serverless-plugin
+# @convivio/serverless-plugin
