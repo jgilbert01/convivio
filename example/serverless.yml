@@ -1,7 +1,7 @@
 service: convivio-example
 
 plugins:
-  - serverless-webpack
+  # - serverless-webpack
   - '@convivio/serverless-plugin'
   # - serverless-offline
 
@@ -19,6 +19,8 @@ package:
 functions:
   rest:
     handler: src/rest/index.handle
+    # package:
+    #   artifact: ./.webpack/rest.zip
     events:
       - http:
           method: any
@@ -27,6 +29,8 @@ functions:
       T: rest
   listener:
     handler: src/listener/index.handle
+    # package:
+    #   artifact: ./.webpack/listener.zip
     events:
     #   - http:
     #       method: get

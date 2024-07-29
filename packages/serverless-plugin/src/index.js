@@ -1,18 +1,28 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 
-import { start /*, compile, package */ } from '@convivio/webpack';
+import { start, compile } from '@convivio/webpack';
 
 const getFunctions = (serverless) => {
   const env = serverless.service.provider.environment || {};
   return serverless.service.getAllFunctions()
-    .reduce((a, key) => ({
+    .map((key) => {
+      const funct = serverless.service.getFunction(key);
+      funct.package = {
+        artifact: `./.webpack/${key}.zip`,
+      };
+      return {
+        key,
+        funct,
+      };
+    })
+    .reduce((a, { key, funct }) => ({
       ...a,
       [key]: {
-        ...serverless.service.getFunction(key),
+        ...funct,
         environment: {
           ...env,
-          ...(serverless.service.getFunction(key).environment || {}),
+          ...(funct.environment || {}),
         }
       }
     }), {});
@@ -23,40 +33,34 @@ class Plugin {
     this.serverless = serverless;
     this.options = options;
 
-    _.assign(this, { start });
+    _.assign(this, { start, compile });
 
     this.commands = {
       offline: {
         commands: {
           start: {
-            // lifecycleEvents: ["init", "ready", "end"],
-            // options: commandOptions,
           },
         },
         lifecycleEvents: ['start'],
-        // options: commandOptions,
-        // usage: "Simulates API Gateway to call your lambda functions offline.",
       },
     };
 
     this.hooks = {
-      // 'before:package:createDeploymentArtifacts': () => Promise.bind(this).then(this.compile)
-      'offline:start': () => Promise.bind(this).then(() => {
-        // console.log(JSON.stringify(this.serverless, null, 2));
-        // console.log(this.serverless, null, 2);
+      'before:package:createDeploymentArtifacts': () => Promise.bind(this).then(() => {
         const { servicePath } = this.serverless.config;
+        const service = this.serverless.service.service;
         const functions = getFunctions(this.serverless);
-        // console.log('functions: ', JSON.stringify(functions, null, 2));
+        return this.compile(servicePath, service, functions);
+      }),
 
-        this.start(servicePath, functions, this.serverless.service.provider);
+      'offline:start': () => Promise.bind(this).then(() => {
+        const { servicePath } = this.serverless.config;
+        const service = this.serverless.service.service;
+        const functions = getFunctions(this.serverless);
+        this.start(servicePath, service, functions, this.serverless.service.provider);
       }),
     };
   }
-
-  // async compile() {
-  //   const webpackConfigFilePath = path.join(this.serverless.config.servicePath, 'webpack.config.js');
-  //   return Promise.fromCallback(cb => webpack(require(webpackConfigFilePath)).run(cb));
-  // };
 }
 
 // export default Plugin;

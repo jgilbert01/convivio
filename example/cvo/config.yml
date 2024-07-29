@@ -4,4 +4,5 @@ custom:
     # webpackConfig: ./webpack.config.js
     includeModules: true
     packager: npm
+    keepOutputDirectory: true
 

@@ -7,7 +7,7 @@ const log = debug('cvo:offline:routes:consume');
 
 export default (servicePath, devServer, f, e, provider, vcr) => {
   const [index, handle] = f.handler.split('.');
-  const lambda = require(path.join(servicePath, '.webpack', 'service', index));
+  const lambda = require(path.join(servicePath, '.webpack', index));
   const ctx = context(f, provider);
 
   // https://docs.aws.amazon.com/lambda/latest/api/API_Invoke.html

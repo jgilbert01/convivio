@@ -1,21 +1,12 @@
 import _ from 'lodash';
-import path from 'path';
 import debug from 'debug';
-import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
 import ping from './routes/ping';
 import rest from './routes/rest';
 import consume from './routes/consume';
 import { trace } from './middleware';
-
-debug.formatters.j = (v) => {
-  try {
-    return JSON.stringify(v, null, 2);
-  } catch (error) {
-    return `[UnexpectedJSONParseError]: ${error.message}`;
-  }
-};
+import { compile } from '../compile';
 
 const log = debug('cvo:offline:function');
 
@@ -34,7 +25,9 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
       if (http) {
         return rest(servicePath, devServer, f, e, provider, vcr);
       }
+
       // TODO alb
+      
       if (stream || sqs) {
         return consume(servicePath, devServer, f, e, provider, vcr);
       }
@@ -46,10 +39,11 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
   return middlewares;
 };
 
-export const start = async (servicePath, functions, provider) => {
-  const webpackConfigFilePath = path.join(servicePath, 'webpack.config.js');
-  const webpackConfig = require(webpackConfigFilePath);
-  const compiler = webpack(webpackConfig);
+// TODO assume lambda role
+
+export const start = async (servicePath, service, functions, provider) => {
+  // console.log('functions: ', Object.values(functions));
+  const { compiler, webpackConfig } = await compile(servicePath, service, functions, true);
 
   const { vcr = {}, ...devServer } = webpackConfig.devServer || {};
   const devServerOptions = {

@@ -1,3 +1,5 @@
+import Promise from 'bluebird';
+
 export const DISCRIMINATOR = 'thing';
 
 class Model {

@@ -4,6 +4,9 @@ lib
 *.log
 .nyc_output
 .webpack
+.serverless
+.convivio
 coverage
 .npmrc
 *.tgz
+bak
