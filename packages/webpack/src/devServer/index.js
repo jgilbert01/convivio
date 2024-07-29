@@ -42,7 +42,7 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
 // TODO assume lambda role
 
 export const start = async (servicePath, service, functions, provider) => {
-  // console.log('functions: ', Object.values(functions));
+  // log('functions: ', Object.values(functions));
   const { compiler, webpackConfig } = await compile(servicePath, service, functions, true);
 
   const { vcr = {}, ...devServer } = webpackConfig.devServer || {};

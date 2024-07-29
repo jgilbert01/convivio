@@ -1,12 +1,10 @@
 const path = require('path');
-// const slsw = require('serverless-webpack');
+const debug = require('debug');
 const nodeExternals = require('webpack-node-externals');
-// const { merge } = require('webpack-merge');
-// const { EnvironmentPlugin } = require('webpack');
-const ZipPlugin = require('zip-webpack-plugin'); // https://www.antstack.com/blog/nodejs-lambda-bundling-tree-shaking-webpack/
 
-// const { env } = require('./compile');
 const ConvivioWebpackPlugin = require('./plugin');
+
+const log = debug('cvo:config');
 
 const injectMocks = (entries) =>
   Object.keys(entries).reduce((e, key) => {
@@ -14,8 +12,7 @@ const injectMocks = (entries) =>
     return e;
   }, {});
 
-const includeMocks = () => {
-  // console.log((new Error()).stack);
+const includeMocks = (env) => {
   return env.isLocal && process.env.REPLAY !== 'bloody';
 };
 
@@ -48,14 +45,14 @@ const module = {
   }]
 };
 
+// TODO export more fragements like devServer, vcr, injectMocks, and module
+
 export const convivioDefaults = (env) => {
-  // console.log('env: ', env);
-  // console.log((new Error()).stack);
+  log('%j', env);
 
   if (env.isLocal) {
-    const entry = includeMocks() ? injectMocks(env.entries) : env.entries;
-    // const entry = includeMocks() ? env.entries : env.entries;
-    // console.log('env: ', env);
+    // const entry = includeMocks(env) ? injectMocks(env.entries) : env.entries;
+    const entry = includeMocks(env) ? env.entries : env.entries;
 
     return [{
       entry,
@@ -66,9 +63,8 @@ export const convivioDefaults = (env) => {
       optimization,
       externals,
       module,
-      plugins: [
-        // ...(includeMocks() ? [new EnvironmentPlugin({ REPLAY: process.env.REPLAY || 'replay' })] : []),
-      ],
+      plugins: [],
+      // TODO devServer
     }];
   } else {
     return env.allEntryFunctions.map(({ funcName, key, value }) => ({
@@ -84,13 +80,6 @@ export const convivioDefaults = (env) => {
       module,
       plugins: [
         new ConvivioWebpackPlugin({ ...env }),
-        // new ZipPlugin({
-        //   // path: path.join(process.cwd(), '.webpack'),
-        //   // filename: funcName, //entryName.split('/')[1],
-        //   // extension: 'zip',
-        //   // pathPrefix: funcName,
-        //   // include: [key],
-        // }),
       ],
     }));
   }

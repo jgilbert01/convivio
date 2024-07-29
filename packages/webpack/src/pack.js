@@ -3,7 +3,7 @@ import archiver from 'archiver';
 import Promise from 'bluebird';
 import debug from 'debug';
 
-const log = debug('cvo:pack');
+const log = debug('cvo:pack:zip');
 
 export const pack = ({ artifactFilePath, directory }) => {
     const zip = archiver.create('zip');

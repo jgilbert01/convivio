@@ -4,7 +4,7 @@ import path from 'path';
 import debug from 'debug';
 import { cloneDeepWith } from 'lodash';
 
-const log = debug('cvo:offline:vcr');
+const log = debug('cvo:offline:vcr:nock');
 
 const REGEX = 'regex:';
 

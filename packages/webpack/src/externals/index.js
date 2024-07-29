@@ -5,6 +5,7 @@ import fse from 'fs-extra';
 import fs from 'fs';
 import jc from 'json-cycle';
 import debug from 'debug';
+import isBuiltinModule from 'is-builtin-module';
 
 import npm from './npm';
 
@@ -46,8 +47,7 @@ function addModulesToPackageJson(externalModules, packageJson, pathToPackageRoot
  * Remove a given list of excluded modules from a module list
  * @this - The active plugin instance
  */
-function removeExcludedModules(modules, packageForceExcludes, log) {
-  // eslint-disable-next-line lodash/prefer-immutable-method
+function removeExcludedModules(modules, packageForceExcludes) {
   const excludedModules = _.remove(modules, externalModule => {
     const splitModule = _.split(externalModule, '@');
     // If we have a scoped module we have to re-add the @
@@ -59,13 +59,7 @@ function removeExcludedModules(modules, packageForceExcludes, log) {
     return _.includes(packageForceExcludes, moduleName);
   });
 
-  // if (log && !_.isEmpty(excludedModules)) {
-  //   if (this.log) {
-  //     this.log(`Excluding external modules: ${_.join(excludedModules, ', ')}`);
-  //   } else {
-  //     this.serverless.cli.log(`Excluding external modules: ${_.join(excludedModules, ', ')}`);
-  //   }
-  // }
+  log('excludedModules: ', excludedModules);
 };
 
 /**
@@ -86,7 +80,6 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
 
   // Get versions of all transient modules
   _.forEach(externalModules, module => {
-    log(module);
     let moduleVersion = packageJson.dependencies[module.external];
 
     if (moduleVersion) {
@@ -100,13 +93,7 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
         if (fse.pathExistsSync(customNodeModulesDir)) {
           nodeModulesBase = customNodeModulesDir;
         } else {
-          // if (this.log) {
-          //   this.log.warning(`${customNodeModulesDir} dose not exist. Please check nodeModulesRelativeDir setting`);
-          // } else {
-          //   this.serverless.cli.log(
-          //     `WARNING: ${customNodeModulesDir} dose not exist. Please check nodeModulesRelativeDir setting`
-          //   );
-          // }
+          log(`WARNING: ${customNodeModulesDir} dose not exist. Please check nodeModulesRelativeDir setting`);
         }
       }
 
@@ -115,29 +102,15 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
         const modulePackagePath = path.join(nodeModulesBase, module.external, 'package.json');
 
         const peerDependencies = require(modulePackagePath).peerDependencies;
-        log('peerDependencies: ', peerDependencies);
         if (!_.isEmpty(peerDependencies)) {
-          // if (this.log) {
-          //   this.log.verbose(`Adding explicit peers for dependency ${module.external}`);
-          // } else {
-          //   this.options.verbose && this.serverless.cli.log(`Adding explicit peers for dependency ${module.external}`);
-          // }
+          log(`Adding explicit peers for dependency ${module.external}`);
 
           const peerDependenciesMeta = require(modulePackagePath).peerDependenciesMeta;
 
           if (!_.isEmpty(peerDependenciesMeta)) {
             _.forEach(peerDependencies, (value, key) => {
               if (peerDependenciesMeta[key] && peerDependenciesMeta[key].optional === true) {
-                // if (this.log) {
-                //   this.log.verbose(
-                //     `Skipping peers dependency ${key} for dependency ${module.external} because it's optional`
-                //   );
-                // } else {
-                //   this.options.verbose &&
-                //     this.serverless.cli.log(
-                //       `Skipping peers dependency ${key} for dependency ${module.external} because it's optional`
-                //     );
-                // }
+                log(`Skipping peers dependency ${key} for dependency ${module.external} because it's optional`);
                 _.unset(peerDependencies, key);
               }
             });
@@ -156,15 +129,7 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
           }
         }
       } catch (e) {
-        // if (this.log) {
-        //   this.log.warning(
-        //     `Could not check for peer dependencies of ${module.external}. Set nodeModulesRelativeDir if node_modules is in different directory.`
-        //   );
-        // } else {
-        //   this.serverless.cli.log(
-        //     `WARNING: Could not check for peer dependencies of ${module.external}. Set nodeModulesRelativeDir if node_modules is in different directory.`
-        //   );
-        // }
+        log(`WARNING: Could not check for peer dependencies of ${module.external}. Set nodeModulesRelativeDir if node_modules is in different directory.`);
       }
     } else {
       if (!packageJson.devDependencies || !packageJson.devDependencies[module.external]) {
@@ -172,15 +137,10 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
         const originInfo = _.get(dependencyGraph, 'dependencies', {})[module.origin] || {};
         moduleVersion = _.get(_.get(originInfo, 'dependencies', {})[module.external], 'version');
         if (!moduleVersion) {
-          // eslint-disable-next-line lodash/path-style
           moduleVersion = _.get(dependencyGraph, ['dependencies', module.external, 'version']);
         }
         if (!moduleVersion) {
-          // if (this.log) {
-          //   this.log.warning(`Could not determine version of module ${module.external}`);
-          // } else {
-          //   this.serverless.cli.log(`WARNING: Could not determine version of module ${module.external}`);
-          // }
+          log(`WARNING: Could not determine version of module ${module.external}`);
         }
         prodModules.push(moduleVersion ? `${module.external}@${moduleVersion}` : module.external);
       } else if (
@@ -190,31 +150,18 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
       ) {
         // To minimize the chance of breaking setups we whitelist packages available on AWS here. These are due to the previously missing check
         // most likely set in devDependencies and should not lead to an error now.
-        const ignoredDevDependencies = ['aws-sdk'];
+        const ignoredDevDependencies = ['aws-sdk']; // TODO @aws-sdk
 
         if (!_.includes(ignoredDevDependencies, module.external)) {
           // Runtime dependency found in devDependencies but not forcefully excluded
-          // if (this.log) {
-          //   this.log.error(
-          //     `Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`
-          //   );
-          // } else {
-          //   this.serverless.cli.log(
-          //     `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`
-          //   );
-          // }
-          throw new Error(`Serverless-webpack dependency error: ${module.external}.`);
+          log(
+            `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`
+          );
+          throw new Error(`webpack dependency error: ${module.external}.`);
         }
-        // if (this.log) {
-        //   this.log.verbose(
-        //     `Runtime dependency '${module.external}' found in devDependencies. It has been excluded automatically.`
-        //   );
-        // } else {
-        //   this.options.verbose &&
-        //     this.serverless.cli.log(
-        //       `INFO: Runtime dependency '${module.external}' found in devDependencies. It has been excluded automatically.`
-        //     );
-        // }
+        log(
+          `INFO: Runtime dependency '${module.external}' found in devDependencies. It has been excluded automatically.`
+        );
       }
     }
   });
@@ -247,13 +194,7 @@ export const packExternalModules = (service) => (params) => {
 
   const includes = true; // this.configuration.includeModules;
 
-  // if (!includes) {
-  //   return Promise.resolve();
-  // }
-  // if (this.log) {
-  //   this.log.verbose('Packing external modules');
-  //   this.progress.get('webpack').notice('[Webpack] Packing external modules');
-  // }
+  log('Packing external modules');
 
   // Read plugin configuration
   const packageForceIncludes = _.get(includes, 'forceInclude', []);
@@ -261,7 +202,6 @@ export const packExternalModules = (service) => (params) => {
   const packagePath = includes.packagePath || './package.json';
   const nodeModulesRelativeDir = includes.nodeModulesRelativeDir;
   const packageJsonPath = path.join(process.cwd(), packagePath);
-  // log(packageJsonPath);
   const packageScripts = _.reduce(
     [],
     (__, script, index) => {
@@ -277,59 +217,39 @@ export const packExternalModules = (service) => (params) => {
     const sectionNames = npm.copyPackageSectionNames(); // this.configuration.packagerOptions
     // log(sectionNames);
     const packageJson = jc.parse(fs.readFileSync(packageJsonPath));
-    // log(packageJson);
     const packageSections = _.pick(packageJson, sectionNames);
-    // log(packageSections);
-    // if (!_.isEmpty(packageSections)) {
-    //   if (this.log) {
-    //     this.log.verbose(`Using package.json sections ${_.join(_.keys(packageSections), ', ')}`);
-    //   } else {
-    //     this.options.verbose &&
-    //       this.serverless.cli.log(`Using package.json sections ${_.join(_.keys(packageSections), ', ')}`);
-    //   }
-    // }
+    if (!_.isEmpty(packageSections)) {
+      log(`Using package.json sections ${_.join(_.keys(packageSections), ', ')}`);
+    }
 
     // Get first level dependency graph
-    // if (this.log) {
-    //   this.log.verbose(`Fetch dependency graph from ${packageJsonPath}`);
-    // } else {
-    //   this.options.verbose && this.serverless.cli.log(`Fetch dependency graph from ${packageJsonPath}`);
-    // }
+    log(`Fetch dependency graph from ${packageJsonPath}`);
 
     return npm
       .getProdDependencies(path.dirname(packageJsonPath), 1, {}) // this.configuration.packagerOptions
       .then(dependencyGraph => {
         // log(dependencyGraph);
-        // const problems = _.get(dependencyGraph, 'problems', []);
-        // if (this.options.verbose && !_.isEmpty(problems)) {
-        //   // if (this.log) {
-        //   //   this.log.verbose(`Ignoring ${_.size(problems)} NPM errors:`);
-        //   // } else {
-        //   //   this.serverless.cli.log(`Ignoring ${_.size(problems)} NPM errors:`);
-        //   // }
-        //   _.forEach(problems, problem => {
-        //     // if (this.log) {
-        //     //   this.log.verbose(`=> ${problem}`);
-        //     // } else {
-        //     //   this.serverless.cli.log(`=> ${problem}`);
-        //     // }
-        //   });
-        // }
-        log('stats.stats: ', stats.stats);
+        const problems = _.get(dependencyGraph, 'problems', []);
+        if (!_.isEmpty(problems)) {
+          log(`Ignoring ${_.size(problems)} NPM errors:`);
+          _.forEach(problems, problem => {
+            log(`=> ${problem}`);
+          });
+        }
+        // log('stats.stats: ', stats.stats);
 
         // (1) Generate dependency composition
         const compositeModules = _.uniq(
           _.flatMap(stats.stats, compileStats => {
-            log('compileStats: ', compileStats);
-            log('compileStats.externalModules: ', compileStats.externalModules);
-            log('packageForceIncludes: ', packageForceIncludes);
+            // log('compileStats: ', compileStats);
+            // log('compileStats.externalModules: ', compileStats.externalModules);
+            // log('packageForceIncludes: ', packageForceIncludes);
             const externalModules = _.concat(
               compileStats.externalModules ?? [],
               _.map(packageForceIncludes, whitelistedPackage => ({
                 external: whitelistedPackage
               }))
             );
-            log('externalModules2: ', externalModules);
             return getProdModules.call(
               this,
               externalModules,
@@ -341,22 +261,16 @@ export const packExternalModules = (service) => (params) => {
           })
         );
         // log(compositeModules);
-        removeExcludedModules.call(this, compositeModules, packageForceExcludes, true);
+        removeExcludedModules.call(this, compositeModules, packageForceExcludes);
 
         if (_.isEmpty(compositeModules)) {
-          log('EXIT');
           // The compiled code does not reference any external modules at all
-          // if (this.log) {
-          //   this.log('No external modules needed');
-          // } else {
-          //   this.serverless.cli.log('No external modules needed');
-          // }
+          log('No external modules needed');
           return Promise.resolve();
         }
 
         // (1.a) Install all needed modules
-        // const compositeModulePath = path.join(compileStats.outputPath, 'dependencies');
-        const compositeModulePath = path.join(params.webpackConfig.output.path, 'dependencies');
+        const compositeModulePath = path.join(process.cwd(), '.webpack', 'dependencies');
         const compositePackageJson = path.join(compositeModulePath, 'package.json');
 
         // (1.a.1) Create a package.json
@@ -384,11 +298,7 @@ export const packExternalModules = (service) => (params) => {
         return Promise.fromCallback(cb => fse.pathExists(packageLockPath, cb))
           .then(exists => {
             if (exists) {
-              // if (this.log) {
-              //   this.log('Package lock found - Using locked versions');
-              // } else {
-              //   this.serverless.cli.log('Package lock found - Using locked versions');
-              // }
+              log('Package lock found - Using locked versions');
               try {
                 let packageLockFile = fs.readFileSync(packageLockPath);
                 packageLockFile = npm.rebaseLockfile(relPath, packageLockFile);
@@ -402,32 +312,20 @@ export const packExternalModules = (service) => (params) => {
                 );
                 hasPackageLock = true;
               } catch (err) {
-                // if (this.log) {
-                //   this.log.warning(`Could not read lock file: ${err.message}`);
-                // } else {
-                //   this.serverless.cli.log(`Warning: Could not read lock file: ${err.message}`);
-                // }
+                log(`WARNING: Could not read lock file: ${err.message}`);
               }
             }
             return Promise.resolve();
           })
           .then(() => {
-            // const start = _.now();
-            // if (this.log) {
-            //   this.log('Packing external modules: ' + compositeModules.join(', '));
-            // } else {
-            //   this.serverless.cli.log('Packing external modules: ' + compositeModules.join(', '));
-            // }
+            const start = _.now();
+            log('Packing external modules: ' + compositeModules.join(', '));
 
             return npm.getPackagerVersion(compositeModulePath).then(version => {
               return npm
                 .install(compositeModulePath, {}, version) // this.configuration.packagerOptions
                 .then(() => {
-                  // if (this.log) {
-                  //   this.log.verbose(`Package took [${_.now() - start} ms]`);
-                  // } else {
-                  //   this.options.verbose && this.serverless.cli.log(`Package took [${_.now() - start} ms]`);
-                  // }
+                  log(`Package took [${_.now() - start} ms]`);
                   return null;
                 })
                 .return(stats.stats);
@@ -435,8 +333,8 @@ export const packExternalModules = (service) => (params) => {
           })
           .mapSeries(compileStats => {
             const modulePath = compileStats.outputPath;
-            log('modulePath: ', modulePath);
-            log('compileStats: ', compileStats);
+            // log('modulePath: ', modulePath);
+            // log('compileStats: ', compileStats);
 
             // Create package.json
             const modulePackageJson = path.join(modulePath, 'package.json');
@@ -494,42 +392,113 @@ export const packExternalModules = (service) => (params) => {
                   )
                   : Promise.resolve()
               )
-              // .tap(() => {
-              //   if (this.log) {
-              //     this.log.verbose(`Copy modules: ${modulePath} [${_.now() - startCopy} ms]`);
-              //   } else {
-              //     this.options.verbose &&
-              //       this.serverless.cli.log(`Copy modules: ${modulePath} [${_.now() - startCopy} ms]`);
-              //   }
-              // })
+              .tap(() => {
+                log(`Copy modules: ${modulePath} [${_.now() - startCopy} ms]`);
+              })
               .then(() => {
                 // Prune extraneous packages - removes not needed ones
-                // const startPrune = _.now();
+                const startPrune = _.now();
                 return npm.getPackagerVersion(modulePath).then(version => {
                   return npm.prune(modulePath, {}, version).tap(() => { // this.configuration.packagerOptions
-                    // if (this.log) {
-                    //   this.log.verbose(`Prune: ${modulePath} [${_.now() - startPrune} ms]`);
-                    // } else {
-                    //   this.options.verbose &&
-                    //     this.serverless.cli.log(`Prune: ${modulePath} [${_.now() - startPrune} ms]`);
-                    // }
+                    log(`Prune: ${modulePath} [${_.now() - startPrune} ms]`);
                   });
                 });
               })
               .then(() => {
                 // Prune extraneous packages - removes not needed ones
-                // const startRunScripts = _.now();
+                const startRunScripts = _.now();
                 return npm.runScripts(modulePath, _.keys(packageScripts)).tap(() => {
-                  // if (this.log) {
-                  //   this.log.verbose(`Run scripts: ${modulePath} [${_.now() - startRunScripts} ms]`);
-                  // } else {
-                  //   this.options.verbose &&
-                  //     this.serverless.cli.log(`Run scripts: ${modulePath} [${_.now() - startRunScripts} ms]`);
-                  // }
+                  log(`Run scripts: ${modulePath} [${_.now() - startRunScripts} ms]`);
                 });
               });
           })
           .return();
       });
   });
+};
+
+export const getExternalModules = ({ compilation }) => {
+  const externals = new Set();
+  for (const module of compilation.modules) {
+    if (isExternalModule(module) && isUsedExports(compilation.moduleGraph, module)) {
+      externals.add({
+        origin: _.get(
+          findExternalOrigin(compilation.moduleGraph, getIssuerCompat(compilation.moduleGraph, module)),
+          'rawRequest'
+        ),
+        external: getExternalModuleName(module)
+      });
+    }
+  }
+  return Array.from(externals);
+};
+
+const getExternalModuleName = (module) => {
+  const pathArray = /^external .*"(.*?)"$/.exec(module.identifier());
+  if (!pathArray) {
+    throw new Error(`Unable to extract module name from Webpack identifier: ${module.identifier()}`);
+  }
+
+  const path = pathArray[1];
+  const pathComponents = path.split('/');
+  const main = pathComponents[0];
+
+  // this is a package within a namespace
+  if (main.charAt(0) == '@') {
+    return `${main}/${pathComponents[1]}`;
+  }
+
+  return main;
+};
+
+const isExternalModule = (module) => {
+  return _.startsWith(module.identifier(), 'external ') && !isBuiltinModule(getExternalModuleName(module));
+};
+
+/**
+ * Gets the module issuer. The ModuleGraph api does not exists in webpack@4
+ * so falls back to using module.issuer.
+ */
+const getIssuerCompat = (moduleGraph, module) => {
+  if (moduleGraph) {
+    return moduleGraph.getIssuer(module);
+  }
+
+  return module.issuer;
+};
+
+/**
+ * Find if module exports are used. The ModuleGraph api does not exists in webpack@4
+ * so falls back to using module.issuer
+ * @param {Object} moduleGraph - Webpack module graph
+ * @param {Object} module - Module
+ */
+const getUsedExportsCompat = (moduleGraph, module) => {
+  if (moduleGraph) {
+    return moduleGraph.getUsedExports(module);
+  }
+
+  return module.usedExports;
+};
+
+/**
+ * Find the original module that required the transient dependency. Returns
+ * undefined if the module is a first level dependency.
+ * @param {Object} moduleGraph - Webpack module graph
+ * @param {Object} issuer - Module issuer
+ */
+const findExternalOrigin = (moduleGraph, issuer) => {
+  if (!_.isNil(issuer) && _.startsWith(issuer.rawRequest, './')) {
+    return findExternalOrigin(moduleGraph, getIssuerCompat(moduleGraph, issuer));
+  }
+  return issuer;
+};
+
+const isUsedExports = (moduleGraph, module) => {
+  // set of used exports, or true (when namespace object is used), or false (when unused), or null (when unknown)
+  // @see https://github.com/webpack/webpack/blob/896efde07d775043765a300961c8b932349254bb/lib/ExportsInfo.js#L463-L466
+  const usedExports = getUsedExportsCompat(moduleGraph, module);
+
+  // Only returns false when unused
+  return usedExports !== false;
 };

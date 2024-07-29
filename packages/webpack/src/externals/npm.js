@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import * as Utils from './utils';
+import { spawnProcess, safeJsonParse, SpawnError } from './utils';
 import { join } from 'path';
 import fse from 'fs-extra';
 import fs from 'fs';
@@ -10,12 +10,10 @@ import debug from 'debug';
 const log = debug('cvo:pack:npm');
 
 export default class NPM {
-  // eslint-disable-next-line lodash/prefer-constant
   static get lockfileName() {
     return 'package-lock.json';
   }
 
-  // eslint-disable-next-line lodash/prefer-constant
   static get mustCopyModules() {
     return true;
   }
@@ -29,7 +27,7 @@ export default class NPM {
     const command = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
     const args = ['-v'];
 
-    return Utils.spawnProcess(command, args, { cwd })
+    return spawnProcess(command, args, { cwd })
       .catch(err => {
         return Promise.resolve({ stdout: err.stdout });
       })
@@ -41,7 +39,7 @@ export default class NPM {
     const options = packagerOptions || {};
     const lockPath = join(cwd, options.lockFile || NPM.lockfileName);
     if (fse.pathExistsSync(lockPath)) {
-      const lock = Utils.safeJsonParse(fs.readFileSync(lockPath));
+      const lock = safeJsonParse(fs.readFileSync(lockPath));
       // log(lock);
       if (lock.lockfileVersion === 2) {
         return Promise.resolve(lock);
@@ -65,11 +63,11 @@ export default class NPM {
     ];
 
     log(command, args, cwd);
-    return Utils.spawnProcess(command, args, {
+    return spawnProcess(command, args, {
       cwd: cwd
     })
       .catch(err => {
-        if (err instanceof Utils.SpawnError) {
+        if (err instanceof SpawnError) {
           // Only exit with an error if we have critical npm errors for 2nd level inside
           // ignoring any extra output from npm >= 7
           const lines = _.split(err.stderr, '\n');
@@ -141,14 +139,14 @@ export default class NPM {
       args.push('--ignore-scripts');
     }
 
-    return Utils.spawnProcess(command, args, { cwd }).return();
+    return spawnProcess(command, args, { cwd }).return();
   }
 
   static prune(cwd) {
     const command = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
     const args = ['prune'];
 
-    return Utils.spawnProcess(command, args, { cwd }).return();
+    return spawnProcess(command, args, { cwd }).return();
   }
 
   static runScripts(cwd, scriptNames) {
@@ -156,7 +154,7 @@ export default class NPM {
     return Promise.mapSeries(scriptNames, scriptName => {
       const args = ['run', scriptName];
 
-      return Utils.spawnProcess(command, args, { cwd });
+      return spawnProcess(command, args, { cwd });
     }).return();
   }
 };
