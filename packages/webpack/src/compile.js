@@ -12,9 +12,10 @@ export const env = { // TODO remove ???
   allEntryFunctions: {},
 };
 
-export const compile = async (servicePath, service, functions, isLocal) => {
+export const compile = async (servicePath, service, configuration, functions, isLocal) => {
   env.isLocal = isLocal;
   env.service = service;
+  env.configuration = configuration;
   env.allEntryFunctions = Object.entries(functions).map(([funcName, f]) => {
     const handlerEntry = /(.*)\..*?$/.exec(f.handler)[1];
     return { funcName, key: handlerEntry, value: `./${handlerEntry}.js` };

@@ -1,0 +1,104 @@
+[
+  {
+    "scope": "https://dynamodb.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "ExpressionAttributeNames": {
+        "#discriminator": "discriminator",
+        "#deleted": "deleted",
+        "#lastModifiedBy": "lastModifiedBy",
+        "#latched": "latched",
+        "#ttl": "ttl",
+        "#timestamp": "timestamp",
+        "#awsregion": "awsregion"
+      },
+      "ExpressionAttributeValues": {
+        ":discriminator": {
+          "S": "thing"
+        },
+        ":deleted": {
+          "BOOL": true
+        },
+        ":lastModifiedBy": {
+          "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+        },
+        ":ttl": {
+          "N": "1723654923"
+        },
+        ":timestamp": {
+          "N": "1722704523645"
+        },
+        ":awsregion": {
+          "S": "us-west-2"
+        }
+      },
+      "Key": {
+        "pk": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "sk": {
+          "S": "thing"
+        }
+      },
+      "ReturnValues": "ALL_NEW",
+      "TableName": "your-apps-bff-service-stg-entities",
+      "UpdateExpression": "SET #discriminator = :discriminator, #deleted = :deleted, #lastModifiedBy = :lastModifiedBy, #ttl = :ttl, #timestamp = :timestamp, #awsregion = :awsregion REMOVE #latched"
+    },
+    "status": 200,
+    "response": {
+      "Attributes": {
+        "deleted": {
+          "BOOL": true
+        },
+        "timestamp": {
+          "N": "1722704523645"
+        },
+        "awsregion": {
+          "S": "us-west-2"
+        },
+        "ttl": {
+          "N": "1723654923"
+        },
+        "sk": {
+          "S": "thing"
+        },
+        "discriminator": {
+          "S": "thing"
+        },
+        "lastModifiedBy": {
+          "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+        },
+        "description": {
+          "S": "This is thing zero."
+        },
+        "id": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "pk": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": {
+          "S": "thing0"
+        }
+      }
+    },
+    "rawHeaders": [
+      "Server",
+      "Server",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:03 GMT",
+      "Content-Type",
+      "application/x-amz-json-1.0",
+      "Content-Length",
+      "404",
+      "Connection",
+      "keep-alive",
+      "x-amzn-RequestId",
+      "PKHQBL12NELIQFSBO0V6BMS04VVV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "x-amz-crc32",
+      "4174559128"
+    ],
+    "responseIsBinary": false
+  }
+]

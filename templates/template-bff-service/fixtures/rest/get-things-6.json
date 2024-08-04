@@ -1,0 +1,77 @@
+[
+  {
+    "scope": "https://dynamodb.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "ExpressionAttributeNames": {
+        "#keyName": "discriminator"
+      },
+      "ExpressionAttributeValues": {
+        ":keyName": {
+          "S": "thing"
+        }
+      },
+      "IndexName": "gsi1",
+      "KeyConditionExpression": "#keyName = :keyName",
+      "Limit": 25,
+      "TableName": "your-apps-bff-service-stg-entities"
+    },
+    "status": 200,
+    "response": {
+      "Count": 1,
+      "Items": [
+        {
+          "timestamp": {
+            "N": "1722704522705"
+          },
+          "awsregion": {
+            "S": "us-west-2"
+          },
+          "ttl": {
+            "N": "1725555722"
+          },
+          "sk": {
+            "S": "thing"
+          },
+          "discriminator": {
+            "S": "thing"
+          },
+          "lastModifiedBy": {
+            "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+          },
+          "id": {
+            "S": "00000000-0000-0000-0000-000000000000"
+          },
+          "description": {
+            "S": "This is thing zero."
+          },
+          "pk": {
+            "S": "00000000-0000-0000-0000-000000000000"
+          },
+          "name": {
+            "S": "thing0"
+          }
+        }
+      ],
+      "ScannedCount": 1
+    },
+    "rawHeaders": [
+      "Server",
+      "Server",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:03 GMT",
+      "Content-Type",
+      "application/x-amz-json-1.0",
+      "Content-Length",
+      "404",
+      "Connection",
+      "keep-alive",
+      "x-amzn-RequestId",
+      "EEV8SS7ODEG1P6S15EV3AKKA77VV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "x-amz-crc32",
+      "2253959802"
+    ],
+    "responseIsBinary": false
+  }
+]

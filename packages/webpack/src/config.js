@@ -6,27 +6,27 @@ const ConvivioWebpackPlugin = require('./plugin');
 
 const log = debug('cvo:config');
 
-const injectMocks = (entries) =>
+export const injectMocks = (entries) =>
   Object.keys(entries).reduce((e, key) => {
     e[key] = ['regenerator-runtime/runtime', './test/int/mocks.js', entries[key]];
     return e;
   }, {});
 
-const includeMocks = (env) => {
+export const includeMocks = (env) => {
   return env.isLocal && process.env.REPLAY !== 'bloody';
 };
 
-const output = {
+export const output = {
   libraryTarget: 'commonjs',
   path: path.join(process.cwd(), '.webpack'),
   filename: '[name].js'
 };
 
-const optimization = {
+export const optimization = {
   minimize: false
 };
 
-const externals = [nodeExternals()];
+export const externals = [nodeExternals()];
 // externals: [nodeExternals(
 //   //   {
 //   //   // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
@@ -34,7 +34,7 @@ const externals = [nodeExternals()];
 //   // }
 // )],
 
-const module = {
+export const module = {
   rules: [{
     test: /\.js$/,
     use: [{
@@ -51,8 +51,8 @@ export const convivioDefaults = (env) => {
   log('%j', env);
 
   if (env.isLocal) {
-    // const entry = includeMocks(env) ? injectMocks(env.entries) : env.entries;
-    const entry = includeMocks(env) ? env.entries : env.entries;
+    const entry = includeMocks(env) ? injectMocks(env.entries) : env.entries;
+    // const entry = includeMocks(env) ? env.entries : env.entries;
 
     return [{
       entry,

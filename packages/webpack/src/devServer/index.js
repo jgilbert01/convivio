@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import debug from 'debug';
+import express from 'express';
 import WebpackDevServer from 'webpack-dev-server';
 
 import ping from './routes/ping';
@@ -11,6 +12,10 @@ import { compile } from '../compile';
 const log = debug('cvo:offline:function');
 
 export const setupMiddlewares = (servicePath, functions, provider, vcr) => (middlewares, devServer) => {
+  devServer.app.use(express.json()) // for parsing application/json
+  devServer.app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+  devServer.app.use(express.raw()) // for parsing application/octet-stream
+  
   devServer.app.use(trace);
   ping(devServer);
 
@@ -41,9 +46,9 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
 
 // TODO assume lambda role
 
-export const start = async (servicePath, service, functions, provider) => {
+export const start = async (servicePath, service, configuration, functions, provider) => {
   // log('functions: ', Object.values(functions));
-  const { compiler, webpackConfig } = await compile(servicePath, service, functions, true);
+  const { compiler, webpackConfig } = await compile(servicePath, service, configuration, functions, true);
 
   const { vcr = {}, ...devServer } = webpackConfig.devServer || {};
   const devServerOptions = {

@@ -28,25 +28,6 @@
       }
     }
   },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.450.0",
-    "@aws-sdk/s3-request-presigner": "^3.450.0",
-    "@babel/runtime": "^7.23.2",
-    "@smithy/node-http-handler": "^2.1.9",
-    "@smithy/util-retry": "^2.1.1",
-    "@smithy/util-stream": "^2.1.1",
-    "aws-kms-ee": "^1.0.0",
-    "aws-lambda-stream": "^1.0.7",
-    "bluebird": "^3.7.2",
-    "debug": "^4.3.4",
-    "highland": "^2.13.5",
-    "lambda-api": "^1.0.0",
-    "lodash": "^4.17.21",
-    "memory-cache": "^0.2.0",
-    "moment": "^2.29.4",
-    "source-map-support": "^0.5.19",
-    "uuid": "^9.0.1"
-  },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.450.0",
     "@aws-sdk/client-eventbridge": "^3.450.0",
@@ -79,5 +60,24 @@
     "webpack-dev-server": "^5.0.4",
     "webpack-merge": "^6.0.1",
     "webpack-node-externals": "^2.5.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.450.0",
+    "@aws-sdk/s3-request-presigner": "^3.450.0",
+    "@babel/runtime": "^7.23.2",
+    "@smithy/node-http-handler": "^2.1.9",
+    "@smithy/util-retry": "^2.1.1",
+    "@smithy/util-stream": "^2.1.1",
+    "aws-kms-ee": "^1.0.0",
+    "aws-lambda-stream": "^1.0.7",
+    "bluebird": "^3.7.2",
+    "debug": "^4.3.4",
+    "highland": "^2.13.5",
+    "lambda-api": "^1.0.0",
+    "lodash": "^4.17.21",
+    "memory-cache": "^0.2.0",
+    "moment": "^2.29.4",
+    "source-map-support": "^0.5.19",
+    "uuid": "^9.0.1"
   }
 }

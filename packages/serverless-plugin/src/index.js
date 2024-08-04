@@ -8,6 +8,9 @@ const getFunctions = (serverless) => {
   return serverless.service.getAllFunctions()
     .map((key) => {
       const funct = serverless.service.getFunction(key);
+      funct.key = key;
+      const handlerEntry = /(.*)\..*?$/.exec(funct.handler)[1];
+      funct.handlerEntry = { key: handlerEntry, value: `./${handlerEntry}.js` };
       funct.package = {
         artifact: `./.webpack/${key}.zip`,
       };
@@ -49,15 +52,17 @@ class Plugin {
       'before:package:createDeploymentArtifacts': () => Promise.bind(this).then(() => {
         const { servicePath } = this.serverless.config;
         const service = this.serverless.service.service;
+        const configuration = this.serverless.service.custom.webpack;
         const functions = getFunctions(this.serverless);
-        return this.compile(servicePath, service, functions);
+        return this.compile(servicePath, service, configuration, functions);
       }),
 
       'offline:start': () => Promise.bind(this).then(() => {
         const { servicePath } = this.serverless.config;
         const service = this.serverless.service.service;
+        const configuration = this.serverless.service.custom.webpack;
         const functions = getFunctions(this.serverless);
-        this.start(servicePath, service, functions, this.serverless.service.provider);
+        this.start(servicePath, service, configuration, functions, this.serverless.service.provider);
       }),
     };
   }

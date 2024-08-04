@@ -25,7 +25,7 @@ class ConvivioWebpackPlugin {
       // log('stats: %j' , compileStats);
 
       if (!env.isLocal) {
-        return packExternalModules(this.options.service)({ 
+        return packExternalModules(this.options.service, this.options.configuration)({ 
             stats: compileStats, 
             webpackConfig: stats.compilation.compiler.options,
         })

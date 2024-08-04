@@ -1,0 +1,106 @@
+[
+  {
+    "scope": "https://dynamodb.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "ExpressionAttributeNames": {
+        "#name": "name",
+        "#description": "description",
+        "#discriminator": "discriminator",
+        "#timestamp": "timestamp",
+        "#lastModifiedBy": "lastModifiedBy",
+        "#deleted": "deleted",
+        "#latched": "latched",
+        "#ttl": "ttl",
+        "#awsregion": "awsregion"
+      },
+      "ExpressionAttributeValues": {
+        ":name": {
+          "S": "thing0"
+        },
+        ":description": {
+          "S": "This is thing zero."
+        },
+        ":discriminator": {
+          "S": "thing"
+        },
+        ":timestamp": {
+          "N": "1722704522705"
+        },
+        ":lastModifiedBy": {
+          "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+        },
+        ":ttl": {
+          "N": "1725555722"
+        },
+        ":awsregion": {
+          "S": "us-west-2"
+        }
+      },
+      "Key": {
+        "pk": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "sk": {
+          "S": "thing"
+        }
+      },
+      "ReturnValues": "ALL_NEW",
+      "TableName": "your-apps-bff-service-stg-entities",
+      "UpdateExpression": "SET #name = :name, #description = :description, #discriminator = :discriminator, #timestamp = :timestamp, #lastModifiedBy = :lastModifiedBy, #ttl = :ttl, #awsregion = :awsregion REMOVE #deleted, #latched"
+    },
+    "status": 200,
+    "response": {
+      "Attributes": {
+        "timestamp": {
+          "N": "1722704522705"
+        },
+        "awsregion": {
+          "S": "us-west-2"
+        },
+        "sk": {
+          "S": "thing"
+        },
+        "ttl": {
+          "N": "1725555722"
+        },
+        "discriminator": {
+          "S": "thing"
+        },
+        "lastModifiedBy": {
+          "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+        },
+        "description": {
+          "S": "This is thing zero."
+        },
+        "id": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "pk": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": {
+          "S": "thing0"
+        }
+      }
+    },
+    "rawHeaders": [
+      "Server",
+      "Server",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:02 GMT",
+      "Content-Type",
+      "application/x-amz-json-1.0",
+      "Content-Length",
+      "380",
+      "Connection",
+      "keep-alive",
+      "x-amzn-RequestId",
+      "KPFC0GI3UJ7VDIM6BL4BGL2KEJVV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "x-amz-crc32",
+      "1613824883"
+    ],
+    "responseIsBinary": false
+  }
+]

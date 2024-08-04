@@ -1,4 +1,5 @@
 import path from 'path';
+import crypto from 'crypto';
 import debug from 'debug';
 import { decodeJwt } from 'jose';
 import { environment, vcrNock } from '../middleware';
@@ -6,76 +7,65 @@ import { context } from './context';
 
 const log = debug('cvo:offline:routes:rest');
 
-// TODO decodeJwt
-// fail if there is no jwt and authorizer configures
-// let token = headers.Authorization || headers.authorization
+const toAuthorizer = (req) => {
+  let token = req.headers.Authorization || req.headers.authorization
+  if (token && token.split(' ')[0] === 'Bearer') {
+    ;[, token] = token.split(' ');
+  }
 
-// if (token && token.split(" ")[0] === "Bearer") {
-//   ;[, token] = token.split(" ")
-// }
+  let claims
+  let scopes
 
-// let claims
-// let scopes
+  if (token) {
+    try {
+      claims = decodeJwt(token)
+      if (claims.scp || claims.scope) {
+        scopes = claims.scp || claims.scope.split(' ')
+      }
+    } catch {
+      // noop
+    }
+  }
 
-// if (token) {
-//   try {
-//     claims = decodeJwt(token)
-//     if (claims.scp || claims.scope) {
-//       scopes = claims.scp || claims.scope.split(" ")
-//       // In AWS HTTP Api the scope property is removed from the decoded JWT
-//       // I'm leaving this property because I'm not sure how all of the authorizers
-//       // for AWS REST Api handle JWT.
-//       // claims = { ...claims }
-//       // delete claims.scope
-//     }
-//   } catch {
-//     // Do nothing
-//   }
-// }
-    
+  return {
+    claims,
+    principalId: claims.sub || 'offlineContext_authorizer_principalId',
+    scopes,
+  };
+};
+
 const toRequest = (req) => ({ // TODO review logs
   body: req.body,
-  headers: req.headers,
   httpMethod: req.method.toUpperCase(),
+  headers: req.headers,
   // multiValueHeaders: {
   //   'Host': ['localhost:3001'], 'Accept-Encoding': ['gzip, deflate'], 'User-Agent': ['node-superagent/3.8.3'], 'Connection': ['close'],
   // },
   multiValueQueryStringParameters: null,
-  path: req.path,
   // pathParameters: { proxy: 'things/00000000-0000-0000-0000-000000000000' },
+  path: req.path,
   pathParameters: req.params,
   queryStringParameters: req.query,
   requestContext: {
     accountId: 'offlineContext_accountId',
     apiId: 'offlineContext_apiId',
-    //   authorizer: { principalId: 'offlineContext_authorizer_principalId' },
-    // authorizer:
-    // authAuthorizer ||
-    // assign(authContext, {
-    //   claims,
-    //   // 'principalId' should have higher priority
-    //   principalId:
-    //     authPrincipalId ||
-    //     env.PRINCIPAL_ID ||
-    //     "offlineContext_authorizer_principalId", // See #24
-    //   scopes,
-    // }),
-
+    authorizer: toAuthorizer(req),
     httpMethod: req.method.toUpperCase(),
     identity: {
       accountId: 'offlineContext_accountId',
       apiKey: 'offlineContext_apiKey',
       caller: 'offlineContext_caller',
-      // cognitoAuthenticationProvider: 'offlineContext_cognitoAuthenticationProvider',
-      // cognitoAuthenticationType: 'offlineContext_cognitoAuthenticationType',
-      // cognitoIdentityId: 'offlineContext_cognitoIdentityId',
-      // cognitoIdentityPoolId: 'offlineContext_cognitoIdentityPoolId',
+      cognitoAuthenticationProvider: 'offlineContext_cognitoAuthenticationProvider',
+      cognitoAuthenticationType: 'offlineContext_cognitoAuthenticationType',
+      cognitoIdentityId: 'offlineContext_cognitoIdentityId',
+      cognitoIdentityPoolId: 'offlineContext_cognitoIdentityPoolId',
       sourceIp: req.ip,
-      // user: 'offlineContext_user',
-      // userAgent: 'node-superagent/3.8.3',
+      user: 'offlineContext_user',
+      userAgent: req.headers['user-agent'] || '',
       userArn: 'offlineContext_userArn',
     },
-    //   protocol: 'HTTP/1.1',
+    protocol: 'HTTP/1.1', // TODO ???
+    requestId: crypto.randomUUID(),
     //   requestId: 'offlineContext_requestId_ckf9tmzj800011vzrhoekcly8',
     //   requestTimeEpoch: 1600528993747,
     resourceId: 'offlineContext_resourceId',
@@ -121,8 +111,10 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
     vcrNock(f, vcr),
     async (req, res) => {
       try {
+        const request = toRequest(req);
+        log(request);
         const data = await lambda[handle](
-          toRequest(req),
+          request,
           ctx,
         );
 

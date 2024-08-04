@@ -150,9 +150,9 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
       ) {
         // To minimize the chance of breaking setups we whitelist packages available on AWS here. These are due to the previously missing check
         // most likely set in devDependencies and should not lead to an error now.
-        const ignoredDevDependencies = ['aws-sdk']; // TODO @aws-sdk
+        const ignoredDevDependencies = ['aws-sdk', '@aws-sdk'];
 
-        if (!_.includes(ignoredDevDependencies, module.external)) {
+        if (!ignoredDevDependencies.some((dev) => module.external.startsWith(dep))) {
           // Runtime dependency found in devDependencies but not forcefully excluded
           log(
             `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`
@@ -187,12 +187,13 @@ function writeFileSync(filePath, contents) {
  * This will utilize the npm cache at its best and give us the needed results
  * and performance.
  */
-export const packExternalModules = (service) => (params) => {
+export const packExternalModules = (service, configuration) => (params) => {
+  // log('configuration: %j', configuration);
   // log('params: %j', params);
 
   const stats = { stats: params.stats };
 
-  const includes = true; // this.configuration.includeModules;
+  const includes = configuration.includeModules;
 
   log('Packing external modules');
 

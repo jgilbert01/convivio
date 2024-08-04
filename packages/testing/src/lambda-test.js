@@ -42,5 +42,14 @@ export const lambdaTest = ({
     .then((resp) => ({
       ...resp,
       Payload: JSON.parse(Buffer.from(resp.Payload)),
-    }));
+    }))
+    .then((resp) => {
+      if (resp.Payload.errorMessage) {
+        console.error(resp);
+        const err = new Error(resp.Payload.errorMessage);
+        err.response = resp;
+        throw err;
+      }
+      return resp;
+    });
 };
