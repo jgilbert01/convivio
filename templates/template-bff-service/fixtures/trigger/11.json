@@ -1,0 +1,154 @@
+[
+  {
+    "scope": "https://dynamodb.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "ConsistentRead": true,
+      "ExpressionAttributeNames": {
+        "#pk": "pk"
+      },
+      "ExpressionAttributeValues": {
+        ":pk": {
+          "S": "00000000-0000-0000-0000-000000000000"
+        }
+      },
+      "KeyConditionExpression": "#pk = :pk",
+      "TableName": "your-apps-bff-service-stg-entities"
+    },
+    "status": 200,
+    "response": {
+      "Count": 1,
+      "Items": [
+        {
+          "deleted": {
+            "BOOL": true
+          },
+          "timestamp": {
+            "N": "1722704523645"
+          },
+          "awsregion": {
+            "S": "us-west-2"
+          },
+          "ttl": {
+            "N": "1723654923"
+          },
+          "sk": {
+            "S": "thing"
+          },
+          "discriminator": {
+            "S": "thing"
+          },
+          "lastModifiedBy": {
+            "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
+          },
+          "description": {
+            "S": "This is thing zero."
+          },
+          "id": {
+            "S": "00000000-0000-0000-0000-000000000000"
+          },
+          "pk": {
+            "S": "00000000-0000-0000-0000-000000000000"
+          },
+          "name": {
+            "S": "thing0"
+          }
+        }
+      ],
+      "ScannedCount": 1
+    },
+    "rawHeaders": [
+      "Server",
+      "Server",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:04 GMT",
+      "Content-Type",
+      "application/x-amz-json-1.0",
+      "Content-Length",
+      "428",
+      "Connection",
+      "keep-alive",
+      "x-amzn-RequestId",
+      "A0DEF83O57C49EBPPVGCHNDS6VVV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "x-amz-crc32",
+      "2224180778"
+    ],
+    "responseIsBinary": false
+  },
+  {
+    "scope": "https://dynamodb.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "ExpressionAttributeNames": {
+        "#status": "status"
+      },
+      "ExpressionAttributeValues": {
+        ":status": {
+          "S": "APPROVED"
+        }
+      },
+      "FilterExpression": "#status = :status",
+      "TableName": "your-apps-bff-service-stg-entities"
+    },
+    "status": 200,
+    "response": {
+      "Count": 0,
+      "Items": [],
+      "ScannedCount": 3
+    },
+    "rawHeaders": [
+      "Server",
+      "Server",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:04 GMT",
+      "Content-Type",
+      "application/x-amz-json-1.0",
+      "Content-Length",
+      "39",
+      "Connection",
+      "keep-alive",
+      "x-amzn-RequestId",
+      "ED5J1J5EK28J24THE711E2VNT7VV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "x-amz-crc32",
+      "3763983595"
+    ],
+    "responseIsBinary": false
+  },
+  {
+    "scope": "https://events.us-west-2.amazonaws.com:443",
+    "method": "POST",
+    "path": "/",
+    "body": {
+      "Entries": [
+        {
+          "Detail": "{\"id\":\"a24f9cdaec8ead2781353ef13e942f42\",\"type\":\"thing-created\",\"partitionKey\":\"00000000-0000-0000-0000-000000000000\",\"timestamp\":1600349040394,\"tags\":{\"account\":\"np\",\"region\":\"us-west-2\",\"stage\":\"stg\",\"source\":\"your-apps-bff-service\",\"functionname\":\"your-apps-bff-service-stg-trigger\",\"pipeline\":\"t1\",\"skip\":true},\"thing\":{\"lastModifiedBy\":\"offlineContext_authorizer_principalId\",\"timestamp\":1600349040394,\"id\":\"00000000-0000-0000-0000-000000000000\"}}",
+          "DetailType": "thing-created",
+          "EventBusName": "your-apps-event-hub-stg-bus",
+          "Source": "custom"
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "Entries": [
+        {
+          "EventId": "7cefcd44-6f8d-d9f5-89f1-9e6039438de1"
+        }
+      ],
+      "FailedEntryCount": 0
+    },
+    "rawHeaders": [
+      "x-amzn-RequestId",
+      "47d37f3e-abe2-442e-9577-2645cb174ab4",
+      "Content-Type",
+      "application/x-amz-json-1.1",
+      "Content-Length",
+      "85",
+      "Date",
+      "Sat, 03 Aug 2024 17:02:04 GMT"
+    ],
+    "responseIsBinary": false
+  }
+]

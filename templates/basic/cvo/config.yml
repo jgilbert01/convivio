@@ -1,0 +1,8 @@
+custom:
+  x: ${opt:stage}
+  webpack:
+    # webpackConfig: ./webpack.config.js
+    includeModules: true
+    packager: npm
+    keepOutputDirectory: true
+

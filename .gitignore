@@ -1,0 +1,12 @@
+node_modules/
+lib
+.DS_Store
+*.log
+.nyc_output
+.webpack
+.serverless
+.convivio
+coverage
+.npmrc
+*.tgz
+bak

@@ -1,0 +1,65 @@
+{
+  "name": "@convivio/serverless-plugin",
+  "version": "0.0.0",
+  "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
+  "keywords": [
+    "serverless",
+    "plugin",
+    "aws",
+    "lambda",
+    "offline",
+    "vcr",
+    "build",
+    "test",
+    "deploy"
+  ],
+  "author": "John Gilbert",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "compile": "babel src --out-dir lib",
+    "clean": "rm -rf lib/",
+    "lint": "npm run lint:js",
+    "lint:js": "eslint --fix --format=node_modules/eslint-formatter-pretty .",
+    "pretest": "npm run clean && npm run lint",
+    "test": "better-npm-run test",
+    "prepublishOnly": "npm run build"
+  },
+  "betterScripts": {
+    "test": {
+      "command": "nyc mocha --recursive \"./test/unit/**/*.test.js\"",
+      "env": {
+        "AWS_REGION": "us-west-2",
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.0",
+    "@babel/core": "^7.10.0",
+    "@babel/plugin-transform-runtime": "^7.10.0",
+    "@babel/preset-env": "^7.10.0",
+    "@babel/register": "^7.10.0",
+    "@babel/runtime": "^7.10.0",
+    "babel-eslint": "^10.0.0",
+    "babel-plugin-istanbul": "^5.2.0",
+    "better-npm-run": "^0.1.1",
+    "eslint": "^6.7.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-formatter-pretty": "^3.0.1",
+    "eslint-plugin-import": "^2.18.2"
+  },
+  "dependencies": {
+    "@convivio/webpack": "file:../webpack",
+    "bluebird": "^3.7.1",
+    "lodash": "^4.17.15"
+  }
+}
