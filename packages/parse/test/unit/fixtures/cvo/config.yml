@@ -1,0 +1,14 @@
+custom:
+  subsys: template
+  stage: ${opt:stage}
+  region: ${env:REGION, ${opt:region}}
+  webpack:
+    includeModules: true
+  tableStreamArn:
+    us-west-2:
+      Fn::GetAtt: [ EntitiesTable, StreamArn ]
+    us-east-1: # ${awsdesc:DynamoDB.describeTable.TableName.${self:provider.environment.ENTITY_TABLE_NAME}.Table.LatestStreamArn}
+      Fn::GetAtt: [ EntitiesTable, StreamArn ]
+
+environment:
+  ENTITY_TABLE_NAME: ${self:service}-${opt:stage}-entities
