@@ -17,6 +17,8 @@ import {
 import { NodeHttpHandler } from '@smithy/node-http-handler';
 import Promise from 'bluebird';
 
+import { defaultDebugLogger } from './log';
+
 class Connector {
   constructor({
     debug,
@@ -28,7 +30,7 @@ class Connector {
         requestTimeout: timeout,
         connectionTimeout: timeout,
       }),
-      logger: console, // { log: /* istanbul ignore next */ (msg) => debug('%s', msg.replace(/\n/g, '\r')) },
+      logger: defaultDebugLogger(debug),
     });
   }
 

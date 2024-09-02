@@ -1,5 +1,5 @@
 params:
-  stg:
+  np:
     debug: '*'
     account: np # nonprod
     logRetentionInDays: 3
@@ -13,6 +13,7 @@ custom:
   org: my
   subsys: your-apps
   webpack:
+    # isLegacy: true
     includeModules:
       forceExclude:
         - '@aws-sdk/client-dynamodb'

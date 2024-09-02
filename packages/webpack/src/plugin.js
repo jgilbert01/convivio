@@ -24,14 +24,17 @@ class ConvivioWebpackPlugin {
       // log('all stats: %j' , stats);
       // log('stats: %j' , compileStats);
 
+      // TODO remove packExternalModules once optimize is verified
       if (!env.isLocal) {
-        return packExternalModules(this.options.service, this.options.configuration)({ 
-            stats: compileStats, 
+        return (env.configuration.isLegacy
+          ? packExternalModules(this.options.service, this.options.configuration)({
+            stats: compileStats,
             webpackConfig: stats.compilation.compiler.options,
-        })
-        .then(() => {
+          })
+          : Promise.resolve())
+          .then(() => {
             return pack({ directory: compileStats[0].outputPath, artifactFilePath: `${compileStats[0].outputPath}.zip` });
-        });
+          });
       }
 
       return Promise.resolve();

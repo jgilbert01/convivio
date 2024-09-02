@@ -18,6 +18,7 @@ const resourceTypeToErrorCodePostfix = (resourceType) => {
 
 export const checkStackProgress = async (
   connector,
+  progress,
   action,
   cfData,
   stackUrl,
@@ -72,7 +73,7 @@ export const checkStackProgress = async (
               stackLatestError = event;
             }
             // Log stack events
-            log(`  ${eventStatus} - ${event.ResourceType} - ${event.LogicalResourceId}`);
+            progress.updateProgress(`  ${eventStatus} - ${event.ResourceType} - ${event.LogicalResourceId}`);
 
             if (
               event.ResourceType !== 'AWS::CloudFormation::Stack'
@@ -88,8 +89,7 @@ export const checkStackProgress = async (
                 if (action === 'update') return 'Updating';
                 throw new Error(`Unrecgonized action: ${action}`);
               })();
-              // TODO progress ???
-              log(`${progressMessagePrefix} CloudFormation stack (${completedResources.size}/${cfData.Changes.length})`);
+              progress.updateProgress(`${progressMessagePrefix} CloudFormation stack (${completedResources.size}/${cfData.Changes.length})`);
             }
 
             // Prepare for next monitoring action
@@ -147,7 +147,7 @@ export const checkStackProgress = async (
       ))
   .then(() => {
     if (validStatuses.has(stackStatus)) return stackStatus;
-    return checkStackProgress(connector, action, cfData, stackUrl, options, {
+    return checkStackProgress(connector, progress, action, cfData, stackUrl, options, {
       loggedEventIds,
       stackStatus,
       stackLatestError,
@@ -156,7 +156,7 @@ export const checkStackProgress = async (
     });
   });
 
-export const monitorStack = async (connector, action, cfData, options = {}) => {
+export const monitorStack = async (connector, progress, action, cfData, options = {}) => {
   // Skip monitoring if stack was already created
   if (cfData === 'alreadyCreated') return Promise.resolve();
 
@@ -166,5 +166,5 @@ export const monitorStack = async (connector, action, cfData, options = {}) => {
   const cfQueryString = `region=${region}#/stack/detail?stackId=${encodedStackId}`;
   const stackUrl = `${baseCfUrl}?${cfQueryString}`;
 
-  return checkStackProgress(connector, action, cfData, stackUrl, options, {});
+  return checkStackProgress(connector, progress, action, cfData, stackUrl, options, {});
 };

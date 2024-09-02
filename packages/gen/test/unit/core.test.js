@@ -23,7 +23,7 @@ const convivio = {
   options,
   config,
   hooks: {
-    generate: new AsyncSeriesHook(['convivio']),
+    generate: new AsyncSeriesHook(['convivio', 'progress']),
   },
   yaml: CORE,
 };
@@ -34,7 +34,7 @@ describe('core/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
-    await convivio.hooks.generate.callAsync(convivio);
+    await convivio.hooks.generate.promise(convivio);
 
     expect(convivio.json).to.deep.equal({
       AWSTemplateFormatVersion: '2010-09-09',

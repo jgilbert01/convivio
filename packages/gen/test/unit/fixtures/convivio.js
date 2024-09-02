@@ -4,9 +4,13 @@ export const CORE = {
     name: 'aws',
     runtime: 'nodejs18.x',
     region: 'us-west-2',
+    deploymentBucket: 'my-deploy-bucket',
     environment: {
       ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
     },
+  },
+  package: {
+    artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
   },
   custom: {
     subsys: 'template',
@@ -30,6 +34,12 @@ export const CORE = {
   functions: {
     rest: {
       handler: 'src/rest/index.handle',
+
+      key: 'rest',
+      name: 'my-bff-service-dev-rest',
+      handlerEntry: { key: 'src/rest/index', value: './src/rest/index.js' },
+      package: { artifact: './.webpack/rest.zip' },
+
       events: [
         {
           http: {
@@ -41,6 +51,12 @@ export const CORE = {
     },
     listener: {
       handler: 'src/listener/index.handle',
+
+      key: 'listener',
+      name: 'my-bff-service-dev-listener',
+      handlerEntry: { key: 'src/listener/index', value: './src/listener/index.js' },
+      package: { artifact: './.webpack/listener.zip' },
+
       events: [
         {
           stream: {

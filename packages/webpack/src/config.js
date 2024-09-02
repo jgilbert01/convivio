@@ -22,11 +22,24 @@ export const output = {
   filename: '[name].js'
 };
 
-export const optimization = {
-  minimize: false
-};
+// https://webpack.js.org/guides/code-splitting/
+export const optimization = (env) => env.configuration.isLegacy ?
+  ({
+    minimize: false,
+  }) : ({
+    minimize: false,
+    splitChunks: {
+      chunks: 'all',
+      maxSize: 200000, // 200KB
+    },
+  });
 
-export const externals = [nodeExternals()];
+export const externals = (env) => env.configuration.isLegacy ?
+  [nodeExternals()] :
+  [
+    /^@aws-sdk\/.+/,
+    // /^@smithy\/.+/,
+  ];
 // externals: [nodeExternals(
 //   //   {
 //   //   // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
@@ -60,8 +73,8 @@ export const convivioDefaults = (env) => {
       target: 'node',
       mode: 'development',
       // devtool: 'nosources-source-map',
-      optimization,
-      externals,
+      optimization: optimization(env),
+      externals: externals(env),
       module,
       plugins: [],
       // TODO devServer
@@ -75,8 +88,8 @@ export const convivioDefaults = (env) => {
       },
       target: 'node',
       mode: 'production',
-      optimization,
-      externals,
+      optimization: optimization(env),
+      externals: externals(env),
       module,
       plugins: [
         new ConvivioWebpackPlugin({ ...env }),

@@ -1,13 +1,8 @@
-import merge from 'lodash/merge';
 import debug from 'debug';
 
-const log = debug('cvo:gen:resources');
+import { mergeResources } from '../utils';
 
-const mergeResources = (src, tgt) => {
-  merge(src.Resources ?? {}, tgt.Resources ?? {});
-  merge(src.Outputs ?? {}, tgt.Outputs ?? {});
-  merge(src.Conditions ?? {}, tgt.Conditions ?? {});
-};
+const log = debug('cvo:gen:resources');
 
 // NOTE place this as the last generator
 // so it can override other generators

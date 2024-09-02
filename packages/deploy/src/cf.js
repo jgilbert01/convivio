@@ -6,18 +6,13 @@ import { monitorStack } from './monitor-stack';
 
 const log = debug('cvo:deploy:cf');
 
-export const deploy = async (plugin, convivio) => {
+export const deploy = async (plugin, convivio, progress) => {
   const StackName = `${convivio.yaml.service}-${convivio.options.stage}`; // TODO this.provider.naming.getStackName(
   const ChangeSetName = `${StackName}-change-set`;
 
-  const TemplateURL = convivio.yaml.provider.deploymentBucket
-    ? ''
-    : undefined;
-
+  const TemplateURL = plugin.TemplateURL;
   // this is just for example projects and bootstrapping <subsys>-pipeline-resources
-  const TemplateBody = convivio.yaml.provider.deploymentBucket
-    ? undefined
-    : JSON.stringify(convivio.json);
+  const TemplateBody = TemplateURL ? undefined : JSON.stringify(convivio.json);
 
   const connector = new Connector({ debug: log });
 
@@ -71,7 +66,7 @@ export const deploy = async (plugin, convivio) => {
     ChangeSetName,
   });
 
-  await monitorStack(connector, ChangeSetType.toLowerCase(), changeSetDescription);
+  await monitorStack(connector, progress, ChangeSetType.toLowerCase(), changeSetDescription);
 };
 
 export const waitForChangeSetCreation = async (connector, ChangeSetName, StackName) => {

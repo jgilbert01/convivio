@@ -1,6 +1,5 @@
 import debug from 'debug';
 
-import { getArtifactDirectoryName } from './utils';
 // import { upload, cleanup } from './s3';
 import { deploy } from './cf';
 
@@ -12,16 +11,13 @@ export class DeployPlugin {
   }
 
   apply(cvo) {
-    cvo.hooks.deploy.tapPromise(DeployPlugin.name, async (convivio) => {
+    cvo.hooks.deploy.tapPromise(DeployPlugin.name, async (convivio, progress) => {
       log('%j', { convivio });
 
-      this.bucketName = convivio.yaml.provider.deploymentBucket;
-      // this.artifactDirectoryName = getArtifactDirectoryName(convivio);
-
       try {
-      // await upload(this, convivio);
-        await deploy(this, convivio);
-      // await cleanup(this, convivio);
+        await upload(this, convivio);
+        await deploy(this, convivio, progress);
+        // await cleanup(this, convivio);
       } catch (err) {
         console.log(err);
       }

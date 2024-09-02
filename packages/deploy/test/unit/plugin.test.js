@@ -25,7 +25,7 @@ const convivio = {
   options,
   config,
   hooks: {
-    deploy: new AsyncSeriesHook(['convivio']),
+    deploy: new AsyncSeriesHook(['convivio', 'progress']),
   },
   yaml: CORE,
   json: BASE,
@@ -37,7 +37,7 @@ describe('plugin/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
-    await convivio.hooks.deploy.callAsync(convivio);
+    await convivio.hooks.deploy.promise(convivio, { updateProgress: console.log });
 
     // expect(convivio.json).to.deep.equal({});
   });
