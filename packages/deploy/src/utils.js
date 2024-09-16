@@ -22,7 +22,7 @@ export const getFileStats = (filepath) => {
     return fs.promise.stat(filepath);
   } catch (error) {
     throw new Error(
-      `Cannot read file artifact "${filepath}": ${error.message}`
+      `Cannot read file artifact "${filepath}": ${error.message}`,
     );
   }
 };
@@ -36,7 +36,7 @@ export const deepSortObjectByKey = (obj) => {
     return _.fromPairs(
       Object.entries(obj)
         .sort(([key], [otherKey]) => key.localeCompare(otherKey))
-        .map(([key, value]) => [key, deepSortObjectByKey(value)])
+        .map(([key, value]) => [key, deepSortObjectByKey(value)]),
     );
   }
 

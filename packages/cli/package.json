@@ -42,7 +42,8 @@
       "command": "nyc mocha --recursive \"./test/unit/**/*.test.js\"",
       "env": {
         "AWS_REGION": "us-west-2",
-        "NODE_ENV": "test"
+        "NODE_ENV": "test",
+        "DEBUG": "cvo:*"
       }
     }
   },
@@ -68,7 +69,10 @@
     "sinon-chai": "^3.7.0"
   },
   "dependencies": {
+    "@convivio/deploy": "file:../deploy",
+    "@convivio/gen": "file:../gen",
     "@convivio/parse": "file:../parse",
+    "@convivio/webpack": "file:../webpack",
     "bluebird": "^3.7.1",
     "cli-progress-footer": "^2.3.3",
     "commander": "^12.1.0",

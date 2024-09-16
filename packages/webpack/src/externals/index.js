@@ -17,23 +17,23 @@ function rebaseFileReferences(pathToPackageRoot, moduleVersion) {
     return _.replace(
       `${_.startsWith(moduleVersion, 'file:') ? 'file:' : ''}${pathToPackageRoot}/${filePath}`,
       /\\/g,
-      '/'
+      '/',
     );
   }
 
   return moduleVersion;
-};
+}
 
 /**
  * Add the given modules to a package json's dependencies.
  */
 function addModulesToPackageJson(externalModules, packageJson, pathToPackageRoot) {
-  _.forEach(externalModules.sort(), externalModule => {
+  _.forEach(externalModules.sort(), (externalModule) => {
     const splitModule = _.split(externalModule, '@');
     // If we have a scoped module we have to re-add the @
     if (_.startsWith(externalModule, '@')) {
       splitModule.splice(0, 1);
-      splitModule[0] = '@' + splitModule[0];
+      splitModule[0] = `@${splitModule[0]}`;
     }
     let moduleVersion = _.join(_.tail(splitModule), '@');
     // We have to rebase file references to the target package.json
@@ -41,26 +41,26 @@ function addModulesToPackageJson(externalModules, packageJson, pathToPackageRoot
     packageJson.dependencies = packageJson.dependencies || {};
     packageJson.dependencies[_.first(splitModule)] = moduleVersion;
   });
-};
+}
 
 /**
  * Remove a given list of excluded modules from a module list
  * @this - The active plugin instance
  */
 function removeExcludedModules(modules, packageForceExcludes) {
-  const excludedModules = _.remove(modules, externalModule => {
+  const excludedModules = _.remove(modules, (externalModule) => {
     const splitModule = _.split(externalModule, '@');
     // If we have a scoped module we have to re-add the @
     if (_.startsWith(externalModule, '@')) {
       splitModule.splice(0, 1);
-      splitModule[0] = '@' + splitModule[0];
+      splitModule[0] = `@${splitModule[0]}`;
     }
     const moduleName = _.first(splitModule);
     return _.includes(packageForceExcludes, moduleName);
   });
 
   log('excludedModules: ', excludedModules);
-};
+}
 
 /**
  * Resolve the needed versions of production dependencies for external modules.
@@ -101,11 +101,11 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
       try {
         const modulePackagePath = path.join(nodeModulesBase, module.external, 'package.json');
 
-        const peerDependencies = require(modulePackagePath).peerDependencies;
+        const { peerDependencies } = require(modulePackagePath);
         if (!_.isEmpty(peerDependencies)) {
           log(`Adding explicit peers for dependency ${module.external}`);
 
-          const peerDependenciesMeta = require(modulePackagePath).peerDependenciesMeta;
+          const { peerDependenciesMeta } = require(modulePackagePath);
 
           if (!_.isEmpty(peerDependenciesMeta)) {
             _.forEach(peerDependencies, (value, key) => {
@@ -123,7 +123,7 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
               packagePath,
               nodeModulesRelativeDir,
               dependencyGraph,
-              forceExcludes
+              forceExcludes,
             );
             Array.prototype.push.apply(prodModules, peerModules);
           }
@@ -131,48 +131,46 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
       } catch (e) {
         log(`WARNING: Could not check for peer dependencies of ${module.external}. Set nodeModulesRelativeDir if node_modules is in different directory.`);
       }
-    } else {
-      if (!packageJson.devDependencies || !packageJson.devDependencies[module.external]) {
-        // Add transient dependencies if they appear not in the service's dev dependencies
-        const originInfo = _.get(dependencyGraph, 'dependencies', {})[module.origin] || {};
-        moduleVersion = _.get(_.get(originInfo, 'dependencies', {})[module.external], 'version');
-        if (!moduleVersion) {
-          moduleVersion = _.get(dependencyGraph, ['dependencies', module.external, 'version']);
-        }
-        if (!moduleVersion) {
-          log(`WARNING: Could not determine version of module ${module.external}`);
-        }
-        prodModules.push(moduleVersion ? `${module.external}@${moduleVersion}` : module.external);
-      } else if (
-        packageJson.devDependencies &&
-        packageJson.devDependencies[module.external] &&
-        !_.includes(forceExcludes, module.external)
-      ) {
-        // To minimize the chance of breaking setups we whitelist packages available on AWS here. These are due to the previously missing check
-        // most likely set in devDependencies and should not lead to an error now.
-        const ignoredDevDependencies = ['aws-sdk', '@aws-sdk'];
-
-        if (!ignoredDevDependencies.some((dev) => module.external.startsWith(dep))) {
-          // Runtime dependency found in devDependencies but not forcefully excluded
-          log(
-            `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`
-          );
-          throw new Error(`webpack dependency error: ${module.external}.`);
-        }
-        log(
-          `INFO: Runtime dependency '${module.external}' found in devDependencies. It has been excluded automatically.`
-        );
+    } else if (!packageJson.devDependencies || !packageJson.devDependencies[module.external]) {
+      // Add transient dependencies if they appear not in the service's dev dependencies
+      const originInfo = _.get(dependencyGraph, 'dependencies', {})[module.origin] || {};
+      moduleVersion = _.get(_.get(originInfo, 'dependencies', {})[module.external], 'version');
+      if (!moduleVersion) {
+        moduleVersion = _.get(dependencyGraph, ['dependencies', module.external, 'version']);
       }
+      if (!moduleVersion) {
+        log(`WARNING: Could not determine version of module ${module.external}`);
+      }
+      prodModules.push(moduleVersion ? `${module.external}@${moduleVersion}` : module.external);
+    } else if (
+      packageJson.devDependencies
+        && packageJson.devDependencies[module.external]
+        && !_.includes(forceExcludes, module.external)
+    ) {
+      // To minimize the chance of breaking setups we whitelist packages available on AWS here. These are due to the previously missing check
+      // most likely set in devDependencies and should not lead to an error now.
+      const ignoredDevDependencies = ['aws-sdk', '@aws-sdk'];
+
+      if (!ignoredDevDependencies.some((dev) => module.external.startsWith(dep))) {
+        // Runtime dependency found in devDependencies but not forcefully excluded
+        log(
+          `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`,
+        );
+        throw new Error(`webpack dependency error: ${module.external}.`);
+      }
+      log(
+        `INFO: Runtime dependency '${module.external}' found in devDependencies. It has been excluded automatically.`,
+      );
     }
   });
 
   return prodModules;
-};
+}
 
 function writeFileSync(filePath, contents) {
   fse.mkdirsSync(path.dirname(filePath));
   return fse.writeFileSync(filePath, contents);
-};
+}
 
 /**
  * We need a performant algorithm to install the packages for each single
@@ -201,7 +199,7 @@ export const packExternalModules = (service, configuration) => (params) => {
   const packageForceIncludes = _.get(includes, 'forceInclude', []);
   const packageForceExcludes = _.get(includes, 'forceExclude', []);
   const packagePath = includes.packagePath || './package.json';
-  const nodeModulesRelativeDir = includes.nodeModulesRelativeDir;
+  const { nodeModulesRelativeDir } = includes;
   const packageJsonPath = path.join(process.cwd(), packagePath);
   const packageScripts = _.reduce(
     [],
@@ -209,7 +207,7 @@ export const packExternalModules = (service, configuration) => (params) => {
       __[`script${index}`] = script;
       return __;
     },
-    {}
+    {},
   );
 
   // Determine and create packager
@@ -228,12 +226,12 @@ export const packExternalModules = (service, configuration) => (params) => {
 
     return npm
       .getProdDependencies(path.dirname(packageJsonPath), 1, {}) // this.configuration.packagerOptions
-      .then(dependencyGraph => {
+      .then((dependencyGraph) => {
         // log(dependencyGraph);
         const problems = _.get(dependencyGraph, 'problems', []);
         if (!_.isEmpty(problems)) {
           log(`Ignoring ${_.size(problems)} NPM errors:`);
-          _.forEach(problems, problem => {
+          _.forEach(problems, (problem) => {
             log(`=> ${problem}`);
           });
         }
@@ -241,15 +239,15 @@ export const packExternalModules = (service, configuration) => (params) => {
 
         // (1) Generate dependency composition
         const compositeModules = _.uniq(
-          _.flatMap(stats.stats, compileStats => {
+          _.flatMap(stats.stats, (compileStats) => {
             // log('compileStats: ', compileStats);
             // log('compileStats.externalModules: ', compileStats.externalModules);
             // log('packageForceIncludes: ', packageForceIncludes);
             const externalModules = _.concat(
               compileStats.externalModules ?? [],
-              _.map(packageForceIncludes, whitelistedPackage => ({
-                external: whitelistedPackage
-              }))
+              _.map(packageForceIncludes, (whitelistedPackage) => ({
+                external: whitelistedPackage,
+              })),
             );
             return getProdModules.call(
               this,
@@ -257,9 +255,9 @@ export const packExternalModules = (service, configuration) => (params) => {
               packagePath,
               nodeModulesRelativeDir,
               dependencyGraph,
-              packageForceExcludes
+              packageForceExcludes,
             );
-          })
+          }),
         );
         // log(compositeModules);
         removeExcludedModules.call(this, compositeModules, packageForceExcludes);
@@ -281,9 +279,9 @@ export const packExternalModules = (service, configuration) => (params) => {
             version: '1.0.0',
             description: `Packaged externals for ${service}`,
             private: true,
-            scripts: packageScripts
+            scripts: packageScripts,
           },
-          packageSections
+          packageSections,
         );
         const relPath = path.relative(compositeModulePath, path.dirname(packageJsonPath));
         addModulesToPackageJson(compositeModules, compositePackage, relPath);
@@ -293,11 +291,11 @@ export const packExternalModules = (service, configuration) => (params) => {
         const packagerOptions = {};
         const packageLockPath = path.join(
           path.dirname(packageJsonPath),
-          packagerOptions.lockFile || npm.lockfileName
+          packagerOptions.lockFile || npm.lockfileName,
         );
         let hasPackageLock = false;
-        return Promise.fromCallback(cb => fse.pathExists(packageLockPath, cb))
-          .then(exists => {
+        return Promise.fromCallback((cb) => fse.pathExists(packageLockPath, cb))
+          .then((exists) => {
             if (exists) {
               log('Package lock found - Using locked versions');
               try {
@@ -309,7 +307,7 @@ export const packExternalModules = (service, configuration) => (params) => {
 
                 writeFileSync(
                   path.join(compositeModulePath, npm.lockfileName),
-                  packageLockFile
+                  packageLockFile,
                 );
                 hasPackageLock = true;
               } catch (err) {
@@ -320,19 +318,17 @@ export const packExternalModules = (service, configuration) => (params) => {
           })
           .then(() => {
             const start = _.now();
-            log('Packing external modules: ' + compositeModules.join(', '));
+            log(`Packing external modules: ${compositeModules.join(', ')}`);
 
-            return npm.getPackagerVersion(compositeModulePath).then(version => {
-              return npm
-                .install(compositeModulePath, {}, version) // this.configuration.packagerOptions
-                .then(() => {
-                  log(`Package took [${_.now() - start} ms]`);
-                  return null;
-                })
-                .return(stats.stats);
-            });
+            return npm.getPackagerVersion(compositeModulePath).then((version) => npm
+              .install(compositeModulePath, {}, version) // this.configuration.packagerOptions
+              .then(() => {
+                log(`Package took [${_.now() - start} ms]`);
+                return null;
+              })
+              .return(stats.stats));
           })
-          .mapSeries(compileStats => {
+          .mapSeries((compileStats) => {
             const modulePath = compileStats.outputPath;
             // log('modulePath: ', modulePath);
             // log('compileStats: ', compileStats);
@@ -346,22 +342,22 @@ export const packExternalModules = (service, configuration) => (params) => {
                 description: `Packaged externals for ${service}`,
                 private: true,
                 scripts: packageScripts,
-                dependencies: {}
+                dependencies: {},
               },
-              packageSections
+              packageSections,
             );
             const prodModules = getProdModules.call(
               this,
               _.concat(
                 compileStats.externalModules,
-                _.map(packageForceIncludes, whitelistedPackage => ({
-                  external: whitelistedPackage
-                }))
+                _.map(packageForceIncludes, (whitelistedPackage) => ({
+                  external: whitelistedPackage,
+                })),
               ),
               packagePath,
               nodeModulesRelativeDir,
               dependencyGraph,
-              packageForceExcludes
+              packageForceExcludes,
             );
             removeExcludedModules.call(this, prodModules, packageForceExcludes);
             const relPath = path.relative(modulePath, path.dirname(packageJsonPath));
@@ -372,38 +368,33 @@ export const packExternalModules = (service, configuration) => (params) => {
             return Promise.try(() => {
               // Only copy dependency modules if demanded by packager
               if (npm.mustCopyModules) {
-                return Promise.fromCallback(callback =>
+                return Promise.fromCallback((callback) =>
                   fse.copy(
                     path.join(compositeModulePath, 'node_modules'),
                     path.join(modulePath, 'node_modules'),
-                    callback
-                  )
-                );
+                    callback,
+                  ));
               }
               return Promise.resolve();
             })
               .then(() =>
-                hasPackageLock
-                  ? Promise.fromCallback(callback =>
+                (hasPackageLock
+                  ? Promise.fromCallback((callback) =>
                     fse.copy(
                       path.join(compositeModulePath, npm.lockfileName),
                       path.join(modulePath, npm.lockfileName),
-                      callback
-                    )
-                  )
-                  : Promise.resolve()
-              )
+                      callback,
+                    ))
+                  : Promise.resolve()))
               .tap(() => {
                 log(`Copy modules: ${modulePath} [${_.now() - startCopy} ms]`);
               })
               .then(() => {
                 // Prune extraneous packages - removes not needed ones
                 const startPrune = _.now();
-                return npm.getPackagerVersion(modulePath).then(version => {
-                  return npm.prune(modulePath, {}, version).tap(() => { // this.configuration.packagerOptions
-                    log(`Prune: ${modulePath} [${_.now() - startPrune} ms]`);
-                  });
-                });
+                return npm.getPackagerVersion(modulePath).then((version) => npm.prune(modulePath, {}, version).tap(() => { // this.configuration.packagerOptions
+                  log(`Prune: ${modulePath} [${_.now() - startPrune} ms]`);
+                }));
               })
               .then(() => {
                 // Prune extraneous packages - removes not needed ones
@@ -425,9 +416,9 @@ export const getExternalModules = ({ compilation }) => {
       externals.add({
         origin: _.get(
           findExternalOrigin(compilation.moduleGraph, getIssuerCompat(compilation.moduleGraph, module)),
-          'rawRequest'
+          'rawRequest',
         ),
-        external: getExternalModuleName(module)
+        external: getExternalModuleName(module),
       });
     }
   }
@@ -452,9 +443,7 @@ const getExternalModuleName = (module) => {
   return main;
 };
 
-const isExternalModule = (module) => {
-  return _.startsWith(module.identifier(), 'external ') && !isBuiltinModule(getExternalModuleName(module));
-};
+const isExternalModule = (module) => _.startsWith(module.identifier(), 'external ') && !isBuiltinModule(getExternalModuleName(module));
 
 /**
  * Gets the module issuer. The ModuleGraph api does not exists in webpack@4

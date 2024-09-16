@@ -1,6 +1,7 @@
 import debug from 'debug';
 
-import Connector from './connectors/s3';
+import { factory } from '@convivio/connectors';
+
 import {
   createFileHash,
   getArtifactDirectoryName,
@@ -11,7 +12,7 @@ import {
 const log = debug('cvo:deploy:s3');
 
 export const upload = async (plugin, convivio) => {
-  const connector = new Connector({ debug: log });
+  const connector = factory(convivio.options.region, 's3');
 
   const exists = checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket);
   if (!exists) {
@@ -49,7 +50,7 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
   const normCfTemplate = normalizeCloudFormationTemplate(convivio.json);
   const fileHash = createFileHash(JSON.stringify(normCfTemplate));
 
-  let params = {
+  const params = {
     Bucket: convivio.yaml.provider.deploymentBucket,
     Key: plugin.TemplateURL,
     Body: JSON.stringify(convivio.json), // compiledCfTemplate
@@ -108,12 +109,6 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
     if (streamError) throw streamError;
     return response;
   },
-
-
-
-
-
-
 
 'use strict';
 
@@ -210,8 +205,5 @@ module.exports = {
     await this.removeObjects(objectsToRemove);
   },
 };
- 
-
-
 
     */

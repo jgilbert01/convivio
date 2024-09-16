@@ -2,9 +2,9 @@ const path = require('path');
 const debug = require('debug');
 const nodeExternals = require('webpack-node-externals');
 
-const ConvivioWebpackPlugin = require('./plugin');
+const ConvivioWebpackPlugin = require('./wplugin');
 
-const log = debug('cvo:config');
+const log = debug('cvo:webpack:config');
 
 export const injectMocks = (entries) =>
   Object.keys(entries).reduce((e, key) => {
@@ -12,19 +12,17 @@ export const injectMocks = (entries) =>
     return e;
   }, {});
 
-export const includeMocks = (env) => {
-  return env.isLocal && process.env.REPLAY !== 'bloody';
-};
+export const includeMocks = (env) => env.isLocal && process.env.REPLAY !== 'bloody';
 
 export const output = {
   libraryTarget: 'commonjs',
   path: path.join(process.cwd(), '.webpack'),
-  filename: '[name].js'
+  filename: '[name].js',
 };
 
 // https://webpack.js.org/guides/code-splitting/
-export const optimization = (env) => env.configuration.isLegacy ?
-  ({
+export const optimization = (env) => (env.configuration.isLegacy
+  ? ({
     minimize: false,
   }) : ({
     minimize: false,
@@ -32,14 +30,14 @@ export const optimization = (env) => env.configuration.isLegacy ?
       chunks: 'all',
       maxSize: 200000, // 200KB
     },
-  });
+  }));
 
-export const externals = (env) => env.configuration.isLegacy ?
-  [nodeExternals()] :
-  [
+export const externals = (env) => (env.configuration.isLegacy
+  ? [nodeExternals()]
+  : [
     /^@aws-sdk\/.+/,
     // /^@smithy\/.+/,
-  ];
+  ]);
 // externals: [nodeExternals(
 //   //   {
 //   //   // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
@@ -51,11 +49,21 @@ export const module = {
   rules: [{
     test: /\.js$/,
     use: [{
-      loader: 'babel-loader'
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          ['@babel/preset-env', {
+            targets: {
+              'node': '20', // TODO config vs override ???
+            },
+          }],
+        ],
+        plugins: ['@babel/plugin-transform-runtime'],
+      }
     }],
     include: __dirname,
-    exclude: /node_modules/
-  }]
+    exclude: /node_modules/,
+  }],
 };
 
 // TODO export more fragements like devServer, vcr, injectMocks, and module

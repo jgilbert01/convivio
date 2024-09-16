@@ -15,7 +15,7 @@ class TracePlugin {
       log('%j', { args });
       return Promise.delay(1000);
     });
-    convivio.hooks.compile.tapPromise(TracePlugin.name, (...args) => {
+    convivio.hooks.generate.tapPromise(TracePlugin.name, (...args) => {
       log('%j', { args });
       return Promise.delay(1000);
     });
@@ -43,6 +43,6 @@ class TracePlugin {
     //   },
     // });
   }
-};
+}
 
 export default TracePlugin;

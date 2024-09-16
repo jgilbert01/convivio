@@ -1,45 +1,55 @@
-import _ from 'lodash';
-import Promise from 'bluebird';
 import debug from 'debug';
 
-import { packExternalModules, getExternalModules } from './externals';
-import { env } from './compile';
-import { pack } from './pack';
+import { compile } from './compile';
+import { start } from './devServer';
 
-const log = debug('cvo:compile:plugin');
+const log = debug('cvo:webpack:plugin');
 
-class ConvivioWebpackPlugin {
+export class WebpackPlugin {
   constructor(options) {
     this.options = options;
-    // additions
   }
 
-  apply(compiler) {
-    compiler.hooks.done.tapPromise(ConvivioWebpackPlugin.name, (stats) => {
-      const compileStats = _.map(stats.stats ? stats.stats : [stats], compileStats => ({
-        outputPath: compileStats.compilation.compiler.outputPath,
-        externalModules: getExternalModules(compileStats)
-      }));
-
-      // log('all stats: %j' , stats);
-      // log('stats: %j' , compileStats);
-
-      // TODO remove packExternalModules once optimize is verified
-      if (!env.isLocal) {
-        return (env.configuration.isLegacy
-          ? packExternalModules(this.options.service, this.options.configuration)({
-            stats: compileStats,
-            webpackConfig: stats.compilation.compiler.options,
-          })
-          : Promise.resolve())
-          .then(() => {
-            return pack({ directory: compileStats[0].outputPath, artifactFilePath: `${compileStats[0].outputPath}.zip` });
-          });
-      }
-
-      return Promise.resolve();
-    });
+  apply(cvo) {
+    cvo.hooks.start.tapPromise(WebpackPlugin.name, startHook);
+    cvo.hooks.package.tapPromise(WebpackPlugin.name, packageHook);
   }
 };
 
-module.exports = ConvivioWebpackPlugin;
+const startHook = async (convivio, progress) => {
+  log('%j', { convivio });
+
+  if (!convivio.yaml.functions) return;
+  
+  try {
+    const { servicePath } = convivio.config;
+    const service = convivio.yaml.service;
+    const configuration = convivio.yaml.custom?.webpack || {};
+    const functions = convivio.yaml.functions;
+
+    await start(servicePath, service, configuration, functions, convivio.yaml.provider);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const packageHook = async (convivio, progress) => {
+  log('%j', { convivio });
+
+  if (!convivio.yaml.functions) return;
+  
+  try {
+    const { servicePath } = convivio.config;
+    const service = convivio.yaml.service;
+    const configuration = convivio.yaml.custom?.webpack || {};
+    const functions = convivio.yaml.functions;
+    // TODO cleanup/normalize args
+    await compile(servicePath, service, configuration, functions);
+
+    // await package(this, convivio);
+    // await deploy(this, convivio, progress);
+    // await cleanup(this, convivio);
+  } catch (err) {
+    console.log(err);
+  }
+};

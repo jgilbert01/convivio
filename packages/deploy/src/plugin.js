@@ -3,7 +3,7 @@ import debug from 'debug';
 // import { upload, cleanup } from './s3';
 import { deploy } from './cf';
 
-const log = debug('cvo:deploy');
+const log = debug('cvo:deploy:plugin');
 
 export class DeployPlugin {
   constructor(options) {

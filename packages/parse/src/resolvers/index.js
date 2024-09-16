@@ -1,13 +1,13 @@
 // opt, env
 export * from './object';
 export * from './self';
+export * from './param';
 export * from './file';
+export * from './aws';
+export * from './cf';
 
-// param
-// aws
-// sls ???
-// file - yml, js?, json?
-// cf(region)
+// sls - instanceId ***
+// file - js?, json?
 
 // ssm ???
 // s3 ???

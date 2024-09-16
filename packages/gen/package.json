@@ -66,6 +66,7 @@
     "tapable": "^2.2.1"
   },
   "dependencies": {
+    "@convivio/connectors": "file:../connectors",
     "bluebird": "^3.7.1",
     "debug": "^4.1.1",
     "js-yaml": "^4.1.0",

@@ -1,5 +1,5 @@
 {
-  "name": "@convivio/parse",
+  "name": "@convivio/connectors",
   "version": "0.0.0",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
@@ -39,8 +39,7 @@
       "command": "nyc mocha --recursive \"./test/unit/**/*.test.js\"",
       "env": {
         "AWS_REGION": "us-west-2",
-        "NODE_ENV": "test",
-        "DEBUG": "xcvo:*"
+        "NODE_ENV": "test"
       }
     }
   },
@@ -67,7 +66,10 @@
     "tapable": "^2.2.1"
   },
   "dependencies": {
-    "@convivio/connectors": "file:../connectors",
+    "@aws-sdk/client-cloudformation": "^3.632.0",
+    "@aws-sdk/client-s3": "^3.633.0",
+    "@aws-sdk/lib-storage": "^3.633.0",
+    "@smithy/node-http-handler": "^3.1.4",
     "bluebird": "^3.7.1",
     "debug": "^4.1.1",
     "js-yaml": "^4.1.0",

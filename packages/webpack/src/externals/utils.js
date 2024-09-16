@@ -28,7 +28,7 @@ export function spawnProcess(command, args, options) {
       ...options,
       // nodejs 20 on windows doesn't allow `.cmd` command to run without `shell: true`
       // https://github.com/serverless-heaven/serverless-webpack/issues/1791
-      shell: /^win/.test(process.platform)
+      shell: /^win/.test(process.platform),
     });
     let stdout = '';
     let stderr = '';
@@ -36,16 +36,16 @@ export function spawnProcess(command, args, options) {
     child.stdout.setEncoding('utf8');
     child.stderr.setEncoding('utf8');
     // Listen to stream events
-    child.stdout.on('data', data => {
+    child.stdout.on('data', (data) => {
       stdout += data;
     });
-    child.stderr.on('data', data => {
+    child.stderr.on('data', (data) => {
       stderr += data;
     });
-    child.on('error', err => {
+    child.on('error', (err) => {
       reject(err);
     });
-    child.on('close', exitCode => {
+    child.on('close', (exitCode) => {
       if (exitCode !== 0) {
         reject(new SpawnError(`${command} ${_.join(args, ' ')} failed with code ${exitCode}`, stdout, stderr));
       } else {

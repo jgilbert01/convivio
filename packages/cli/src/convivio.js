@@ -13,7 +13,7 @@ import cpf from 'cli-progress-footer';
 
 import debug from 'debug';
 
-import { mergeConfig } from './utils';
+import defaultConfig from './config';
 
 const log = debug('cvo:cvo');
 
@@ -21,15 +21,15 @@ const progress = cpf();
 progress.shouldAddProgressAnimationPrefix = true;
 
 class Convivio {
-  constructor(options) {
+  constructor(options, overrides = {}) {
     this.options = options;
-    this.config = mergeConfig(this);
+    this.config = defaultConfig(this, overrides);
 
     this.hooks = {
       // assumeRole: new AsyncSeriesHook(['convivio', 'progress']),
       parse: new AsyncSeriesHook(['convivio', 'progress']),
       start: new AsyncSeriesHook(['convivio', 'progress']),
-      compile: new AsyncSeriesHook(['convivio', 'progress']),
+      generate: new AsyncSeriesHook(['convivio', 'progress']),
       package: new AsyncSeriesHook(['convivio', 'progress']),
       deploy: new AsyncSeriesHook(['convivio', 'progress']),
     };
@@ -50,7 +50,7 @@ class Convivio {
 
   async package() {
     await this.hooks.parse.promise(this, progress);
-    await this.hooks.compile.promise(this, progress);
+    await this.hooks.generate.promise(this, progress);
     await this.hooks.package.promise(this, progress);
   }
 
@@ -59,7 +59,7 @@ class Convivio {
     await this.hooks.parse.promise(this, progress);
 
     progress.updateProgress('Compiling...');
-    await this.hooks.compile.promise(this, progress);
+    await this.hooks.generate.promise(this, progress);
 
     progress.updateProgress('Packaging...');
     await this.hooks.package.promise(this, progress);

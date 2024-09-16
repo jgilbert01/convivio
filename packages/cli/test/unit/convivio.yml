@@ -1,0 +1,15 @@
+service: test-bff-service
+
+provider:
+  name: aws
+
+functions:
+  test:
+    handler: test/unit/handler.handler
+
+resources:
+  Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}

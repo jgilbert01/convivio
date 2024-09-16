@@ -1,5 +1,7 @@
 import debug from 'debug';
 
+import { writeFileSync } from '@convivio/connectors';
+
 import { mergeResources } from '../utils';
 
 const log = debug('cvo:gen:resources');
@@ -24,6 +26,8 @@ export class ResourcesPlugin {
       } else {
         mergeResources(convivio.json, convivio.yaml.resources);
       }
+
+      writeFileSync('./.convivio/cloudformation-template.json', convivio.json);
     });
   }
 }
