@@ -36,7 +36,7 @@ export const externals = (env) => (env.configuration.isLegacy
   ? [nodeExternals()]
   : [
     /^@aws-sdk\/.+/,
-    // /^@smithy\/.+/,
+    /^@smithy\/.+/,
   ]);
 // externals: [nodeExternals(
 //   //   {
@@ -54,12 +54,12 @@ export const module = {
         presets: [
           ['@babel/preset-env', {
             targets: {
-              'node': '20', // TODO config vs override ???
+              node: '20', // TODO config vs override ???
             },
           }],
         ],
         plugins: ['@babel/plugin-transform-runtime'],
-      }
+      },
     }],
     include: __dirname,
     exclude: /node_modules/,

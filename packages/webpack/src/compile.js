@@ -16,7 +16,9 @@ export const env = { // TODO remove ???
 };
 
 export const compile = async (servicePath, service, configuration, functions, isLocal) => {
-  log('%j', { servicePath, service, configuration, functions, isLocal });
+  log('%j', {
+    servicePath, service, configuration, functions, isLocal,
+  });
 
   env.isLocal = isLocal;
   env.service = service;

@@ -14,7 +14,5 @@ export class CorePlugin {
       log('%j', { convivio });
       convivio.json = ENVELOPE; // compiledCloudFormationTemplate
     });
-
-    // TODO package - save json to .convivio/compiled-cloudformation-template.json
   }
 }

@@ -14,18 +14,18 @@ export class WebpackPlugin {
     cvo.hooks.start.tapPromise(WebpackPlugin.name, startHook);
     cvo.hooks.package.tapPromise(WebpackPlugin.name, packageHook);
   }
-};
+}
 
 const startHook = async (convivio, progress) => {
   log('%j', { convivio });
 
   if (!convivio.yaml.functions) return;
-  
+
   try {
     const { servicePath } = convivio.config;
-    const service = convivio.yaml.service;
+    const { service } = convivio.yaml;
     const configuration = convivio.yaml.custom?.webpack || {};
-    const functions = convivio.yaml.functions;
+    const { functions } = convivio.yaml;
 
     await start(servicePath, service, configuration, functions, convivio.yaml.provider);
   } catch (err) {
@@ -37,12 +37,12 @@ const packageHook = async (convivio, progress) => {
   log('%j', { convivio });
 
   if (!convivio.yaml.functions) return;
-  
+
   try {
     const { servicePath } = convivio.config;
-    const service = convivio.yaml.service;
+    const { service } = convivio.yaml;
     const configuration = convivio.yaml.custom?.webpack || {};
-    const functions = convivio.yaml.functions;
+    const { functions } = convivio.yaml;
     // TODO cleanup/normalize args
     await compile(servicePath, service, configuration, functions);
 

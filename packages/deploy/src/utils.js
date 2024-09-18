@@ -3,11 +3,15 @@ import fs from 'fs';
 import _ from 'lodash';
 
 export const getArtifactDirectoryName = (convivio) => {
-  const date = new Date();
-  const serviceStage = `${convivio.service.service}/${this.provider.getStage()}`;
-  const dateString = `${date.getTime().toString()}-${date.toISOString()}`;
-  const prefix = convivio.yaml.provider?.deploymentPrefix || 'convivio';
-  return `${prefix}/${serviceStage}/${dateString}`;
+  if (!convivio.yaml.package.artifactDirectoryName) {
+    const date = new Date();
+    const serviceStage = `${convivio.yaml.service}/${convivio.options.stage}`;
+    const dateString = `${date.getTime().toString()}-${date.toISOString()}`;
+    const prefix = convivio.yaml.provider?.deploymentPrefix || 'convivio';
+    convivio.yaml.package.artifactDirectoryName = `${prefix}/${serviceStage}/${dateString}`;
+  }
+
+  return convivio.yaml.package.artifactDirectoryName;
 };
 
 export const createFileHash = (data) => crypto
@@ -86,4 +90,18 @@ export const normalizeCloudFormationTemplate = (template) => {
   }
 
   return normalizedTemplate;
+};
+
+export const getS3EndpointForRegion = (convivio) => {
+  const strRegion = convivio.options.region.toLowerCase();
+  // look for govcloud - currently s3-us-gov-west-1.amazonaws.com
+  if (strRegion.match(/us-gov/)) return `s3-${strRegion}.amazonaws.com`;
+  // look for china - currently s3.cn-north-1.amazonaws.com.cn
+  if (strRegion.match(/cn-/)) return `s3.${strRegion}.amazonaws.com.cn`;
+  // look for AWS ISO (US)
+  if (strRegion.match(/iso-/)) return `s3.${strRegion}.c2s.ic.gov`;
+  // look for AWS ISOB (US)
+  if (strRegion.match(/isob-/)) return `s3.${strRegion}.sc2s.sgov.gov`;
+  // default s3 endpoint for other regions
+  return 's3.amazonaws.com';
 };

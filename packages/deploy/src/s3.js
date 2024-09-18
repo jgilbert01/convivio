@@ -1,4 +1,6 @@
+import fs from 'fs';
 import debug from 'debug';
+import path from 'path';
 
 import { factory } from '@convivio/connectors';
 
@@ -6,6 +8,7 @@ import {
   createFileHash,
   getArtifactDirectoryName,
   getFileStats,
+  getS3EndpointForRegion,
   normalizeCloudFormationTemplate,
 } from './utils';
 
@@ -20,10 +23,11 @@ export const upload = async (plugin, convivio) => {
   }
 
   // save for cf processing
-  plugin.TemplateURL = `${getArtifactDirectoryName(convivio)}/compiled-cloudformation-template.json`;
+  plugin.Key = `${getArtifactDirectoryName(convivio)}/cloudformation-template.json`;
+  plugin.TemplateURL = `https://${getS3EndpointForRegion(convivio)}/${convivio.yaml.provider.deploymentBucket}/${plugin.Key}`;
 
   await uploadCloudFormationTemplate(connector, plugin, convivio);
-  // await uploadFunctions(connector, plugin, convivio);
+  await uploadFunctions(connector, plugin, convivio);
 };
 
 const checkIfBucketExists = async (connector, bucketName) => {
@@ -45,14 +49,14 @@ const checkIfBucketExists = async (connector, bucketName) => {
 const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
   log('Uploading CloudFormation file to S3');
   // TODO read file if packaged separately
-  // ./convivio/compiled-cloudformation-template.json
+  // ./convivio/cloudformation-template.json
 
   const normCfTemplate = normalizeCloudFormationTemplate(convivio.json);
   const fileHash = createFileHash(JSON.stringify(normCfTemplate));
 
   const params = {
     Bucket: convivio.yaml.provider.deploymentBucket,
-    Key: plugin.TemplateURL,
+    Key: plugin.Key,
     Body: JSON.stringify(convivio.json), // compiledCfTemplate
     ContentType: 'application/json',
     Metadata: {
@@ -65,50 +69,50 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
   //   params = setServersideEncryptionOptions(params, deploymentBucketObject);
   // }
 
-  return connector.upload(params);
+  return connector.uploadObject(params);
 };
 
-// const uploadFunctions = (connector, plugin, convivio) => {
-//   // zip(s) = convivio.yaml.functions
-// };
+const uploadFunctions = async (connector, plugin, convivio) => {
+  await Promise.all(Object.values(convivio.yaml.functions)
+    .map((f) => uploadZipFile(connector, plugin, convivio, f)));
+};
+
+const uploadZipFile = async (connector, plugin, convivio, f) => {
+  // log('%j', { f });
+  const artifactFilePath = f.package.artifact;
+  const fileName = artifactFilePath.split(path.sep).pop();
+
+  const data = fs.readFileSync(artifactFilePath);
+  const fileHash = createFileHash(data);
+
+  const artifactStream = fs.createReadStream(artifactFilePath);
+  let streamError;
+  artifactStream.on('error', (error) => { streamError = error; });
+
+  const params = {
+    Bucket: convivio.yaml.provider.deploymentBucket,
+    Key: `${convivio.yaml.package.artifactDirectoryName}/${fileName}`,
+    Body: artifactStream,
+    ContentType: 'application/zip',
+    Metadata: {
+      filesha256: fileHash,
+    },
+  };
+
+  // const deploymentBucketObject = this.serverless.service.provider.deploymentBucketObject;
+  // if (deploymentBucketObject) {
+  //   params = setServersideEncryptionOptions(params, deploymentBucketObject);
+  // }
+
+  const response = await connector.uploadObject(params);
+  // Interestingly, if request handling was queued, and stream errored (before being consumed by
+  // AWS SDK) then SDK call succeeds without actually uploading a file to S3 bucket.
+  // Below line ensures that eventual stream error is communicated
+  if (streamError) throw streamError;
+  return response;
+};
 
 /*
-  async uploadZipFile(artifactFilePath) {
-    const fileName = artifactFilePath.split(path.sep).pop();
-
-    // TODO refactor to be async (use util function to compute checksum async)
-    const data = fs.readFileSync(artifactFilePath);
-    const fileHash = crypto.createHash('sha256').update(data).digest('base64');
-
-    const artifactStream = fs.createReadStream(artifactFilePath);
-    // As AWS SDK request might be postponed (requests are queued)
-    // eventual stream error may crash the process (it's thrown as uncaught if not observed).
-    // Below lines prevent that
-    let streamError;
-    artifactStream.on('error', (error) => (streamError = error));
-
-    let params = {
-      Bucket: this.bucketName,
-      Key: `${this.serverless.service.package.artifactDirectoryName}/${fileName}`,
-      Body: artifactStream,
-      ContentType: 'application/zip',
-      Metadata: {
-        filesha256: fileHash,
-      },
-    };
-
-    const deploymentBucketObject = this.serverless.service.provider.deploymentBucketObject;
-    if (deploymentBucketObject) {
-      params = setServersideEncryptionOptions(params, deploymentBucketObject);
-    }
-
-    const response = await this.provider.request('S3', 'upload', params);
-    // Interestingly, if request handling was queued, and stream errored (before being consumed by
-    // AWS SDK) then SDK call succeeds without actually uploading a file to S3 bucket.
-    // Below line ensures that eventual stream error is communicated
-    if (streamError) throw streamError;
-    return response;
-  },
 
 'use strict';
 

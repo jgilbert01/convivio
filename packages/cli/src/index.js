@@ -18,7 +18,7 @@ program
   // .option('-r --role [arn]',
   //   'Role(s) ARN to assume (env AWS_ROLE default)',
   //   process.env.AWS_ROLE)
-  .option('-c, --config <path>', 'set config path', '.convivio.config.js');
+  // .option('-c, --config <path>', 'set config path', 'convivio.config.js'); 
 
 // TODO verbose, force, package, param?
 // offline/start, remove, logs, init

@@ -98,7 +98,7 @@ export const checkStackProgress = async (
           // Handle stack create/update/delete failures
           if (
             stackLatestError
-                && (!this.options.verbose
+                && (!options.verbose
                   || (stackStatus
                     && (stackStatus.endsWith('ROLLBACK_COMPLETE')
                       || ['DELETE_FAILED', 'DELETE_COMPLETE'].includes(stackStatus))))

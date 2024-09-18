@@ -1,4 +1,4 @@
-export * from './request';
+export * from './factory';
 export * from './utils';
 
 // TODO cache

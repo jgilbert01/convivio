@@ -151,7 +151,7 @@ function getProdModules(externalModules, packagePath, nodeModulesRelativeDir, de
       // most likely set in devDependencies and should not lead to an error now.
       const ignoredDevDependencies = ['aws-sdk', '@aws-sdk'];
 
-      if (!ignoredDevDependencies.some((dev) => module.external.startsWith(dep))) {
+      if (!ignoredDevDependencies.some((dep) => module.external.startsWith(dep))) {
         // Runtime dependency found in devDependencies but not forcefully excluded
         log(
           `ERROR: Runtime dependency '${module.external}' found in devDependencies. Move it to dependencies or use forceExclude to explicitly exclude it.`,
@@ -360,8 +360,8 @@ export const packExternalModules = (service, configuration) => (params) => {
               packageForceExcludes,
             );
             removeExcludedModules.call(this, prodModules, packageForceExcludes);
-            const relPath = path.relative(modulePath, path.dirname(packageJsonPath));
-            addModulesToPackageJson(prodModules, modulePackage, relPath);
+            const relPath2 = path.relative(modulePath, path.dirname(packageJsonPath));
+            addModulesToPackageJson(prodModules, modulePackage, relPath2);
             writeFileSync(modulePackageJson, JSON.stringify(modulePackage, null, 2));
 
             const startCopy = _.now();

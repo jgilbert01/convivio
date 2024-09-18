@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-// import { upload, cleanup } from './s3';
+import { upload } from './s3';
 import { deploy } from './cf';
 
 const log = debug('cvo:deploy:plugin');
@@ -15,7 +15,7 @@ export class DeployPlugin {
       log('%j', { convivio });
 
       try {
-        await upload(this, convivio);
+        await upload(this, convivio, progress);
         await deploy(this, convivio, progress);
         // await cleanup(this, convivio);
       } catch (err) {

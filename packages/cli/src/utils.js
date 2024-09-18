@@ -22,25 +22,6 @@ export const mergeConfig = (convivio) => {
     plugins: [
       ...dc.plugins,
       // ...uc.plugins,
-    ]
+    ],
   };
-};
-
-
-debug.formatters.j = (v) => {
-  try {
-    const cache = [];
-    return JSON.stringify(v, (key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (cache.includes(value)) {
-          return '[CIRCULAR]';
-        } else {
-          cache.push(value);
-        }
-      }
-      return value;
-    }, 2);
-  } catch (error) {
-    return `[UnexpectedJSONParseError]: ${error.message}`;
-  }
 };

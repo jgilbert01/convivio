@@ -9,13 +9,17 @@ import {
 
 import { DeployPlugin } from '../../src/plugin';
 
-import { BASE, CORE } from './fixtures/convivio';
+import {
+  BASE, CORE, FUNCT_YAML, FUNCT_JSON,
+} from './fixtures/convivio';
 
 const options = {
   stage: 'dev',
+  region: 'us-west-2',
 };
 
 const config = {
+  basedir: './test/unit',
   plugins: [
     new DeployPlugin(options),
   ],
@@ -36,9 +40,13 @@ convivio.config.plugins.forEach((p) => p.apply(convivio));
 describe('plugin/index.js', () => {
   afterEach(sinon.restore);
 
-  it('should generate template', async () => {
+  it('should deploy initial template', async () => {
     await convivio.hooks.deploy.promise(convivio, { updateProgress: console.log });
+  });
 
-    // expect(convivio.json).to.deep.equal({});
+  it('should deploy function template', async () => {
+    convivio.yaml = FUNCT_YAML;
+    convivio.json = FUNCT_JSON;
+    await convivio.hooks.deploy.promise(convivio, { updateProgress: console.log });
   });
 });

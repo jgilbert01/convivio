@@ -4,11 +4,15 @@ import CloudFormationConnector from './cloudformation';
 import S3Connector from './s3';
 import StsConnector from './sts';
 
+const log = debug('cvo:connectors:factory');
+
+// TODO credentials from assume-role
+
 const connectors = {};
 const factories = {
-  'cloudFormation': () => new CloudFormationConnector({ debug }),
-  'sts': () => new StsConnector({ debug }),
-  's3': () => new S3Connector({ debug }),
+  'cloudFormation': () => new CloudFormationConnector({ debug: log }),
+  'sts': () => new StsConnector({ debug: log }),
+  's3': () => new S3Connector({ debug: log }),
 };
 
 
@@ -28,6 +32,6 @@ export const factory = (region, service) => {
   return connector;
 };
 
-export const request = (region, service, method, params) => {
-  return factory(region, service)[method](params);
-};
+// export const request = (region, service, method, params) => {
+//   return factory(region, service)[method](params);
+// };

@@ -35,7 +35,7 @@ const convivio = {
 
 convivio.config.plugins.forEach((p) => p.apply(convivio));
 
-describe.only('lambda/index.js', () => {
+describe('lambda/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
