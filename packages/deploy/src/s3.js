@@ -6,7 +6,6 @@ import { factory } from '@convivio/connectors';
 
 import {
   createFileHash,
-  getArtifactDirectoryName,
   getFileStats,
   getS3EndpointForRegion,
   normalizeCloudFormationTemplate,
@@ -23,7 +22,7 @@ export const upload = async (plugin, convivio) => {
   }
 
   // save for cf processing
-  plugin.Key = `${getArtifactDirectoryName(convivio)}/cloudformation-template.json`;
+  plugin.Key = `${convivio.yaml.package.artifactDirectoryName}/cloudformation-template.json`;
   plugin.TemplateURL = `https://${getS3EndpointForRegion(convivio)}/${convivio.yaml.provider.deploymentBucket}/${plugin.Key}`;
 
   await uploadCloudFormationTemplate(connector, plugin, convivio);

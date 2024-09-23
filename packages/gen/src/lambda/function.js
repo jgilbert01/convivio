@@ -1,6 +1,7 @@
 import path from 'path';
 import {
   get,
+  getArtifactDirectoryName,
   normalizeName,
   normalizeResourceName,
 } from '../utils';
@@ -20,9 +21,9 @@ export default (metadata, convivio) => ({
 
       Condition: metadata.condition,
       Properties: {
-        Code: convivio.yaml.provider.deploymentBucket ? {
+        Code: convivio.yaml.provider.deploymentBucket ? { // TODO and exists - TemplateURL ???
           S3Bucket: convivio.yaml.provider.deploymentBucket,
-          S3Key: `${convivio.yaml.package.artifactDirectoryName}/${metadata.package.artifact.split(path.sep).pop()}`,
+          S3Key: `${getArtifactDirectoryName(convivio)}/${metadata.package.artifact.split(path.sep).pop()}`,
         } : undefined, // TODO
         FunctionName: metadata.name,
         Description: metadata.description,

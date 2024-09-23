@@ -26,13 +26,15 @@ export class ParsePlugin {
 }
 
 const filename = (basedir, filenames) => filenames.reduce((a, fn) => {
-  // log('%j', { a, fn });
+  log('%j', {
+    basedir, filenames, a, fn,
+  });
   if (!a && fs.existsSync(path.resolve(basedir, fn))) {
     return fn;
   } else {
     return a;
   }
-});
+}, undefined);
 
 const fattenFunctions = (convivio) => {
   const env = convivio.yaml.provider.environment || {};

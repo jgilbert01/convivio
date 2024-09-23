@@ -2,18 +2,6 @@ import crypto from 'crypto';
 import fs from 'fs';
 import _ from 'lodash';
 
-export const getArtifactDirectoryName = (convivio) => {
-  if (!convivio.yaml.package.artifactDirectoryName) {
-    const date = new Date();
-    const serviceStage = `${convivio.yaml.service}/${convivio.options.stage}`;
-    const dateString = `${date.getTime().toString()}-${date.toISOString()}`;
-    const prefix = convivio.yaml.provider?.deploymentPrefix || 'convivio';
-    convivio.yaml.package.artifactDirectoryName = `${prefix}/${serviceStage}/${dateString}`;
-  }
-
-  return convivio.yaml.package.artifactDirectoryName;
-};
-
 export const createFileHash = (data) => crypto
   .createHash('sha256')
   .update(data)

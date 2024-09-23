@@ -12,3 +12,15 @@ export const mergeResources = (src, tgt) => {
 };
 
 export const get = (metadata, convivio, field, defaultValue) => metadata[field] || convivio.yaml.provider[field] || defaultValue;
+
+export const getArtifactDirectoryName = (convivio) => {
+  if (!convivio.yaml.package.artifactDirectoryName) {
+    const date = new Date();
+    const serviceStage = `${convivio.yaml.service}/${convivio.options.stage}`;
+    const dateString = `${date.getTime().toString()}-${date.toISOString()}`;
+    const prefix = convivio.yaml.provider?.deploymentPrefix || 'convivio';
+    convivio.yaml.package.artifactDirectoryName = `${prefix}/${serviceStage}/${dateString}`;
+  }
+
+  return convivio.yaml.package.artifactDirectoryName;
+};

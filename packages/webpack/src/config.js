@@ -38,14 +38,8 @@ export const externals = (env) => (env.configuration.isLegacy
     /^@aws-sdk\/.+/,
     /^@smithy\/.+/,
   ]);
-// externals: [nodeExternals(
-//   //   {
-//   //   // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
-//   //   // allowlist: ['lambda-api', /^lodash/]
-//   // }
-// )],
 
-export const module = {
+export const module = (env) => ({
   rules: [{
     test: /\.js$/,
     use: [{
@@ -54,7 +48,7 @@ export const module = {
         presets: [
           ['@babel/preset-env', {
             targets: {
-              node: '20', // TODO config vs override ???
+              node: env.configuration?.node || '20',
             },
           }],
         ],
@@ -64,7 +58,7 @@ export const module = {
     include: __dirname,
     exclude: /node_modules/,
   }],
-};
+});
 
 // TODO export more fragements like devServer, vcr, injectMocks, and module
 
@@ -83,7 +77,7 @@ export const convivioDefaults = (env) => {
       // devtool: 'nosources-source-map',
       optimization: optimization(env),
       externals: externals(env),
-      module,
+      module: module(env),
       plugins: [],
       // TODO devServer
     }];
@@ -98,7 +92,7 @@ export const convivioDefaults = (env) => {
       mode: 'production',
       optimization: optimization(env),
       externals: externals(env),
-      module,
+      module: module(env),
       plugins: [
         new ConvivioWebpackPlugin({ ...env }),
       ],

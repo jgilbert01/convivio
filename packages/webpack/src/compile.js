@@ -15,9 +15,9 @@ export const env = { // TODO remove ???
   allEntryFunctions: {},
 };
 
-export const compile = async (servicePath, service, configuration, functions, isLocal) => {
+export const compile = async (basedir, service, configuration, functions, isLocal) => {
   log('%j', {
-    servicePath, service, configuration, functions, isLocal,
+    basedir, service, configuration, functions, isLocal,
   });
 
   env.isLocal = isLocal;
@@ -29,7 +29,12 @@ export const compile = async (servicePath, service, configuration, functions, is
   });
   env.entries = env.allEntryFunctions.reduce((a, f) => ({ ...a, [f.key]: f.value }), {});
 
-  const webpackConfigFilePath = path.join(servicePath, 'webpack.config.js');
+  const webpackConfigFilePath = path.join(basedir, './webpack.config.js');
+  log('%j', {
+    basedir,
+    webpackConfigFilePath,
+  });
+
   let webpackConfig = convivioDefaults;
   if (fs.existsSync(webpackConfigFilePath)) {
     webpackConfig = require(webpackConfigFilePath);

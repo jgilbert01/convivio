@@ -22,12 +22,12 @@ const startHook = async (convivio, progress) => {
   if (!convivio.yaml.functions) return;
 
   try {
-    const { servicePath } = convivio.config;
+    const { basedir } = convivio.config;
     const { service } = convivio.yaml;
     const configuration = convivio.yaml.custom?.webpack || {};
     const { functions } = convivio.yaml;
 
-    await start(servicePath, service, configuration, functions, convivio.yaml.provider);
+    await start(basedir, service, configuration, functions, convivio.yaml.provider);
   } catch (err) {
     console.log(err);
   }
@@ -39,12 +39,12 @@ const packageHook = async (convivio, progress) => {
   if (!convivio.yaml.functions) return;
 
   try {
-    const { servicePath } = convivio.config;
+    const { basedir } = convivio.config;
     const { service } = convivio.yaml;
     const configuration = convivio.yaml.custom?.webpack || {};
     const { functions } = convivio.yaml;
     // TODO cleanup/normalize args
-    await compile(servicePath, service, configuration, functions);
+    await compile(basedir, service, configuration, functions);
 
     // await package(this, convivio);
     // await deploy(this, convivio, progress);

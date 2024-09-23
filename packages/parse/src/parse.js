@@ -10,7 +10,7 @@ export const parse = async (value, resolvers) => {
 
   for (let i = 0; i < value.length; i++) { // eslint-disable-line no-plusplus
     let c = value[i];
-    // console.log('stack: ', c, stack);
+    // console.log('%j', { c, stack });
     switch (c) {
       case '$':
         if (value[i + 1] === '{') {
@@ -62,9 +62,25 @@ export const parse = async (value, resolvers) => {
             throw new Error(`Unknown variable source: ${variable.src}`);
           }
 
-          c = await src(variable, resolvers); // eslint-disable-line no-await-in-loop
+          if (!variable.address.includes('${')) {
+            c = await src(variable, resolvers); // eslint-disable-line no-await-in-loop
+          } else {
+            c = undefined;
+          }
+
           if (!c) { // prepare for pass 2
-            c = `\$\{${variable.src}:${variable.address}\}`; // TODO ???
+            c = `\$\{${variable.src}`;
+            if (variable.param) {
+              c = `${c}(${variable.param})`;
+            }
+            if (variable.address) {
+              c = `${c}:${variable.address}`;
+            }
+            if (variable.defaultValue) {
+              c = `${c}, ${variable.defaultValue}`;
+            }
+            c = `${c}\}`;
+            // log('%j', { c });
           }
         }
       default:
@@ -74,8 +90,8 @@ export const parse = async (value, resolvers) => {
 
   log('%j', { stack: stack[0].result[0] });
   if (typeof stack[0].result[0] === 'string') {
-    return stack[0].result.join('');
+    return stack[0].result.join(''); // string
   } else {
-    return stack[0].result[0];
+    return stack[0].result[0]; // object
   }
 };
