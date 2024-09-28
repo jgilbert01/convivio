@@ -71,4 +71,16 @@ describe('parse.js', () => {
       }),
     })).to.equal('my-service-west');
   });
+
+  it.skip('should replace dynamic default value with static default', async () => {
+    expect(await parse('${cf(us-west-2):my-cognito-resources-${opt:stage}.userPoolArn, \'unknown\'}', {
+      opt: resolveFromObject({
+        stage: 'dev',
+        region: undefined,
+      }),
+      cf: resolveFromObject({
+        AWS_REGION: undefined,
+      }),
+    })).to.equal('my-service-west');
+  });
 });

@@ -24,20 +24,18 @@ const resolve = async (key, value, resolvers) => {
   return value;
 };
 
-export const resolveOnePass = async (yaml, resolvers) => {
+export const resolveOnePass = async (yaml, resolvers) =>
   // log('%j', { resolveOnePass: yaml });
-  return Object.entries(yaml || {})
+  Object.entries(yaml || {})
     .reduce(async (a, [key, value]) => {
       a = await a;
       a[key] = await resolve(key, value, resolvers);
       // a[key] = await resolve(key, value, resolvers);
       return a;
     }, yaml);
-};
-
 export const resolveAll = async (yaml, resolvers) => {
   log('%j', { pass0: yaml });
-  
+
   // pass 1
   await resolveOnePass(yaml, resolvers);
   log('%j', { pass1: yaml });

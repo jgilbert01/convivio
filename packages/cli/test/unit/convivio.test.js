@@ -62,7 +62,7 @@ describe('convivio.js', () => {
       Description: 'The AWS CloudFormation template for this Serverless application',
       Resources: {
         TestLogGroup: {
-          Type: 'AWS::Lambda::LogGroup',
+          Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/test-bff-service-dev-test',
             RetentionInDays: undefined,

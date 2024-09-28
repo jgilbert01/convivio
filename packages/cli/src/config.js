@@ -5,14 +5,14 @@ import {
   resolveFromFile,
   resolveFromAws,
   resolveFromCf,
-  // standardResolvers
+  // TODO standardResolvers ???
   ParsePlugin,
 } from '@convivio/parse';
 import {
   CorePlugin,
   LambdaPlugin,
   ResourcesPlugin,
-  // standardResolvers
+  // TODO standardGenerators ???
 } from '@convivio/gen';
 import { DeployPlugin } from '@convivio/deploy';
 import { WebpackPlugin } from '@convivio/webpack';
@@ -23,12 +23,12 @@ import TracePlugin from './trace';
 
 export default (convivio, overrides) => ({
   basedir: process.cwd(),
+  servicePath: overrides?.servicePath || '.',
   config: [
     ...(overrides?.config || []),
     './convivio.yml',
     './serverless.yml',
   ],
-  servicePath: overrides?.servicePath || '.',
   // assumeRole: undefined,
   resolvers: {
     opt: resolveFromObject(convivio.options),
@@ -56,7 +56,7 @@ export default (convivio, overrides) => ({
     new CorePlugin(convivio.options),
     new LambdaPlugin(convivio.options),
     // TODO events
-    //  api gateway
+    //  api gateway, alb
     //  kinesis/ddb stream
     //  sqs
 

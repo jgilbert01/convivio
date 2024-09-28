@@ -45,14 +45,14 @@ describe('resources/index.js', () => {
       Description: 'The AWS CloudFormation template for this Serverless application',
       Resources: {
         RestLogGroup: {
-          Type: 'AWS::Lambda::LogGroup',
+          Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/my-bff-service-dev-rest',
             RetentionInDays: undefined,
           },
         },
         ListenerLogGroup: {
-          Type: 'AWS::Lambda::LogGroup',
+          Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/my-bff-service-dev-listener',
             RetentionInDays: undefined,

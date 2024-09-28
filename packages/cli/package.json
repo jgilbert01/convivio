@@ -43,7 +43,7 @@
       "env": {
         "AWS_REGION": "us-west-2",
         "NODE_ENV": "test",
-        "DEBUG": "cvo:*"
+        "DEBUG": "xcvo:*"
       }
     }
   },

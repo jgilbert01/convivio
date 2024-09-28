@@ -48,7 +48,7 @@ export const module = (env) => ({
         presets: [
           ['@babel/preset-env', {
             targets: {
-              node: env.configuration?.node || '20',
+              node: env.configuration?.node || true, // process.version.node
             },
           }],
         ],

@@ -10,11 +10,10 @@ const log = debug('cvo:connectors:factory');
 
 const connectors = {};
 const factories = {
-  'cloudFormation': () => new CloudFormationConnector({ debug: log }),
-  'sts': () => new StsConnector({ debug: log }),
-  's3': () => new S3Connector({ debug: log }),
+  cloudFormation: () => new CloudFormationConnector({ debug: log }),
+  sts: () => new StsConnector({ debug: log }),
+  s3: () => new S3Connector({ debug: log }),
 };
-
 
 export const factory = (region, service) => {
   let r = connectors[region];

@@ -88,6 +88,9 @@ export const CORE = {
     stage: 'dev',
     region: 'us-west-2',
   },
+  package: {
+    artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
+  },
 };
 
 export const FUNCT_YAML = {

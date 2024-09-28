@@ -431,12 +431,12 @@ const getExternalModuleName = (module) => {
     throw new Error(`Unable to extract module name from Webpack identifier: ${module.identifier()}`);
   }
 
-  const path = pathArray[1];
-  const pathComponents = path.split('/');
+  const path2 = pathArray[1];
+  const pathComponents = path2.split('/');
   const main = pathComponents[0];
 
   // this is a package within a namespace
-  if (main.charAt(0) == '@') {
+  if (main.charAt(0) === '@') {
     return `${main}/${pathComponents[1]}`;
   }
 

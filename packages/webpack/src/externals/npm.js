@@ -72,8 +72,8 @@ export default class NPM {
           const errors = _.takeWhile(lines, (line) => line !== '{');
           const failed = _.reduce(
             errors,
-            (failed, error) => {
-              if (failed) {
+            (failed2, error) => {
+              if (failed2) {
                 return true;
               }
               return (
