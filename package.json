@@ -8,7 +8,7 @@
     "build": "lerna run build",
     "test": "lerna run test",
     "version": "lerna version",
-    "publish": "lerna publish"
+    "publish": "lerna publish --yes"
   },
   "dependencies": {},
   "devDependencies": {
