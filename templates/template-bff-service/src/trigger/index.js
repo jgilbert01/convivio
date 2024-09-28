@@ -22,7 +22,7 @@ export class Handler {
     this.options = options;
   }
 
-  handle(event, includeErrors = true) {
+  handle(event, includeErrors = !process.env.IS_OFFLINE) {
     return initialize(PIPELINES, this.options)
       .assemble(
         fromDynamodb(event, this.options)
@@ -34,11 +34,11 @@ export class Handler {
   }
 }
 
-export const handle = async (event, context, int = {}) => {
+export const handle = async (event, context) => {
   debug('event: %j', event);
   debug('context: %j', context);
 
-  return new Handler({ ...OPTIONS, ...int })
+  return new Handler(OPTIONS)
     .handle(event)
     .through(toPromise);
 };

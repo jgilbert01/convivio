@@ -3,8 +3,8 @@ import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
 import { ConfiguredRetryStrategy } from '@smithy/util-retry';
 
-import { defaultDebugLogger } from './utils/log';
 import { debug as d } from 'debug';
+import { defaultDebugLogger } from './utils/log';
 
 export const lambdaTest = ({
   functionName,

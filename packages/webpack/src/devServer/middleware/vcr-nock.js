@@ -31,7 +31,7 @@ const hash = (v) => {
   const string = JSON.stringify(v);
   if (string.length === 0) return hash;
   for (const char of string) {
-      h ^= char.charCodeAt(0); // Bitwise XOR operation
+    h ^= char.charCodeAt(0); // Bitwise XOR operation
   }
   return h;
 };

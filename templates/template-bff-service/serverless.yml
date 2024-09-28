@@ -15,6 +15,8 @@ provider:
 
 params: ${file(cvo/config.yml):params}
 custom: ${file(cvo/config.yml):custom}
+package:
+  individually: true
 
 plugins:
   - serverless-aws-describe-plugin

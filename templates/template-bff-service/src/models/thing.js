@@ -56,7 +56,7 @@ class Model {
   get(id) {
     return this.connector.get(id)
       .then((data) => {
-        console.log('data: ', data);
+        // console.log('data: ', data);
         return AGGREGATE_MAPPER(data);
       });
   }

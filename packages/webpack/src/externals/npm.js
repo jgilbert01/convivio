@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import { spawnProcess, safeJsonParse, SpawnError } from './utils';
 import { join } from 'path';
 import fse from 'fs-extra';
 import fs from 'fs';
 
 import debug from 'debug';
+import { spawnProcess, safeJsonParse, SpawnError } from './utils';
 
 const log = debug('cvo:pack:npm');
 
@@ -28,10 +28,8 @@ export default class NPM {
     const args = ['-v'];
 
     return spawnProcess(command, args, { cwd })
-      .catch(err => {
-        return Promise.resolve({ stdout: err.stdout });
-      })
-      .then(processOutput => processOutput.stdout);
+      .catch((err) => Promise.resolve({ stdout: err.stdout }))
+      .then((processOutput) => processOutput.stdout);
   }
 
   static getProdDependencies(cwd, depth, packagerOptions) {
@@ -52,38 +50,38 @@ export default class NPM {
       'ls',
       '-prod', // Only prod dependencies
       '-json',
-      `-depth=${depth || 1}`
+      `-depth=${depth || 1}`,
     ];
 
     const ignoredNpmErrors = [
       { npmError: 'code ELSPROBLEMS', log: false }, // npm >= 7
       { npmError: 'extraneous', log: false },
       { npmError: 'missing', log: false },
-      { npmError: 'peer dep missing', log: true }
+      { npmError: 'peer dep missing', log: true },
     ];
 
     log(command, args, cwd);
     return spawnProcess(command, args, {
-      cwd: cwd
+      cwd,
     })
-      .catch(err => {
+      .catch((err) => {
         if (err instanceof SpawnError) {
           // Only exit with an error if we have critical npm errors for 2nd level inside
           // ignoring any extra output from npm >= 7
           const lines = _.split(err.stderr, '\n');
-          const errors = _.takeWhile(lines, line => line !== '{');
+          const errors = _.takeWhile(lines, (line) => line !== '{');
           const failed = _.reduce(
             errors,
-            (failed, error) => {
-              if (failed) {
+            (failed2, error) => {
+              if (failed2) {
                 return true;
               }
               return (
-                !_.isEmpty(error) &&
-                !_.some(ignoredNpmErrors, ignoredError => _.startsWith(error, `npm ERR! ${ignoredError.npmError}`))
+                !_.isEmpty(error)
+                && !_.some(ignoredNpmErrors, (ignoredError) => _.startsWith(error, `npm ERR! ${ignoredError.npmError}`))
               );
             },
-            false
+            false,
           );
 
           if (!failed && !_.isEmpty(err.stdout)) {
@@ -93,8 +91,8 @@ export default class NPM {
 
         return Promise.reject(err);
       })
-      .then(processOutput => processOutput.stdout)
-      .then(depJson => Promise.try(() => JSON.parse(depJson)));
+      .then((processOutput) => processOutput.stdout)
+      .then((depJson) => Promise.try(() => JSON.parse(depJson)));
   }
 
   static _rebaseFileReferences(pathToPackageRoot, moduleVersion) {
@@ -119,7 +117,7 @@ export default class NPM {
     }
 
     if (lockfile.dependencies) {
-      _.forIn(lockfile.dependencies, lockedDependency => {
+      _.forIn(lockfile.dependencies, (lockedDependency) => {
         NPM.rebaseLockfile(pathToPackageRoot, lockedDependency);
       });
     }
@@ -151,10 +149,10 @@ export default class NPM {
 
   static runScripts(cwd, scriptNames) {
     const command = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
-    return Promise.mapSeries(scriptNames, scriptName => {
+    return Promise.mapSeries(scriptNames, (scriptName) => {
       const args = ['run', scriptName];
 
       return spawnProcess(command, args, { cwd });
     }).return();
   }
-};
+}

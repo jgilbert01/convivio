@@ -12,10 +12,10 @@ import { compile } from '../compile';
 const log = debug('cvo:offline:function');
 
 export const setupMiddlewares = (servicePath, functions, provider, vcr) => (middlewares, devServer) => {
-  devServer.app.use(express.json()) // for parsing application/json
-  devServer.app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-  devServer.app.use(express.raw()) // for parsing application/octet-stream
-  
+  devServer.app.use(express.json()); // for parsing application/json
+  devServer.app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+  devServer.app.use(express.raw()); // for parsing application/octet-stream
+
   devServer.app.use(trace);
   ping(devServer);
 
@@ -32,7 +32,7 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
       }
 
       // TODO alb
-      
+
       if (stream || sqs) {
         return consume(servicePath, devServer, f, e, provider, vcr);
       }

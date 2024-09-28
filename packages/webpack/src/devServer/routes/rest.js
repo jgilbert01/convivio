@@ -8,19 +8,21 @@ import { context } from './context';
 const log = debug('cvo:offline:routes:rest');
 
 const toAuthorizer = (req) => {
-  let token = req.headers.Authorization || req.headers.authorization
+  let token = req.headers.Authorization || req.headers.authorization;
   if (token && token.split(' ')[0] === 'Bearer') {
-    ;[, token] = token.split(' ');
+    [, token] = token.split(' ');
   }
 
-  let claims
-  let scopes
+  let claims = {};
+  let scopes = []; // TODO array ???
 
   if (token) {
+    log({ token });
     try {
-      claims = decodeJwt(token)
+      claims = decodeJwt(token);
+      log({ claims });
       if (claims.scp || claims.scope) {
-        scopes = claims.scp || claims.scope.split(' ')
+        scopes = claims.scp || claims.scope.split(' ');
       }
     } catch {
       // noop
@@ -132,9 +134,7 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
   );
 };
 
-
 /*
-
 
 import { Buffer } from "node:buffer"
 import crypto from "node:crypto"
@@ -373,7 +373,5 @@ export default class LambdaProxyIntegrationEvent {
     }
   }
 }
-
-
 
 */

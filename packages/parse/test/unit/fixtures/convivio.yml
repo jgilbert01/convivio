@@ -1,0 +1,48 @@
+service: my-bff-service
+
+# plugins:
+#   - serverless-webpack
+#   - satellite
+#   # - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+custom: ${file(cvo/config.yml):custom}
+# custom:
+#   stage: ${opt:stage}
+#   region: ${env:REGION, ${opt:region}}
+#   webpack:
+#     includeModules: true
+#   tableStreamArn:
+#     us-west-2:
+#       Fn::GetAtt: [ EntitiesTable, StreamArn ]
+#     us-east-1: ${awsdesc:DynamoDB.describeTable.TableName.${self:provider.environment.ENTITY_TABLE_NAME}.Table.LatestStreamArn}
+#       # Fn::GetAtt: [ EntitiesTable, StreamArn ]
+
+# package:
+#   individually: true
+
+functions:
+  rest:
+    handler: src/rest/index.handle
+    events:
+      - http:
+          method: any
+          path: '{proxy+}'
+  listener:
+    handler: src/listener/index.handle
+    events:
+      - stream:
+          type: kinesis
+          arn: arn:aws:kinesis:region:XXXXXX:stream/foobar
+          batchSize: 100
+          startingPosition: TRIM_HORIZON
+          filterPatterns:
+            - data:
+                type:
+                   - prefix: 'thing-'
+
+resources:
+  - ${file(cvo/dynamodb.yml):resources}

@@ -8,9 +8,12 @@ export const trace = (req, res, next) => {
   } = req;
   res.on('finish', () => {
     log('%j', {
-      url, method, params, 
-      body: Buffer.isBuffer(body) ? JSON.parse(body) : body, 
-      headers, statusCode: res.statusCode,
+      url,
+      method,
+      params,
+      body: Buffer.isBuffer(body) ? JSON.parse(body) : body,
+      headers,
+      statusCode: res.statusCode,
     });
   });
   next();
