@@ -7,8 +7,8 @@
   "scripts": {
     "build": "lerna run build",
     "test": "lerna run test",
-    "version": "lerna version",
-    "publish": "lerna publish --yes"
+    "version": "lerna version patch",
+    "publish": "lerna publish from-git"
   },
   "dependencies": {},
   "devDependencies": {
