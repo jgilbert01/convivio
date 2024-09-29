@@ -27,6 +27,9 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "npm run clean && npm run compile",
     "compile": "babel src --out-dir lib",
@@ -69,15 +72,16 @@
     "sinon-chai": "^3.7.0"
   },
   "dependencies": {
-    "@convivio/deploy": "file:../deploy",
-    "@convivio/gen": "file:../gen",
-    "@convivio/parse": "file:../parse",
-    "@convivio/webpack": "file:../webpack",
+    "@convivio/deploy": "^0.0.1",
+    "@convivio/gen": "^0.0.1",
+    "@convivio/parse": "^0.0.1",
+    "@convivio/webpack": "^0.0.1",
     "bluebird": "^3.7.1",
     "cli-progress-footer": "^2.3.3",
     "commander": "^12.1.0",
     "debug": "^4.1.1",
     "lodash": "^4.17.15",
     "tapable": "^2.2.1"
-  }
+  },
+  "gitHead": "ee1213a4b697d0edaa0c3dd5c6df886e63adad20"
 }
