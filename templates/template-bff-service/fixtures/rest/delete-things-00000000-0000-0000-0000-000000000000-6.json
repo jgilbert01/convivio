@@ -24,10 +24,10 @@
           "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
         },
         ":ttl": {
-          "N": "1723654923"
+          "N": "1723558000"
         },
         ":timestamp": {
-          "N": "1722704523645"
+          "N": "1722607600001"
         },
         ":awsregion": {
           "S": "us-west-2"
@@ -52,13 +52,13 @@
           "BOOL": true
         },
         "timestamp": {
-          "N": "1722704523645"
+          "N": "1722607600001"
         },
         "awsregion": {
           "S": "us-west-2"
         },
         "ttl": {
-          "N": "1723654923"
+          "N": "1723558000"
         },
         "sk": {
           "S": "thing"
@@ -87,7 +87,7 @@
       "Server",
       "Server",
       "Date",
-      "Sat, 03 Aug 2024 17:02:03 GMT",
+      "Fri, 04 Oct 2024 19:04:21 GMT",
       "Content-Type",
       "application/x-amz-json-1.0",
       "Content-Length",
@@ -95,9 +95,9 @@
       "Connection",
       "keep-alive",
       "x-amzn-RequestId",
-      "PKHQBL12NELIQFSBO0V6BMS04VVV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "MQP0BSL7UGMU9OODM6RBBMN157VV4KQNSO5AEMVJF66Q9ASUAAJG",
       "x-amz-crc32",
-      "4174559128"
+      "1993314268"
     ],
     "responseIsBinary": false
   }

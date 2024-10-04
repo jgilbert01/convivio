@@ -31,7 +31,7 @@ describe('rest/index.js', () => {
       expect(JSON.parse(res.text)).to.deep.equal({
         id: '00000000-0000-0000-0000-000000000000',
         lastModifiedBy: '72500806-8b0f-4f26-ae5b-2a829b011d6e',
-        timestamp: 1653877763001,
+        timestamp: 1722607600001,
         ...THING,
       });
     }));
@@ -45,7 +45,7 @@ describe('rest/index.js', () => {
         data: [{
           id: '00000000-0000-0000-0000-000000000000',
           lastModifiedBy: '72500806-8b0f-4f26-ae5b-2a829b011d6e',
-          timestamp: 1653877763001,
+          timestamp: 1722607600001,
           ...THING,
         }],
       });

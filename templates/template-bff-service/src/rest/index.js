@@ -5,6 +5,7 @@ import {
   getClaims/* , forRole */,
   errorHandler,
   // serializer,
+  // validate,
 } from 'lambda-api-utils';
 import ThingModel from '../models/thing';
 import ElementModel from '../models/element';

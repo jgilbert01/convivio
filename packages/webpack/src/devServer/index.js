@@ -12,7 +12,7 @@ import { compile } from '../compile';
 const log = debug('cvo:offline:function');
 
 export const setupMiddlewares = (servicePath, functions, provider, vcr) => (middlewares, devServer) => {
-  devServer.app.use(express.json()); // for parsing application/json
+  devServer.app.use(express.json({ limit: 1024 * 1024 * 6 })); // for parsing application/json
   devServer.app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   devServer.app.use(express.raw()); // for parsing application/octet-stream
 
@@ -52,9 +52,10 @@ export const start = async (servicePath, service, configuration, functions, prov
 
   const { vcr = {}, ...devServer } = webpackConfig.devServer || {};
   const devServerOptions = {
-    port: 3001,
+    port: configuration.port || 3001,
     setupMiddlewares: setupMiddlewares(servicePath, functions, provider, vcr),
     ...devServer,
+    setupExitSignals: false,
   };
 
   const server = new WebpackDevServer(devServerOptions, compiler);

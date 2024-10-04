@@ -92,12 +92,9 @@
     "mocha": "^10.0.0",
     "nock": "^13.2.4",
     "nyc": "^15.1.0",
-    "replay": "^2.4.0",
     "serverless": "^3.37.0",
     "serverless-aws-describe-plugin": "^1.0.0",
     "serverless-kinesis-esm-plugin": "^1.0.1",
-    "serverless-offline": "^13.3.3",
-    "serverless-webpack": "^5.7.1",
     "sinon": "^17.0.0",
     "sinon-chai": "^3.7.0",
     "start-server-and-test": "^2.0.3",
@@ -111,15 +108,16 @@
     "@smithy/util-retry": "^2.1.1",
     "@smithy/util-stream": "^2.1.1",
     "aws-kms-ee": "^1.0.6",
-    "aws-lambda-stream": "^1.0.18",
+    "aws-lambda-stream": "^1.0.26",
     "bluebird": "^3.7.2",
     "debug": "^4.3.4",
     "highland": "^2.13.5",
     "lambda-api": "^1.0.0",
-    "lambda-api-utils": "^1.0.2",
+    "lambda-api-utils": "^1.0.4",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "moment": "^2.29.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zoe": "^0.0.4"
   }
 }

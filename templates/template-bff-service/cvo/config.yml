@@ -12,12 +12,12 @@ custom:
   partition: aws
   org: my
   subsys: your-apps
-  webpack:
-    # isLegacy: true
-    includeModules:
-      forceExclude:
-        - '@aws-sdk/client-dynamodb'
-        - '@aws-sdk/lib-dynamodb'
+  # webpack:
+  #   isLegacy: true
+  #   includeModules:
+  #     forceExclude:
+  #       - '@aws-sdk/client-dynamodb'
+  #       - '@aws-sdk/lib-dynamodb'
   tableArn: ${file(cvo/dynamodb.yml):tableArn.${opt:region}}
   tableStreamArn: ${file(cvo/dynamodb.yml):tableStreamArn.${opt:region}}
   failover:

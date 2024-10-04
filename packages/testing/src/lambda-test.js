@@ -6,14 +6,15 @@ import { ConfiguredRetryStrategy } from '@smithy/util-retry';
 import { debug as d } from 'debug';
 import { defaultDebugLogger } from './utils/log';
 
+const log = d('cvo:testing:lambda');
+
 export const lambdaTest = ({
   functionName,
   endpoint = 'http://localhost:3001',
   timeout = 6000,
   maxAttempt = 8,
   retryDelay = 1000,
-  debug = d('test'),
-
+  debug = log,
 }) => {
   const lambda = new LambdaClient({
     endpoint,
@@ -25,7 +26,7 @@ export const lambdaTest = ({
       maxAttempt,
       // istanbul ignore next
       (attempt) => 100 + attempt * retryDelay,
-    ), // backoff function for when serverless-offline is slow to start up
+    ), // backoff function for when offline is slow to start up
     logger: defaultDebugLogger(debug),
   });
 
@@ -36,7 +37,7 @@ export const lambdaTest = ({
       Payload: JSON.stringify(event),
     }))
     .then((resp) => {
-      console.log('resp: ', resp);
+      debug('%j', { resp });
       return resp;
     })
     .then((resp) => ({
@@ -45,8 +46,9 @@ export const lambdaTest = ({
     }))
     .then((resp) => {
       if (resp.Payload.errorMessage) {
-        console.error(resp);
+        console.error('%j', { resp });
         const err = new Error(resp.Payload.errorMessage);
+        // stack ???
         err.response = resp;
         throw err;
       }

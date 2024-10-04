@@ -3,9 +3,7 @@ import * as sinon from 'sinon';
 
 import * as utils from '../../src/utils';
 
-console.log('HELLO WEBPACK: ', utils);
-
 // ==========================
 // Mock dates, uuids, etc
 // ==========================
-// sinon.stub(utils, 'now').returns(1722607600001); // TODO update when re-recording
+sinon.stub(utils, 'now').returns(1722607600001); // TODO update when re-recording

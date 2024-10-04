@@ -1,1 +1,5 @@
 docs
+.babelrc
+.eslintignore
+.eslintrc.js
+.nycrc
