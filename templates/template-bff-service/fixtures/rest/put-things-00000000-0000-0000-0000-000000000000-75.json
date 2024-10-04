@@ -26,13 +26,13 @@
           "S": "thing"
         },
         ":timestamp": {
-          "N": "1722704522705"
+          "N": "1722607600001"
         },
         ":lastModifiedBy": {
           "S": "72500806-8b0f-4f26-ae5b-2a829b011d6e"
         },
         ":ttl": {
-          "N": "1725555722"
+          "N": "1725458800"
         },
         ":awsregion": {
           "S": "us-west-2"
@@ -54,7 +54,7 @@
     "response": {
       "Attributes": {
         "timestamp": {
-          "N": "1722704522705"
+          "N": "1722607600001"
         },
         "awsregion": {
           "S": "us-west-2"
@@ -63,7 +63,7 @@
           "S": "thing"
         },
         "ttl": {
-          "N": "1725555722"
+          "N": "1725458800"
         },
         "discriminator": {
           "S": "thing"
@@ -89,7 +89,7 @@
       "Server",
       "Server",
       "Date",
-      "Sat, 03 Aug 2024 17:02:02 GMT",
+      "Fri, 04 Oct 2024 19:04:21 GMT",
       "Content-Type",
       "application/x-amz-json-1.0",
       "Content-Length",
@@ -97,9 +97,9 @@
       "Connection",
       "keep-alive",
       "x-amzn-RequestId",
-      "KPFC0GI3UJ7VDIM6BL4BGL2KEJVV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "46Q4FBSEMUA0BDQ3RC6GL5AI2VVV4KQNSO5AEMVJF66Q9ASUAAJG",
       "x-amz-crc32",
-      "1613824883"
+      "3519479039"
     ],
     "responseIsBinary": false
   }

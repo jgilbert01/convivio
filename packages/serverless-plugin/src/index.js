@@ -52,7 +52,7 @@ class Plugin {
       'before:package:createDeploymentArtifacts': () => Promise.bind(this).then(() => {
         const { servicePath } = this.serverless.config;
         const service = this.serverless.service.service;
-        const configuration = this.serverless.service.custom.webpack;
+        const configuration = this.serverless.service.custom.webpack || {};
         const functions = getFunctions(this.serverless);
         return this.compile(servicePath, service, configuration, functions);
       }),
@@ -60,7 +60,7 @@ class Plugin {
       'offline:start': () => Promise.bind(this).then(() => {
         const { servicePath } = this.serverless.config;
         const service = this.serverless.service.service;
-        const configuration = this.serverless.service.custom.webpack;
+        const configuration = this.serverless.service.custom.webpack || {};
         const functions = getFunctions(this.serverless);
         this.start(servicePath, service, configuration, functions, this.serverless.service.provider);
       }),

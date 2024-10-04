@@ -50,12 +50,13 @@ export const module = (env) => ({
             targets: {
               node: env.configuration?.node || true, // process.version.node
             },
+            modules: env.isLocal ? 'umd' : env.configuration?.modules || 'cjs',
           }],
         ],
         plugins: ['@babel/plugin-transform-runtime'],
       },
     }],
-    include: __dirname,
+    include: env.basedir, // __dirname,
     exclude: /node_modules/,
   }],
 });
@@ -63,17 +64,19 @@ export const module = (env) => ({
 // TODO export more fragements like devServer, vcr, injectMocks, and module
 
 export const convivioDefaults = (env) => {
-  log('%j', env);
+  log('%j', { env });
 
   if (env.isLocal) {
     const entry = includeMocks(env) ? injectMocks(env.entries) : env.entries;
     // const entry = includeMocks(env) ? env.entries : env.entries;
 
     return [{
+      context: env.basedir,
       entry,
       output,
       target: 'node',
       mode: 'development',
+      node: env.configuration.node || false,
       // devtool: 'nosources-source-map',
       optimization: optimization(env),
       externals: externals(env),
@@ -83,6 +86,7 @@ export const convivioDefaults = (env) => {
     }];
   } else {
     return env.allEntryFunctions.map(({ funcName, key, value }) => ({
+      context: env.basedir,
       entry: { [key]: value },
       output: {
         ...output,
@@ -90,6 +94,7 @@ export const convivioDefaults = (env) => {
       },
       target: 'node',
       mode: 'production',
+      node: env.configuration.node || false,
       optimization: optimization(env),
       externals: externals(env),
       module: module(env),

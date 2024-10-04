@@ -22,13 +22,13 @@
       "Items": [
         {
           "timestamp": {
-            "N": "1722704522705"
+            "N": "1722607600001"
           },
           "awsregion": {
             "S": "us-west-2"
           },
           "ttl": {
-            "N": "1725555722"
+            "N": "1725458800"
           },
           "sk": {
             "S": "thing"
@@ -59,7 +59,7 @@
       "Server",
       "Server",
       "Date",
-      "Sat, 03 Aug 2024 17:02:03 GMT",
+      "Fri, 04 Oct 2024 19:04:21 GMT",
       "Content-Type",
       "application/x-amz-json-1.0",
       "Content-Length",
@@ -67,9 +67,9 @@
       "Connection",
       "keep-alive",
       "x-amzn-RequestId",
-      "55ILVDICVPGSBU8L8G5907ONT3VV4KQNSO5AEMVJF66Q9ASUAAJG",
+      "49TSQMR1QQJ3G79A734KBI3P6NVV4KQNSO5AEMVJF66Q9ASUAAJG",
       "x-amz-crc32",
-      "2465569834"
+      "978420231"
     ],
     "responseIsBinary": false
   }
