@@ -14,7 +14,7 @@ export const resolveFromCf = (cvo) => async ({ param, address, defaultValue }) =
   const outputLogicalId = address.slice(separatorIndex + 1);
   log('%j', { stackName, outputLogicalId });
 
-  const connector = factory(param || cvo.options.region, 'cloudFormation');
+  const connector = factory(cvo.config.credentials, param || cvo.options.region, 'CloudFormation');
   const result = await connector.describeStacks({ StackName: stackName });
   if (!result) return defaultValue;
 

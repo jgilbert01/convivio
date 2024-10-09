@@ -15,7 +15,7 @@ export const deploy = async (plugin, convivio, progress) => {
   // this is just for example projects and bootstrapping <subsys>-pipeline-resources
   const TemplateBody = TemplateURL ? undefined : JSON.stringify(convivio.json);
 
-  const connector = factory(convivio.options.region, 'cloudFormation');
+  const connector = factory(convivio.config.credentials, convivio.options.region, 'CloudFormation');
 
   // TODO validateTemplate ??? whole template ???
 

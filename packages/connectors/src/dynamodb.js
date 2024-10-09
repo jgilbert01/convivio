@@ -1,7 +1,10 @@
 import {
-  STSClient,
-  GetCallerIdentityCommand,
-} from '@aws-sdk/client-sts';
+  DynamoDBClient,
+} from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  DescribeTableCommand,
+} from '@aws-sdk/lib-dynamodb';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
 import Promise from 'bluebird';
 
@@ -14,18 +17,18 @@ class Connector {
     credentials,
   }) {
     this.debug = (msg) => debug('%j', msg);
-    this.client = new STSClient({
+    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({
       requestHandler: new NodeHttpHandler({
         requestTimeout: timeout,
         connectionTimeout: timeout,
       }),
       logger: defaultDebugLogger(debug),
       credentials,
-    });
+    }));
   }
 
-  getCallerIdentity() {
-    return this._sendCommand(new GetCallerIdentityCommand({}));
+  describeTable(params) {
+    return this._sendCommand(new DescribeTableCommand(params));
   }
 
   _sendCommand(command) {
