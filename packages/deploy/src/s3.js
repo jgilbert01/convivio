@@ -14,7 +14,7 @@ import {
 const log = debug('cvo:deploy:s3');
 
 export const upload = async (plugin, convivio) => {
-  const connector = factory(convivio.options.region, 's3');
+  const connector = factory(convivio.config.credentials, convivio.options.region, 'S3');
 
   const exists = checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket);
   if (!exists) {

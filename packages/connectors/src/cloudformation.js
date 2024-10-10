@@ -23,6 +23,7 @@ class Connector {
   constructor({
     debug,
     timeout = 3000,
+    credentials,
   }) {
     this.debug = (msg) => debug('%j', msg);
     this.client = new CloudFormationClient({
@@ -31,6 +32,7 @@ class Connector {
         connectionTimeout: timeout,
       }),
       logger: defaultDebugLogger(debug),
+      credentials,
     });
   }
 

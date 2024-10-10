@@ -4,20 +4,26 @@ import {
   resolveFromParam,
   resolveFromFile,
   resolveFromAws,
+  resolveFromAwsDesc,
   resolveFromCf,
   // TODO standardResolvers ???
   ParsePlugin,
 } from '@convivio/parse';
 import {
+  cicdCredentials,
+} from '@convivio/connectors';
+import {
   CorePlugin,
   LambdaPlugin,
   ResourcesPlugin,
+  // StreamPlugin,
+  // SqsPlugin,
   // TODO standardGenerators ???
 } from '@convivio/gen';
 import { DeployPlugin } from '@convivio/deploy';
 import { WebpackPlugin } from '@convivio/webpack';
 
-// TODO standard resolvers/plugins
+// TODO standard resolvers/plugins presets
 
 import TracePlugin from './trace';
 
@@ -29,7 +35,7 @@ export default (convivio, overrides) => ({
     './convivio.yml',
     './serverless.yml',
   ],
-  // assumeRole: undefined,
+  credentials: (overrides?.credentials || cicdCredentials)(convivio, overrides),
   resolvers: {
     opt: resolveFromObject(convivio.options),
     env: resolveFromObject(process.env),
@@ -38,7 +44,7 @@ export default (convivio, overrides) => ({
     // sls: resolveFromSls(convivio),
     file: resolveFromFile(process.cwd()),
     aws: resolveFromAws(convivio),
-    // awsdesc: resolveFromAwsDesc(convivio),
+    awsdesc: resolveFromAwsDesc(convivio),
     cf: resolveFromCf(convivio),
     // s3: resolveFromCf(convivio),
     // ssm: resolveFromCf(convivio),
@@ -47,20 +53,25 @@ export default (convivio, overrides) => ({
     ...(overrides?.resolvers || {}),
   },
   plugins: overrides?.plugins || [
-    // assumeRole
-
     new TracePlugin(convivio.options),
     new ParsePlugin(convivio.options),
 
     // ...standardGenPlugins(convivio),
     new CorePlugin(convivio.options),
     new LambdaPlugin(convivio.options),
-    // TODO events
-    //  api gateway, alb
-    //  kinesis/ddb stream
-    //  sqs
 
-    // TODO insert generators ???
+    // TODO events
+    //  api gateway
+    //  alb
+    //  sqs
+    //  sns ???
+    //  cloudwatch / schedule*2
+    //  s3 ???
+    //  kafka
+
+    new StreamPlugin(convivio.options),
+    // new SqsPlugin(convivio.options),
+
     new ResourcesPlugin(convivio.options),
 
     // TODO swap packaging ???

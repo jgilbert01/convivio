@@ -11,12 +11,12 @@ export const resolveFromAws = (cvo) =>
 
     switch (address) {
       case 'accountId': {
-        const connector = factory(cvo.options.region, 'sts');
+        const connector = factory(cvo.config.credentials, cvo.options.region, 'STS');
         const { Account } = await connector.getCallerIdentity();
         return Account;
       }
       case 'partition': {
-        const connector = factory(cvo.options.region, 'sts');
+        const connector = factory(cvo.config.credentials, cvo.options.region, 'STS');
         const { Arn } = await connector.getCallerIdentity();
         return Arn.split(':')[1];
       }
