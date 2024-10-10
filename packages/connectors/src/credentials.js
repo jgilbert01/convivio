@@ -21,8 +21,8 @@ export const cicdCredentials = () => {
           },
           masterCredentials,
         }),
-        // override chain precedence
-        fromInstanceMetadata());
+      // override chain precedence
+      fromInstanceMetadata());
   }
 
   if (CI) {

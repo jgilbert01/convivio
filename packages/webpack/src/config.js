@@ -28,7 +28,7 @@ export const optimization = (env) => (env.configuration.isLegacy
     minimize: false,
     splitChunks: {
       chunks: 'all',
-      maxSize: 200000, // 200KB
+      maxSize: env.configuration.maxSize || 200000, // 200KB
     },
   }));
 
