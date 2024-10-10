@@ -34,7 +34,7 @@ export const optimization = (env) => (env.configuration.isLegacy
 
 export const externals = (env) => (env.configuration.isLegacy
   ? [nodeExternals()]
-  : [
+  : env.configuration.externals || [
     /^@aws-sdk\/.+/,
     /^@smithy\/.+/,
   ]);
