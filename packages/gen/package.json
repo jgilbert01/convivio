@@ -29,7 +29,7 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "compile": "babel src --out-dir lib",
-    "clean": "rm -rf .nyc_output/ lib/ coverage/",
+    "clean": "rm -rf .nyc_output/ lib/ coverage/ .convivio/",
     "lint": "npm run lint:js",
     "lint:js": "eslint --fix --format=../../node_modules/eslint-formatter-pretty .",
     "lint:staged": "lint-staged",

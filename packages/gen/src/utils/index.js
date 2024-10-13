@@ -1,14 +1,23 @@
+import debug from 'debug';
 import upperFirst from 'lodash/upperFirst';
 import merge from 'lodash/merge';
 
+const log = debug('cvo:gen:utils');
+
 export const normalizeName = (name) => `${upperFirst(name)}`;
+
+export const normalizeNameToAlphaNumericOnly = (name) => normalizeName(name.replace(/[^0-9A-Za-z]/g, ''));
 
 export const normalizeResourceName = (resourceName) => normalizeName(resourceName.replace(/-/g, 'Dash').replace(/_/g, 'Underscore'));
 
-export const mergeResources = (src, tgt) => {
-  merge(src.Resources ?? {}, tgt.Resources ?? {});
-  merge(src.Outputs ?? {}, tgt.Outputs ?? {});
-  merge(src.Conditions ?? {}, tgt.Conditions ?? {});
+export const mergeResources = (tgt, src) => {
+  // log('%j', { src, tgt });
+
+  // remove undefined
+  src = JSON.parse(JSON.stringify(src));
+  merge(tgt.Resources ?? {}, src.Resources ?? {});
+  merge(tgt.Outputs ?? {}, src.Outputs ?? {});
+  merge(tgt.Conditions ?? {}, src.Conditions ?? {});
 };
 
 export const get = (metadata, convivio, field, defaultValue) => metadata[field] || convivio.yaml.provider[field] || defaultValue;

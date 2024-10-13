@@ -16,8 +16,8 @@ import {
   CorePlugin,
   LambdaPlugin,
   ResourcesPlugin,
-  // StreamPlugin,
-  // SqsPlugin,
+  StreamPlugin,
+  SqsPlugin,
   // TODO standardGenerators ???
 } from '@convivio/gen';
 import { DeployPlugin } from '@convivio/deploy';
@@ -70,7 +70,7 @@ export default (convivio, overrides) => ({
     //  kafka
 
     new StreamPlugin(convivio.options),
-    // new SqsPlugin(convivio.options),
+    new SqsPlugin(convivio.options),
 
     new ResourcesPlugin(convivio.options),
 
