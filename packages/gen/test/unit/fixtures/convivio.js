@@ -398,3 +398,53 @@ export const STREAM = {
     },
   ],
 };
+
+export const SQS = {
+  service: 'my-bff-service',
+  provider: {
+    name: 'aws',
+    runtime: 'nodejs18.x',
+    region: 'us-west-2',
+    deploymentBucket: 'my-deploy-bucket',
+  },
+  package: {
+    artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
+  },
+  custom: {
+    subsys: 'template',
+    stage: 'dev',
+    region: 'us-west-2',
+  },
+  functions: {
+    listener: {
+      handler: 'src/listener/index.handle',
+
+      key: 'listener',
+      name: 'my-bff-service-dev-listener',
+      handlerEntry: { key: 'src/listener/index', value: './src/listener/index.js' },
+      package: { artifact: './.webpack/listener.zip' },
+
+      events: [
+        {
+          sqs: {
+            arn: {
+              'Fn::GetAtt': ['ListenerQueue', 'Arn'],
+            },
+            batchSize: 20,
+            filterPatterns: [
+              {
+                data: {
+                  type: [
+                    {
+                      prefix: 'thing-',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+};
