@@ -1,6 +1,6 @@
 {
   "name": "@convivio/parse",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
@@ -70,7 +70,7 @@
     "tapable": "^2.2.1"
   },
   "dependencies": {
-    "@convivio/connectors": "^0.0.3",
+    "@convivio/connectors": "^0.0.4",
     "bluebird": "^3.7.1",
     "debug": "^4.1.1",
     "js-yaml": "^4.1.0",
