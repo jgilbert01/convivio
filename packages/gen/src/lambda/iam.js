@@ -1,6 +1,10 @@
+import {
+  oneFunctionOrGlobal,
+} from '../utils';
+
 // TODO role per function
 
-export default (metadata, convivio) => ({
+export default (convivio, functions) => ({
   Resources: {
     IamRoleLambdaExecution: {
       Type: 'AWS::IAM::Role',
@@ -47,8 +51,8 @@ export default (metadata, convivio) => ({
                   Resource: [
                     {
                       'Fn::Sub':
-                                            'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}'
-                                            + `:log-group:/aws/lambda/${convivio.yaml.service}-${convivio.options.stage}*:*`,
+                        'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}'
+                        + `:log-group:/aws/lambda/${convivio.yaml.service}-${convivio.options.stage}*:*`,
                     },
                   ],
                 },
@@ -60,18 +64,37 @@ export default (metadata, convivio) => ({
                   Resource: [
                     {
                       'Fn::Sub':
-                                            'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}'
-                                            + `:log-group:/aws/lambda/${convivio.yaml.service}-${convivio.options.stage}*:*`,
+                        'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}'
+                        + `:log-group:/aws/lambda/${convivio.yaml.service}-${convivio.options.stage}*:*`,
                     },
                   ],
                 },
 
                 ...(convivio.yaml.provider.iam?.role?.statements || []),
 
+                ...(oneFunctionOrGlobal(functions, 'tracing', convivio.yaml.provider.tracing?.lambda) ? [{
+                  Effect: 'Allow',
+                  Action: ['xray:PutTraceSegments', 'xray:PutTelemetryRecords'],
+                  Resource: ['*'],
+                }] : []),
+
+                ...(convivio.yaml.provider.kmsKeyArn ? [{
+                  Effect: 'Allow',
+                  Action: ['kms:Decrypt'],
+                  Resource: [convivio.yaml.provider.kmsKeyArn],
+                }] : []),
+                ...functions
+                  .filter((f) => f.kmsKeyArn)
+                  .map((f) => ({
+                    Effect: 'Allow',
+                    Action: ['kms:Decrypt'],
+                    Resource: [f.kmsKeyArn],
+                  })),
               ],
             },
           },
         ],
+        ManagedPolicyArns: managedPolicyArns(convivio, functions),
         Path: convivio.yaml.provider.iam?.role?.path || '/',
         RoleName: convivio.yaml.provider.iam?.role?.name || {
           'Fn::Join': [
@@ -99,63 +122,21 @@ export default (metadata, convivio) => ({
 //     }));
 //   }
 
-// provider.iam.role.managedPolicies
+const managedPolicyArns = (convivio, functions) => {
+  const arns = [
+    ...(convivio.yaml.provider.iam?.role?.managedPolicies || []),
 
-// TODO Stream Event
-// {
-//     Effect: 'Allow',
-//     Action: [
-//         'dynamodb:GetRecords',
-//         'dynamodb:GetShardIterator',
-//         'dynamodb:DescribeStream',
-//         'dynamodb:ListStreams'
-//     ],
-//     Resource: [
-//         {
-//             'Fn::GetAtt': [
-//                 'EntitiesTable',
-//                 'StreamArn'
-//             ]
-//         }
-//     ]
-// },
+    ...(oneFunctionOrGlobal(functions, 'vpc', convivio.yaml.provider.vpc) ? [{
+      'Fn::Join': [
+        '',
+        [
+          'arn:',
+          { Ref: 'AWS::Partition' },
+          ':iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole',
+        ],
+      ],
+    }] : []),
+  ];
 
-// TODO SQS event
-// {
-//     Effect: 'Allow',
-//     Action: [
-//         'sqs:ReceiveMessage',
-//         'sqs:DeleteMessage',
-//         'sqs:GetQueueAttributes'
-//     ],
-//     Resource: [
-//         {
-//             'Fn::GetAtt': [
-//                 'ListenerQueue',
-//                 'Arn'
-//             ]
-//         }
-//     ]
-// }
-
-// // check if one of the functions contains vpc configuration
-// const vpcConfigProvided = this.serverless.service.getAllFunctions().some((functionName) => {
-//     const functionObject = this.serverless.service.getFunction(functionName);
-//     return 'vpc' in functionObject;
-//   });
-
-//   if (vpcConfigProvided || this.serverless.service.provider.vpc) {
-//     // add managed iam policy to allow ENI management
-//     this.mergeManagedPolicies([
-//       {
-//         'Fn::Join': [
-//           '',
-//           [
-//             'arn:',
-//             { Ref: 'AWS::Partition' },
-//             ':iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole',
-//           ],
-//         ],
-//       },
-//     ]);
-//   }
+  return arns.length ? arns : undefined;
+};

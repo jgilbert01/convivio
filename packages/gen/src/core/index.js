@@ -1,4 +1,5 @@
 import debug from 'debug';
+import { cloneDeep } from 'lodash';
 
 import { ENVELOPE } from './core-cloudformation-template';
 
@@ -12,7 +13,7 @@ export class CorePlugin {
   apply(cvo) {
     cvo.hooks.generate.tapPromise(CorePlugin.name, async (convivio) => {
       log('%j', { convivio });
-      convivio.json = ENVELOPE; // compiledCloudFormationTemplate
+      convivio.json = cloneDeep(ENVELOPE); // compiledCloudFormationTemplate
     });
   }
 }

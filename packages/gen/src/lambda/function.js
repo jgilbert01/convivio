@@ -33,7 +33,10 @@ export default (metadata, convivio) => ({
         Timeout: get(metadata, convivio, 'timeout', 6),
         Architectures: architectures(get(metadata, convivio, 'architecture')),
         Environment: environment(metadata, convivio),
+        KmsKeyArn: get(metadata, convivio, 'kmsKeyArn'), // String,
         Role: role(metadata, convivio),
+        ReservedConcurrentExecutions: metadata.reservedConcurrency, // Integer
+        TracingConfig: tracingConfig(metadata, convivio),
         VpcConfig: vpcConfig(get(metadata, convivio, 'vpc')),
 
         //         CodeSigningConfigArn : String,
@@ -41,16 +44,13 @@ export default (metadata, convivio) => ({
         //         EphemeralStorage : EphemeralStorage,
         //         FileSystemConfigs : [ FileSystemConfig, ... ],
         //         ImageConfig : ImageConfig,
-        //         KmsKeyArn : String,
         //         Layers : [ String, ... ],
         //         LoggingConfig : LoggingConfig,
         //         PackageType : String,
         //         RecursiveLoop : String,
-        //         ReservedConcurrentExecutions : Integer,
         //         RuntimeManagementConfig : RuntimeManagementConfig,
         //         SnapStart : SnapStart,
         //         Tags : [ Tag, ... ],
-        //         TracingConfig : TracingConfig,
       },
     },
   },
@@ -93,4 +93,16 @@ const role = () => ({
 const vpcConfig = (vpc) => (vpc ? {
   SecurityGroupIds: vpc.securityGroupIds,
   SubnetIds: vpc.subnetIds,
-}: undefined);
+} : undefined);
+
+const tracingConfig = (metadata, convivio) => {
+  const tracing = metadata.tracing || convivio.yaml.provider.tracing?.lambda;
+
+  if (tracing) {
+    return {
+      Mode: typeof tracing === 'boolean' ? 'Active' : tracing,
+    };
+  }
+
+  return undefined;
+};

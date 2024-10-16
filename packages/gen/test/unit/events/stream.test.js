@@ -7,10 +7,12 @@ import {
   AsyncSeriesHook,
 } from 'tapable';
 
-import { CorePlugin } from '../../src/core';
-import { LambdaPlugin } from '../../src/lambda';
+import { CorePlugin } from '../../../src/core';
+import { LambdaPlugin } from '../../../src/lambda';
+import { StreamPlugin } from '../../../src/events/stream';
+import { ResourcesPlugin } from '../../../src/resources';
 
-import { LAMBDA } from './fixtures/convivio';
+import { STREAM } from '../fixtures/convivio';
 
 const options = {
   stage: 'dev',
@@ -21,6 +23,8 @@ const config = {
   plugins: [
     new CorePlugin(options),
     new LambdaPlugin(options),
+    new StreamPlugin(options),
+    new ResourcesPlugin(options),
   ],
 };
 
@@ -30,12 +34,12 @@ const convivio = {
   hooks: {
     generate: new AsyncSeriesHook(['convivio', 'progress']),
   },
-  yaml: LAMBDA,
+  yaml: STREAM,
 };
 
 convivio.config.plugins.forEach((p) => p.apply(convivio));
 
-describe('lambda/index.js', () => {
+describe('events/stream/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
@@ -49,13 +53,6 @@ describe('lambda/index.js', () => {
           Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/my-bff-service-dev-listener',
-            // RetentionInDays: undefined,
-          },
-        },
-        RestLogGroup: {
-          Type: 'AWS::Logs::LogGroup',
-          Properties: {
-            LogGroupName: '/aws/lambda/my-bff-service-dev-rest',
             // RetentionInDays: undefined,
           },
         },
@@ -123,6 +120,29 @@ describe('lambda/index.js', () => {
                         },
                       ],
                     },
+                    {
+                      Action: [
+                        'kinesis:GetRecords',
+                        'kinesis:GetShardIterator',
+                        'kinesis:DescribeStream',
+                        'kinesis:DescribeStreamSummary',
+                        'kinesis:ListShards',
+                        'kinesis:ListStreams',
+                      ],
+                      Effect: 'Allow',
+                      Resource: ['arn:aws:kinesis:region:XXXXXX:stream/foobar'],
+                    },
+                    {
+                      Effect: 'Allow',
+                      Action: [
+                        'kinesis:SubscribeToShard',
+                      ],
+                      Resource: [
+                        {
+                          Ref: 'ListenerConsumer', // 'ListenerfoobarConsumerStreamConsumer',
+                        },
+                      ],
+                    },
                   ],
                 },
               },
@@ -157,11 +177,6 @@ describe('lambda/index.js', () => {
             Handler: 'src/listener/index.handle',
             MemorySize: 1024,
             Timeout: 6,
-            Environment: {
-              Variables: {
-                ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
-              },
-            },
             Role: {
               'Fn::GetAtt': [
                 'IamRoleLambdaExecution',
@@ -175,38 +190,48 @@ describe('lambda/index.js', () => {
             // VpcConfig: undefined,
           },
         },
-        RestLambdaFunction: {
-          Type: 'AWS::Lambda::Function',
-          // Condition: undefined,
+        ListenerEventSourceMappingKinesisFoobar: {
+          Type: 'AWS::Lambda::EventSourceMapping',
           DependsOn: [
-            'RestLogGroup',
+            'IamRoleLambdaExecution',
+            'ListenerConsumer',
+            // 'ListenerfoobarConsumerStreamConsumer',
           ],
           Properties: {
-            // Architectures: undefined,
-            Runtime: 'nodejs18.x',
-            FunctionName: 'my-bff-service-dev-rest',
-            // Description: undefined,
-            Handler: 'src/rest/index.handle',
-            MemorySize: 1024,
-            Timeout: 6,
-            Environment: {
-              Variables: {
-                ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
-              },
+            BatchSize: 100,
+            Enabled: true,
+            // EventSourceArn: 'arn:aws:kinesis:region:XXXXXX:stream/foobar',
+            EventSourceArn: {
+              Ref: 'ListenerConsumer',
             },
-            Role: {
+            FilterCriteria: {
+              Filters: [{
+                Pattern: '{\"data\":{\"type\":[{\"prefix\":\"thing-\"}]}}',
+              }],
+            },
+            FunctionName: {
               'Fn::GetAtt': [
-                'IamRoleLambdaExecution',
+                'ListenerLambdaFunction',
                 'Arn',
               ],
             },
-            Code: {
-              S3Bucket: 'my-deploy-bucket',
-              S3Key: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z/rest.zip',
-            },
-            // VpcConfig: undefined,
+            StartingPosition: 'TRIM_HORIZON',
           },
         },
+        ListenerConsumer: {
+          Type: 'AWS::Kinesis::StreamConsumer',
+          Properties: {
+            ConsumerName: 'template-dev-listener-consumer',
+            StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/template-event-hub-dev-s1',
+          },
+        },
+        // ListenerfoobarConsumerStreamConsumer: {
+        //   Type: 'AWS::Kinesis::StreamConsumer',
+        //   Properties: {
+        //     StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/foobar',
+        //     ConsumerName: 'listenerfoobarConsumer',
+        //   },
+        // },
       },
       Outputs: {
       },

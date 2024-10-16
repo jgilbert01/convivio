@@ -7,10 +7,12 @@ import {
   AsyncSeriesHook,
 } from 'tapable';
 
-import { CorePlugin } from '../../src/core';
-import { LambdaPlugin } from '../../src/lambda';
+import { CorePlugin } from '../../../src/core';
+import { LambdaPlugin } from '../../../src/lambda';
+import { SqsPlugin } from '../../../src/events/sqs';
+import { ResourcesPlugin } from '../../../src/resources';
 
-import { LAMBDA } from './fixtures/convivio';
+import { SQS } from '../fixtures/convivio';
 
 const options = {
   stage: 'dev',
@@ -21,6 +23,8 @@ const config = {
   plugins: [
     new CorePlugin(options),
     new LambdaPlugin(options),
+    new SqsPlugin(options),
+    new ResourcesPlugin(options),
   ],
 };
 
@@ -30,12 +34,12 @@ const convivio = {
   hooks: {
     generate: new AsyncSeriesHook(['convivio', 'progress']),
   },
-  yaml: LAMBDA,
+  yaml: SQS,
 };
 
 convivio.config.plugins.forEach((p) => p.apply(convivio));
 
-describe('lambda/index.js', () => {
+describe('events/sqs/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
@@ -49,13 +53,6 @@ describe('lambda/index.js', () => {
           Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/my-bff-service-dev-listener',
-            // RetentionInDays: undefined,
-          },
-        },
-        RestLogGroup: {
-          Type: 'AWS::Logs::LogGroup',
-          Properties: {
-            LogGroupName: '/aws/lambda/my-bff-service-dev-rest',
             // RetentionInDays: undefined,
           },
         },
@@ -123,6 +120,17 @@ describe('lambda/index.js', () => {
                         },
                       ],
                     },
+                    {
+                      Action: [
+                        'sqs:ReceiveMessage',
+                        'sqs:DeleteMessage',
+                        'sqs:GetQueueAttributes',
+                      ],
+                      Effect: 'Allow',
+                      Resource: [{
+                        'Fn::GetAtt': ['ListenerQueue', 'Arn'],
+                      }],
+                    },
                   ],
                 },
               },
@@ -157,11 +165,6 @@ describe('lambda/index.js', () => {
             Handler: 'src/listener/index.handle',
             MemorySize: 1024,
             Timeout: 6,
-            Environment: {
-              Variables: {
-                ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
-              },
-            },
             Role: {
               'Fn::GetAtt': [
                 'IamRoleLambdaExecution',
@@ -175,36 +178,28 @@ describe('lambda/index.js', () => {
             // VpcConfig: undefined,
           },
         },
-        RestLambdaFunction: {
-          Type: 'AWS::Lambda::Function',
-          // Condition: undefined,
+        ListenerEventSourceMappingSQSListenerQueue: {
+          Type: 'AWS::Lambda::EventSourceMapping',
           DependsOn: [
-            'RestLogGroup',
+            'IamRoleLambdaExecution',
           ],
           Properties: {
-            // Architectures: undefined,
-            Runtime: 'nodejs18.x',
-            FunctionName: 'my-bff-service-dev-rest',
-            // Description: undefined,
-            Handler: 'src/rest/index.handle',
-            MemorySize: 1024,
-            Timeout: 6,
-            Environment: {
-              Variables: {
-                ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
-              },
+            BatchSize: 20,
+            Enabled: true,
+            EventSourceArn: {
+              'Fn::GetAtt': ['ListenerQueue', 'Arn'],
             },
-            Role: {
+            FilterCriteria: {
+              Filters: [{
+                Pattern: '{\"data\":{\"type\":[{\"prefix\":\"thing-\"}]}}',
+              }],
+            },
+            FunctionName: {
               'Fn::GetAtt': [
-                'IamRoleLambdaExecution',
+                'ListenerLambdaFunction',
                 'Arn',
               ],
             },
-            Code: {
-              S3Bucket: 'my-deploy-bucket',
-              S3Key: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z/rest.zip',
-            },
-            // VpcConfig: undefined,
           },
         },
       },
