@@ -26,7 +26,7 @@ export class LambdaPlugin {
         mergeResources(convivio.json, logGroup(f, convivio));
       });
 
-      mergeResources(convivio.json, iamRoleLambdaExecution(undefined, convivio));
+      mergeResources(convivio.json, iamRoleLambdaExecution(convivio, functions));
 
       functions.forEach((f) => {
         mergeResources(convivio.json, lambdaFunction(f, convivio));

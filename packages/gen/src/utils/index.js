@@ -22,6 +22,8 @@ export const mergeResources = (tgt, src) => {
 
 export const get = (metadata, convivio, field, defaultValue) => metadata[field] || convivio.yaml.provider[field] || defaultValue;
 
+export const oneFunctionOrGlobal = (functions, field, global) => functions.some((f) => f[field]) || global;
+
 export const getArtifactDirectoryName = (convivio) => {
   if (!convivio.yaml.package.artifactDirectoryName) {
     const date = new Date();
