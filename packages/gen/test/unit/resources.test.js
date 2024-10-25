@@ -48,7 +48,7 @@ describe('resources/index.js', () => {
           Type: 'AWS::DynamoDB::GlobalTable',
           Condition: 'IsWest',
           Properties: {
-            TableName: 'template-dev-entities',
+            TableName: 'my-dev-entities',
             AttributeDefinitions: [
               {
                 AttributeName: 'pk',
