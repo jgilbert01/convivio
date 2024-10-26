@@ -9,8 +9,6 @@ const program = new Command();
 // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk/README.md
 // boostrap - CDKToolKit = template-pipeline-resources
 
-// TODO calc change set, validate length === 0
-
 program
   // .name('cvo')
   .version(require('../package.json').version)
