@@ -1,5 +1,4 @@
 import path from 'path';
-import crypto from 'crypto';
 import debug from 'debug';
 import { environment, vcrNock } from '../middleware';
 import { context } from './context';
@@ -22,12 +21,9 @@ const toRequest = (req) => ({ // TODO review logs
   requestContext: {
     elb: {
       targetGroupArn:
-        // TODO: probably replace this
-        "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/5811b5d6aff964cd50efa8596604c4e0/b49d49c443aa999f",
+        'arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/5811b5d6aff964cd50efa8596604c4e0/b49d49c443aa999f',
     },
-},
-  // resource: '/{proxy*}',
-  // stageVariables: null,
+  },
   isOffline: true,
 });
 
@@ -61,7 +57,7 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
         res
           .status(data.statusCode)
           .set(data.headers) // TODO assert size
-          .send(data.body); // TODO assert size
+          .send(data.isBase64Encoded ? Buffer.from(data.body, 'base64') : data.body); // TODO assert size
       } catch (err) {
         console.error(err);
         // TODO response

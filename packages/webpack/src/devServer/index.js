@@ -4,8 +4,8 @@ import express from 'express';
 import WebpackDevServer from 'webpack-dev-server';
 
 import ping from './routes/ping';
-import alb from './routes/alb';
-import rest from './routes/rest';
+import albRest from './routes/alb';
+import apigRest from './routes/rest';
 import invoke from './routes/invoke';
 import { trace } from './middleware';
 import { compile } from '../compile';
@@ -29,15 +29,15 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
       } = e;
 
       if (http) {
-        return rest(servicePath, devServer, f, e, provider, vcr);
+        return apigRest(servicePath, devServer, f, e, provider, vcr);
       }
 
       if (alb) {
-        return alb(servicePath, devServer, f, e, provider, vcr);
+        return albRest(servicePath, devServer, f, e, provider, vcr);
       }
 
       // stream, sqs, no event, or catch all
-        return invoke(servicePath, devServer, f, e, provider, vcr);
+      return invoke(servicePath, devServer, f, e, provider, vcr);
     });
   });
 

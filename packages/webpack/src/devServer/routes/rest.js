@@ -124,8 +124,8 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
 
         res
           .status(data.statusCode)
-          .set(data.headers)
-          .send(data.body);
+          .set(data.headers) // TODO assert size
+          .send(data.isBase64Encoded ? Buffer.from(data.body, 'base64') : data.body); // TODO assert size
       } catch (err) {
         console.error(err);
         // TODO response
