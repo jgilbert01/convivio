@@ -1,7 +1,7 @@
 import debug from 'debug';
 import Promise from 'bluebird';
 
-import { factory } from '@convivio/connectors';
+import { factory, writeFileSync } from '@convivio/connectors';
 
 import { monitorStack } from './monitor-stack';
 
@@ -53,14 +53,18 @@ export const deploy = async (plugin, convivio, progress) => {
   log('Waiting for new change set to be created');
   const changeSetDescription = await waitForChangeSetCreation(connector, ChangeSetName, StackName);
 
+  writeFileSync('./.convivio/change-set.json', changeSetDescription);
+
   // TODO --force ???
-  if (isChangeSetWithoutChanges(changeSetDescription)) {
+  if (convivio.options.dryrun || isChangeSetWithoutChanges(changeSetDescription)) {
     await connector.deleteChangeSet({
       StackName,
       ChangeSetName,
     });
     return;
   }
+
+  if (convivio.options.dryrun) return;
 
   await connector.executeChangeSet({
     StackName,

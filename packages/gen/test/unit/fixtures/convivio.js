@@ -13,7 +13,7 @@ export const CORE = {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
   },
   custom: {
-    subsys: 'template',
+    subsys: 'my',
     stage: 'dev',
     region: 'us-west-2',
     tableStreamArn: {
@@ -116,7 +116,7 @@ export const CORE = {
           Type: 'AWS::DynamoDB::GlobalTable',
           Condition: 'IsWest',
           Properties: {
-            TableName: 'template-dev-entities',
+            TableName: 'my-dev-entities',
             AttributeDefinitions: [
               {
                 AttributeName: 'pk',
@@ -207,7 +207,7 @@ export const LAMBDA = {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
   },
   custom: {
-    subsys: 'template',
+    subsys: 'my',
     stage: 'dev',
     region: 'us-west-2',
     tableStreamArn: {
@@ -264,7 +264,7 @@ export const LAMBDA = {
           Type: 'AWS::DynamoDB::GlobalTable',
           Condition: 'IsWest',
           Properties: {
-            TableName: 'template-dev-entities',
+            TableName: 'my-dev-entities',
             AttributeDefinitions: [
               {
                 AttributeName: 'pk',
@@ -345,7 +345,7 @@ export const STREAM = {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
   },
   custom: {
-    subsys: 'template',
+    subsys: 'my',
     stage: 'dev',
     region: 'us-west-2',
   },
@@ -390,8 +390,8 @@ export const STREAM = {
         ListenerConsumer: {
           Type: 'AWS::Kinesis::StreamConsumer',
           Properties: {
-            ConsumerName: 'template-dev-listener-consumer',
-            StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/template-event-hub-dev-s1',
+            ConsumerName: 'my-dev-listener-consumer',
+            StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/my-event-hub-dev-s1',
           },
         },
       },
@@ -411,7 +411,7 @@ export const SQS = {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
   },
   custom: {
-    subsys: 'template',
+    subsys: 'my',
     stage: 'dev',
     region: 'us-west-2',
   },
@@ -442,6 +442,46 @@ export const SQS = {
                 },
               },
             ],
+          },
+        },
+      ],
+    },
+  },
+};
+
+export const ALB = {
+  service: 'my-ui-main',
+  provider: {
+    name: 'aws',
+    runtime: 'nodejs20.x',
+    region: 'us-west-2',
+    deploymentBucket: 'my-deploy-bucket',
+  },
+  package: {
+    artifactDirectoryName: 'convivio/my-ui-main/dev/1725248162835-2024-09-02T03:36:02.835Z',
+  },
+  custom: {
+    subsys: 'my',
+    stage: 'dev',
+    region: 'us-west-2',
+  },
+  functions: {
+    spa: {
+      handler: 'handler.handler',
+
+      key: 'spa',
+      name: 'my-ui-main-dev-spa',
+      handlerEntry: { key: 'handler', value: './handler.js' },
+      package: { artifact: './.webpack/spa.zip' },
+
+      events: [
+        {
+          alb: {
+            listenerArn: 'arn:aws:elasticloadbalancing:us-west-2:123456789012:listener/app/my-global-resources-stg/1234567890123456/6543210987654321',
+            priority: 40000,
+            conditions: {
+              path: '/*',
+            },
           },
         },
       ],

@@ -15,15 +15,11 @@ program
   .option('-s, --stage <char>')
   .option('-r, --region <char>');
 // package path ???
-// .option('-r --role [arn]',
-//   'Role(s) ARN to assume (env AWS_ROLE default)',
-//   process.env.AWS_ROLE)
 // .option('-c, --config <path>', 'set config path', 'convivio.config.js');
 
 // TODO verbose, force, package, param?
 // offline/start, remove, logs, init
 // profile, login w mfa - aws-get-session-token
-// assume role *** - aws-assume-role-cicd, swa
 // jobs ???
 
 program
@@ -44,6 +40,7 @@ program
 
 program
   .command('deploy')
+  .option('-d, --dryrun')
   .action(async () => {
     const options = program.opts();
     const main = new Convivio(options);

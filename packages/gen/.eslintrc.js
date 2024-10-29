@@ -41,6 +41,8 @@ module.exports = {
     "import/prefer-default-export": 0,
     "import/no-dynamic-require": 0,
     "no-template-curly-in-string": 0,
+    "prefer-destructuring": 0,
+    "no-plusplus": 0,
   },
   "globals": {
     "fetch": false,

@@ -221,8 +221,8 @@ describe('events/stream/index.js', () => {
         ListenerConsumer: {
           Type: 'AWS::Kinesis::StreamConsumer',
           Properties: {
-            ConsumerName: 'template-dev-listener-consumer',
-            StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/template-event-hub-dev-s1',
+            ConsumerName: 'my-dev-listener-consumer',
+            StreamARN: 'arn:aws:kinesis:region:XXXXXX:stream/my-event-hub-dev-s1',
           },
         },
         // ListenerfoobarConsumerStreamConsumer: {
