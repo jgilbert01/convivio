@@ -1,5 +1,6 @@
 const path = require('path');
 const debug = require('debug');
+const CopyPlugin = require("copy-webpack-plugin");
 const nodeExternals = require('webpack-node-externals');
 
 const ConvivioWebpackPlugin = require('./wplugin');
@@ -40,25 +41,43 @@ export const externals = (env) => (env.configuration.isLegacy
   ]);
 
 export const module = (env) => ({
-  rules: [{
-    test: /\.js$/,
-    use: [{
-      loader: 'babel-loader',
-      options: {
-        presets: [
-          ['@babel/preset-env', {
-            targets: {
-              node: env.configuration?.node || true, // process.version.node
-            },
-            modules: env.isLocal ? 'umd' : env.configuration?.modules || 'cjs',
-          }],
-        ],
-        plugins: ['@babel/plugin-transform-runtime'],
-      },
-    }],
-    include: env.basedir, // __dirname,
-    exclude: /node_modules/,
-  }],
+  rules: [
+    {
+      test: /\.js$/,
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            ['@babel/preset-env', {
+              targets: {
+                node: env.configuration?.node || true, // process.version.node
+              },
+              modules: env.isLocal ? 'umd' : env.configuration?.modules || 'cjs',
+            }],
+          ],
+          plugins: ['@babel/plugin-transform-runtime'],
+        },
+      }],
+      include: env.basedir, // __dirname,
+      exclude: /node_modules/,
+    },
+    ...(env.configuration.brfs || [
+      // /pdfmake\.js$/,
+      /fontkit[\/\\]index.js$/,
+      /unicode-trie[\/\\]index.js$/,
+      /unicode-properties[\/\\]index.js$/,
+      /linebreak[\/\\]src[\/\\]linebreaker.js/,
+    ])
+      .map((re) => re instanceof RegExp ? re : new RegExp(re))
+      .map((test) => ({
+        enforce: 'post',
+        test,
+        use: [{
+          loader: 'transform-loader',
+          options: { brfs: {} },
+        }],
+      })),
+  ],
 });
 
 // TODO export more fragements like devServer, vcr, injectMocks, and module
@@ -99,6 +118,14 @@ export const convivioDefaults = (env) => {
       externals: externals(env),
       module: module(env),
       plugins: [
+        new CopyPlugin({
+          patterns: [
+            {
+              from: 'assets',
+              to: 'assets',
+            },
+          ],
+        }),
         new ConvivioWebpackPlugin({ ...env }),
       ],
     }));
