@@ -3,7 +3,7 @@ import debug from 'debug';
 const log = debug('cvo:parse:parse');
 
 export const parse = async (value, resolvers) => {
-  const stack = [{ result: [] }];
+  const stack = [{ result: value.length ? [] : [value.length] }]; // empty string
   const setter = ['result'];
   let variable;
   let src;
@@ -58,7 +58,7 @@ export const parse = async (value, resolvers) => {
           log('%j', { variable });
 
           src = resolvers[variable.src];
-          if (!src) {
+          if (!src) { // TODO ignore AWS variable ??? special resolver ???
             throw new Error(`Unknown variable source: ${variable.src}`);
           }
 
