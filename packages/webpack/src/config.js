@@ -62,6 +62,7 @@ export const module = (env) => ({
       exclude: /node_modules/,
     },
     ...(env.configuration.brfs || [
+      // TODO move to preset
       // /pdfmake\.js$/,
       /fontkit[\/\\]index.js$/,
       /unicode-trie[\/\\]index.js$/,
