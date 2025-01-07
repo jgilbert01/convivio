@@ -43,6 +43,7 @@ const fattenFunctions = (convivio) => {
     .map(([key, funct]) => {
       log({ key, funct });
       funct.key = key;
+      funct.name = `${convivio.yaml.service}-${convivio.options.stage}-${key}`;
       const handlerEntry = /(.*)\..*?$/.exec(funct.handler)[1];
       funct.handlerEntry = { key: handlerEntry, value: `./${handlerEntry}.js` };
       funct.package = {

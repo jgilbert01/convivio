@@ -57,4 +57,3 @@ const queueName = (sqs) => { // eslint-disable-line no-shadow
   }
   return sqs.arn.split(':').pop();
 };
-

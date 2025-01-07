@@ -6,8 +6,8 @@ import { factory } from '@convivio/connectors';
 const log = debug('cvo:parse:resolvers:awsdesc');
 
 /*
-Variable resolver to describe AWS resources. 
-It describes a given resource and extracts variables. 
+Variable resolver to describe AWS resources.
+It describes a given resource and extracts variables.
 In other words, it provides access to AWS Requests like the following examples.
 
 ```

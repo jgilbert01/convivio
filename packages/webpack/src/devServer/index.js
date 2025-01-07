@@ -39,6 +39,11 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
       // stream, sqs, no event, or catch all
       return invoke(servicePath, devServer, f, e, provider, vcr);
     });
+
+    if (f.events.length === 0) {
+      // catch all
+      return invoke(servicePath, devServer, f, {}, provider, vcr);
+    }
   });
 
   return middlewares;

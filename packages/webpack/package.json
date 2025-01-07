@@ -74,6 +74,8 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "bluebird": "^3.7.1",
+    "brfs": "^2.0.2",
+    "copy-webpack-plugin": "^12.0.2",
     "debug": "^4.1.1",
     "express": "^4.21.0",
     "fs-extra": "^11.2.0",
@@ -82,6 +84,7 @@
     "json-cycle": "^1.5.0",
     "lodash": "^4.17.15",
     "nock": "^13.5.4",
+    "transform-loader": "^0.2.4",
     "webpack": "^5.92.1",
     "webpack-dev-server": "^5.0.4",
     "webpack-merge": "^6.0.1",

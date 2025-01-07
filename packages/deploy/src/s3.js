@@ -7,6 +7,7 @@ import { factory } from '@convivio/connectors';
 import {
   createFileHash,
   getFileStats,
+  getArtifactDirectoryName,
   getS3EndpointForRegion,
   normalizeCloudFormationTemplate,
 } from './utils';
@@ -16,14 +17,14 @@ const log = debug('cvo:deploy:s3');
 export const upload = async (plugin, convivio) => {
   const connector = factory(convivio.config.credentials, convivio.options.region, 'S3');
 
-  const exists = checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket);
+  const exists = checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket.name);
   if (!exists) {
     return;
   }
 
   // save for cf processing
-  plugin.Key = `${convivio.yaml.package.artifactDirectoryName}/cloudformation-template.json`;
-  plugin.TemplateURL = `https://${getS3EndpointForRegion(convivio)}/${convivio.yaml.provider.deploymentBucket}/${plugin.Key}`;
+  plugin.Key = `${getArtifactDirectoryName(convivio)}/cloudformation-template.json`;
+  plugin.TemplateURL = `https://${getS3EndpointForRegion(convivio)}/${convivio.yaml.provider.deploymentBucket.name}/${plugin.Key}`;
 
   await uploadCloudFormationTemplate(connector, plugin, convivio);
   await uploadFunctions(connector, plugin, convivio);
@@ -54,7 +55,7 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
   const fileHash = createFileHash(JSON.stringify(normCfTemplate));
 
   const params = {
-    Bucket: convivio.yaml.provider.deploymentBucket,
+    Bucket: convivio.yaml.provider.deploymentBucket.name,
     Key: plugin.Key,
     Body: JSON.stringify(convivio.json), // compiledCfTemplate
     ContentType: 'application/json',
@@ -72,7 +73,7 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
 };
 
 const uploadFunctions = async (connector, plugin, convivio) => {
-  await Promise.all(Object.values(convivio.yaml.functions)
+  await Promise.all(Object.values(convivio.yaml.functions || [])
     .map((f) => uploadZipFile(connector, plugin, convivio, f)));
 };
 
@@ -89,8 +90,8 @@ const uploadZipFile = async (connector, plugin, convivio, f) => {
   artifactStream.on('error', (error) => { streamError = error; });
 
   const params = {
-    Bucket: convivio.yaml.provider.deploymentBucket,
-    Key: `${convivio.yaml.package.artifactDirectoryName}/${fileName}`,
+    Bucket: convivio.yaml.provider.deploymentBucket.name,
+    Key: `${getArtifactDirectoryName(convivio)}/${fileName}`,
     Body: artifactStream,
     ContentType: 'application/zip',
     Metadata: {

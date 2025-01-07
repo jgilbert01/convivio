@@ -93,3 +93,19 @@ export const getS3EndpointForRegion = (convivio) => {
   // default s3 endpoint for other regions
   return 's3.amazonaws.com';
 };
+
+export const getArtifactDirectoryName = (convivio) => {
+  if (!convivio.yaml.package) {
+    convivio.yaml.package = {};
+  }
+  
+  if (!convivio.yaml.package.artifactDirectoryName) {
+    const date = new Date();
+    const serviceStage = `${convivio.yaml.service}/${convivio.options.stage}`;
+    const dateString = `${date.getTime().toString()}-${date.toISOString()}`;
+    const prefix = convivio.yaml.provider?.deploymentPrefix || 'convivio';
+    convivio.yaml.package.artifactDirectoryName = `${prefix}/${serviceStage}/${dateString}`;
+  }
+
+  return convivio.yaml.package.artifactDirectoryName;
+};
