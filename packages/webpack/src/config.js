@@ -1,6 +1,6 @@
 const path = require('path');
 const debug = require('debug');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 const ConvivioWebpackPlugin = require('./wplugin');
@@ -69,7 +69,7 @@ export const module = (env) => ({
       /unicode-properties[\/\\]index.js$/,
       /linebreak[\/\\]src[\/\\]linebreaker.js/,
     ])
-      .map((re) => re instanceof RegExp ? re : new RegExp(re))
+      .map((re) => (re instanceof RegExp ? re : new RegExp(re)))
       .map((test) => ({
         enforce: 'post',
         test,
