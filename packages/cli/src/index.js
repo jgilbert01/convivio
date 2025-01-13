@@ -40,10 +40,9 @@ program
 
 program
   .command('deploy')
-  .option('-d, --dryrun')
-  .action(async () => {
-    const options = program.opts();
-    const main = new Convivio(options);
+  .option('--dryrun')
+  .action(async (options) => {
+    const main = new Convivio({...program.opts(), ...options});
     await main.deploy();
   });
 

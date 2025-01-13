@@ -101,7 +101,9 @@ export const convivioDefaults = (env) => {
       optimization: optimization(env),
       externals: externals(env),
       module: module(env),
-      plugins: [],
+      plugins: [
+        new ConvivioWebpackPlugin({ ...env }),
+      ],
       // TODO devServer
     }];
   } else {
@@ -124,6 +126,7 @@ export const convivioDefaults = (env) => {
             {
               from: 'assets',
               to: 'assets',
+              noErrorOnMissing: true,
             },
           ],
         }),
