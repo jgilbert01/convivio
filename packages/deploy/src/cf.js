@@ -45,7 +45,13 @@ export const deploy = async (plugin, convivio, progress) => {
     Capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
     Parameters: [],
     RoleARN: convivio.yaml.iam?.deploymentRole,
-    // Tags: Object.keys(stackTags).map((key) => ({ Key: key, Value: stackTags[key] })),
+    Tags: Object.entries({
+      STAGE: convivio.options.stage,
+      ...convivio.yaml.provider.stackTags
+    }).map(([Key, Value]) => ({
+      Key,
+      Value
+    })),
     TemplateBody,
     TemplateURL,
   });
