@@ -2,7 +2,6 @@ import path from 'path';
 import {
   get,
   getArtifactDirectoryName,
-  normalizeName,
   normalizeResourceName,
 } from '../utils';
 
@@ -11,7 +10,7 @@ export default (metadata, convivio) => ({
     [`${normalizeResourceName(metadata.key)}LambdaFunction`]: {
       Type: 'AWS::Lambda::Function',
       DependsOn: [
-        `${normalizeName(metadata.key)}LogGroup`,
+        `${normalizeResourceName(metadata.key)}LogGroup`,
       ],
       //   if (functionObject.dependsOn) {
       //     functionResource.DependsOn = (functionResource.DependsOn || []).concat(

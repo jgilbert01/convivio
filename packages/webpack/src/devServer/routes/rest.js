@@ -96,8 +96,6 @@ const toRequest = (req) => ({ // TODO review logs
 // });
 
 export default (servicePath, devServer, f, e, provider, vcr) => {
-  const [index, handle] = f.handler.split('.');
-  const lambda = require(path.join(servicePath, '.webpack', index)); // , 'service'
   // console.log('lambda: ', lambda);
   const ctx = context(f, provider);
 
@@ -113,6 +111,9 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
     vcrNock(f, vcr),
     async (req, res) => {
       try {
+        const [index, handle] = f.handler.split('.');
+        const lambda = require(path.join(servicePath, '.webpack', index)); // , 'service'
+      
         const request = toRequest(req);
         log(request);
         const data = await lambda[handle](

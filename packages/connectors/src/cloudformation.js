@@ -22,7 +22,7 @@ import { defaultDebugLogger } from './log';
 class Connector {
   constructor({
     debug,
-    timeout = 3000,
+    timeout = 18000,
     credentials,
   }) {
     this.debug = (msg) => debug('%j', msg);

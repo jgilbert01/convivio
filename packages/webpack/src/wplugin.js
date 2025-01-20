@@ -16,6 +16,10 @@ class ConvivioWebpackPlugin {
 
   apply(compiler) {
     compiler.hooks.done.tapPromise(ConvivioWebpackPlugin.name, (stats) => {
+      if (stats.compilation?.errors) {
+        console.log({ errors: stats.compilation?.errors });
+      }
+
       const compileStats = _.map(stats.stats ? stats.stats : [stats], (compileStats2) => ({
         outputPath: compileStats2.compilation.compiler.outputPath,
         externalModules: getExternalModules(compileStats2),

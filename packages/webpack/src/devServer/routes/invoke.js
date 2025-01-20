@@ -6,9 +6,6 @@ import { context } from './context';
 const log = debug('cvo:offline:routes:consume');
 
 export default (servicePath, devServer, f, e, provider, vcr) => {
-  const [index, handle] = f.handler.split('.');
-  const lambda = require(path.join(servicePath, '.webpack', index));
-
   // https://docs.aws.amazon.com/lambda/latest/api/API_Invoke.html
 
   // log(handle, f.name);
@@ -23,6 +20,9 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
     vcrNock(f, vcr),
     async (req, res) => {
       try {
+        const [index, handle] = f.handler.split('.');
+        const lambda = require(path.join(servicePath, '.webpack', index));
+      
         // log(handle, f.name, JSON.parse(req.body));
 
         const ctx = context(f, provider);

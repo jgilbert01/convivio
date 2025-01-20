@@ -23,7 +23,7 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
   Object.values(functions).forEach((f) => {
     log('%j', f);
 
-    f.events.forEach((e) => {
+    (f.events || []).forEach((e) => {
       const {
         http, alb,
       } = e;
@@ -40,10 +40,12 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
       return invoke(servicePath, devServer, f, e, provider, vcr);
     });
 
-    if (f.events.length === 0) {
+    if (!f.events) {
       // catch all
       return invoke(servicePath, devServer, f, {}, provider, vcr);
     }
+
+    return undefined;
   });
 
   return middlewares;
