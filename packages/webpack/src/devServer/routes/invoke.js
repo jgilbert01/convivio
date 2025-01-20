@@ -22,7 +22,7 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
       try {
         const [index, handle] = f.handler.split('.');
         const lambda = require(path.join(servicePath, '.webpack', index));
-      
+
         // log(handle, f.name, JSON.parse(req.body));
 
         const ctx = context(f, provider);

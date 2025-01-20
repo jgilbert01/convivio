@@ -113,7 +113,7 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
       try {
         const [index, handle] = f.handler.split('.');
         const lambda = require(path.join(servicePath, '.webpack', index)); // , 'service'
-      
+
         const request = toRequest(req);
         log(request);
         const data = await lambda[handle](
