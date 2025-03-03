@@ -17,7 +17,7 @@ const log = debug('cvo:deploy:s3');
 export const upload = async (plugin, convivio) => {
   const connector = factory(convivio.config.credentials, convivio.options.region, 'S3');
 
-  const exists = checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket.name);
+  const exists = await checkIfBucketExists(connector, convivio.yaml.provider.deploymentBucket.name);
   if (!exists) {
     return;
   }
@@ -39,7 +39,7 @@ const checkIfBucketExists = async (connector, bucketName) => {
     });
     return true;
   } catch (err) {
-    if (err.code === 'AWS_S3_HEAD_BUCKET_NOT_FOUND') { // name ???
+    if (err.name === 'NotFound') {
       return false;
     }
     throw err;

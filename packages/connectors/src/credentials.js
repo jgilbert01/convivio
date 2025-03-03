@@ -7,8 +7,10 @@ import { debug } from 'debug';
 const log = debug('cvo:connectors:credentials');
 
 export const cicdCredentials = () => {
-  const { AWS_ROLE, CI } = process.env;
-  log('%j', { AWS_ROLE, CI });
+  const { AWS_ROLE, AWS_REGION, CI } = process.env;
+  log('%j', { AWS_ROLE, AWS_REGION, CI });
+
+  const clientConfig = { region: AWS_REGION };
 
   if (AWS_ROLE) {
     return AWS_ROLE.split('|')
@@ -19,15 +21,16 @@ export const cicdCredentials = () => {
             RoleSessionName: 'convivio-assume-role-cicd',
             DurationSeconds: process.env.AWS_SESSION_DURATION || 1800,
           },
+          clientConfig,
           masterCredentials,
         }),
       // override chain precedence
-      fromInstanceMetadata());
+      fromInstanceMetadata({ clientConfig }));
   }
 
   if (CI) {
     // override chain precedence
-    return fromInstanceMetadata();
+    return fromInstanceMetadata({ clientConfig });
   }
 
   return undefined;
