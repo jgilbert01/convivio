@@ -1,6 +1,6 @@
 {
   "name": "@convivio/testing",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
