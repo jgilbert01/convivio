@@ -20,9 +20,9 @@ let updated = false;
 const putSecrets = (pre) => async (convivio) => {
   log('%j', { convivio });
 
-  if (!cvo.yaml.custom?.secrets) return;
+  if (!convivio.yaml.custom?.secrets) return;
 
-  if (cvo.yaml.custom.secrets.afterDeployOnly && pre) return;
+  if (convivio.yaml.custom.secrets.afterDeployOnly && pre) return;
 
   if (updated) return;
 

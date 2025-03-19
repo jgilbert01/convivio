@@ -19,7 +19,7 @@ let imported = false;
 const importCert = async (convivio) => {
   log('%j', { convivio });
 
-  if (!cvo.yaml.custom?.acm) return;
+  if (!convivio.yaml.custom?.acm) return;
 
   if (imported) return;
 
