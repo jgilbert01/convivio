@@ -1,13 +1,13 @@
 import { debug } from 'debug';
 
+import CertificateManagerConnector from './acm';
 import CloudFormationConnector from './cloudformation';
 import DynamoDBConnector from './dynamodb';
+import SecretsManagerConnector from './secretsmgr';
 import S3Connector from './s3';
 import StsConnector from './sts';
 
 const log = debug('cvo:connectors:factory');
-
-// TODO credentials from assume-role
 
 const connectors = {};
 const factories = {
@@ -15,6 +15,9 @@ const factories = {
   DynamoDB: (credentials) => new DynamoDBConnector({ debug: log, credentials }),
   STS: (credentials) => new StsConnector({ debug: log, credentials }),
   S3: (credentials) => new S3Connector({ debug: log, credentials }),
+  // DMS
+  SecretsManager: (credentials) => new CertificateManagerConnector({ debug: log, credentials }),
+  CertificateManager: (credentials) => new SecretsManagerConnector({ debug: log, credentials }),
 };
 
 export const factory = (credentials, region, service) => {
