@@ -1,6 +1,6 @@
 {
   "name": "@convivio/serverless-plugin",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
@@ -61,7 +61,7 @@
     "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "@convivio/webpack": "^0.0.9",
+    "@convivio/webpack": "^0.0.10",
     "bluebird": "^3.7.1",
     "lodash": "^4.17.15"
   },
