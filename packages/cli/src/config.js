@@ -20,7 +20,11 @@ import {
   SqsPlugin,
   // TODO standardGenerators ???
 } from '@convivio/gen';
-import { DeployPlugin } from '@convivio/deploy';
+import {
+  DeployPlugin,
+  CertificateManagerPlugin,
+  SecretsManagerPlugin,
+} from '@convivio/deploy';
 import { WebpackPlugin } from '@convivio/webpack';
 
 // TODO standard resolvers/plugins presets
@@ -78,5 +82,7 @@ export default (convivio, overrides) => ({
     new WebpackPlugin(convivio.options),
 
     new DeployPlugin(convivio.options),
+    new CertificateManagerPlugin(convivio.options),
+    new SecretsManagerPlugin(convivio.options),
   ],
 });

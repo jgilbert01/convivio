@@ -31,7 +31,9 @@ class Convivio {
       start: new AsyncSeriesHook(['convivio', 'progress']),
       generate: new AsyncSeriesHook(['convivio', 'progress']),
       package: new AsyncSeriesHook(['convivio', 'progress']),
+      predeploy: new AsyncSeriesHook(['convivio', 'progress']),
       deploy: new AsyncSeriesHook(['convivio', 'progress']),
+      postdeploy: new AsyncSeriesHook(['convivio', 'progress']),
     };
 
     this.config.plugins.forEach((p) => p.apply(this));
@@ -65,7 +67,9 @@ class Convivio {
     await this.hooks.package.promise(this, progress);
 
     progress.updateProgress('Deploying...');
+    await this.hooks.predeploy.promise(this, progress);
     await this.hooks.deploy.promise(this, progress);
+    await this.hooks.postdeploy.promise(this, progress);
 
     progress.updateProgress();
   }
