@@ -1,6 +1,6 @@
 {
   "name": "@convivio/cli",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
@@ -72,10 +72,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.0",
-    "@convivio/deploy": "^0.0.10",
-    "@convivio/gen": "^0.0.10",
-    "@convivio/parse": "^0.0.10",
-    "@convivio/webpack": "^0.0.10",
+    "@convivio/deploy": "^0.0.11",
+    "@convivio/gen": "^0.0.11",
+    "@convivio/parse": "^0.0.11",
+    "@convivio/webpack": "^0.0.11",
     "bluebird": "^3.7.1",
     "cli-progress-footer": "^2.3.3",
     "commander": "^12.1.0",
