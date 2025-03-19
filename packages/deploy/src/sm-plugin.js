@@ -10,21 +10,19 @@ export class SecretsManagerPlugin {
   }
 
   apply(cvo) {
-    if (cvo.yaml.custom.secrets) {
-      if (cvo.yaml.custom.secrets.afterDeployOnly) {
-        cvo.hooks.postdeploy.tapPromise(SecretsManagerPlugin.name, putSecrets);
-      } else {
-        cvo.hooks.predeploy.tapPromise(SecretsManagerPlugin.name, putSecrets);
-        cvo.hooks.postdeploy.tapPromise(SecretsManagerPlugin.name, putSecrets);
-      }  
-    }
+    cvo.hooks.predeploy.tapPromise(SecretsManagerPlugin.name, putSecrets(true));
+    cvo.hooks.postdeploy.tapPromise(SecretsManagerPlugin.name, putSecrets(false));
   }
 }
 
 let updated = false;
 
-const putSecrets = async (convivio) => {
+const putSecrets = (pre) => async (convivio) => {
   log('%j', { convivio });
+
+  if (!cvo.yaml.custom?.secrets) return;
+
+  if (cvo.yaml.custom.secrets.afterDeployOnly && pre) return;
 
   if (updated) return;
 

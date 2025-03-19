@@ -10,9 +10,7 @@ export class CertificateManagerPlugin {
   }
 
   apply(cvo) {
-    if (cvo.yaml.custom.acm) {
-      cvo.hooks.predeploy.tapPromise(CertificateManagerPlugin.name, importCert);
-    }
+    cvo.hooks.predeploy.tapPromise(CertificateManagerPlugin.name, importCert);
   }
 }
 
@@ -20,6 +18,8 @@ let imported = false;
 
 const importCert = async (convivio) => {
   log('%j', { convivio });
+
+  if (!cvo.yaml.custom?.acm) return;
 
   if (imported) return;
 
