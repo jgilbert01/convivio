@@ -16,8 +16,8 @@ const factories = {
   STS: (credentials) => new StsConnector({ debug: log, credentials }),
   S3: (credentials) => new S3Connector({ debug: log, credentials }),
   // DMS
-  SecretsManager: (credentials) => new CertificateManagerConnector({ debug: log, credentials }),
-  CertificateManager: (credentials) => new SecretsManagerConnector({ debug: log, credentials }),
+  SecretsManager: (credentials) => new SecretsManagerConnector({ debug: log, credentials }),
+  CertificateManager: (credentials) => new CertificateManagerConnector({ debug: log, credentials }),
 };
 
 export const factory = (credentials, region, service) => {
