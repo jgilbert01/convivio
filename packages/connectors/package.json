@@ -1,6 +1,6 @@
 {
   "name": "@convivio/connectors",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
@@ -69,11 +69,11 @@
     "tapable": "^2.2.1"
   },
   "dependencies": {
+    "@aws-sdk/client-acm": "^3.633.0",
     "@aws-sdk/client-cloudformation": "^3.632.0",
     "@aws-sdk/client-dynamodb": "^3.633.0",
-    "@aws-sdk/client-acm": "^3.633.0",
-    "@aws-sdk/client-secrets-manager": "^3.633.0",
     "@aws-sdk/client-s3": "^3.633.0",
+    "@aws-sdk/client-secrets-manager": "^3.633.0",
     "@aws-sdk/client-sts": "^3.633.0",
     "@aws-sdk/credential-providers": "^3.633.0",
     "@aws-sdk/lib-dynamodb": "^3.633.0",
