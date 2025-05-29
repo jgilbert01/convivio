@@ -7,6 +7,7 @@ import ping from './routes/ping';
 import albRest from './routes/alb';
 import apigRest from './routes/rest';
 import invoke from './routes/invoke';
+import _404 from './routes/404';
 import { trace } from './middleware';
 import { compile } from '../compile';
 
@@ -47,6 +48,8 @@ export const setupMiddlewares = (servicePath, functions, provider, vcr) => (midd
 
     return undefined;
   });
+
+  _404(devServer);
 
   return middlewares;
 };

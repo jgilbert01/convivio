@@ -56,12 +56,12 @@ export default (servicePath, devServer, f, e, provider, vcr) => {
         // console.log('data: ', data);
 
         res
-          .status(data.statusCode)
+          .status(Number.isInteger(data.statusCode) ? data.statusCode : 500)
           .set(data.headers) // TODO assert size
           .send(data.isBase64Encoded ? Buffer.from(data.body, 'base64') : data.body); // TODO assert size
       } catch (err) {
         console.error(err);
-        // TODO response
+        res.status(500).send({ err });
       }
     },
   );

@@ -1,4 +1,5 @@
 import {
+  fromEnv,
   fromTemporaryCredentials,
   fromInstanceMetadata,
 } from '@aws-sdk/credential-providers';
@@ -6,11 +7,11 @@ import { debug } from 'debug';
 
 const log = debug('cvo:connectors:credentials');
 
-export const cicdCredentials = () => {
-  const { AWS_ROLE, AWS_REGION, CI } = process.env;
-  log('%j', { AWS_ROLE, AWS_REGION, CI });
+export const cicdCredentials = (convivio) => {
+  const { AWS_ROLE, AWS_ACCESS_KEY_ID, AWS_SESSION_DURATION, CI } = process.env;
+  log('%j', { AWS_ROLE, AWS_SESSION_DURATION, CI });
 
-  const clientConfig = { region: AWS_REGION };
+  const clientConfig = { region: convivio.options.region };
 
   if (AWS_ROLE) {
     return AWS_ROLE.split('|')
@@ -19,13 +20,15 @@ export const cicdCredentials = () => {
           params: {
             RoleArn,
             RoleSessionName: 'convivio-assume-role-cicd',
-            DurationSeconds: process.env.AWS_SESSION_DURATION || 1800,
+            DurationSeconds: AWS_SESSION_DURATION || 1800,
           },
           clientConfig,
           masterCredentials,
         }),
-      // override chain precedence
-      fromInstanceMetadata({ clientConfig }));
+        // override chain precedence
+        AWS_ACCESS_KEY_ID ?
+          fromEnv({ clientConfig }) :
+          fromInstanceMetadata({ clientConfig }));
   }
 
   if (CI) {
