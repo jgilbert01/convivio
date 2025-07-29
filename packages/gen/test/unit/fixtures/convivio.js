@@ -488,3 +488,76 @@ export const ALB = {
     },
   },
 };
+
+export const APIGW = {
+  service: 'my-bff-service',
+  provider: {
+    name: 'aws',
+    runtime: 'nodejs20.x',
+    region: 'us-west-2',
+    deploymentBucket: 'my-deploy-bucket',
+    endpointType: 'PRIVATE',
+    apiGateway: {
+      binaryMediaTypes: [
+        '*/*',
+      ],
+      resourcePolicy: [
+        {
+          Effect: 'Allow',
+          Principal: '*',
+          Action: [
+            'execute-api:Invoke',
+          ],
+          Resource: 'execute-api:/*/*/*',
+        },
+        {
+          Effect: 'Deny',
+          Principal: '*',
+          Action: [
+            'execute-api:Invoke',
+          ],
+          Resource: 'execute-api:/*/*/*',
+          Condition: {
+            StringNotEquals: {
+              'aws:SourceVpce': 'vpce-12345678901234567',
+            },
+          },
+        },
+      ],
+    },
+    vpcEndpointIds: [
+      'vpce-12345678901234567',
+    ],
+  },
+  package: {
+    artifactDirectoryName: 'convivio/my-ui-main/dev/1725248162835-2024-09-02T03:36:02.835Z',
+  },
+  custom: {
+    subsys: 'my',
+    stage: 'dev',
+    region: 'us-west-2',
+  },
+  functions: {
+    rest: {
+      handler: 'src/rest/index.handle',
+
+      key: 'rest',
+      name: 'my-bff-service-dev-rest',
+      handlerEntry: { key: 'src/rest/index', value: './src/rest/index.js' },
+      package: { artifact: './.webpack/rest.zip' },
+
+      events: [
+        {
+          http: {
+            path: 'things/{proxy+}',
+            method: 'any',
+            // cors: ${file(cvo/apig.yml):cors}
+            authorizer: {
+              arn: 'arn:aws:lambda:us-west-2:123456789012:function:my-idm-service-dev-authorizer',
+            },
+          },
+        },
+      ],
+    },
+  },
+};
