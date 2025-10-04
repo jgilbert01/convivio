@@ -18,6 +18,10 @@ Supports `${cf:*}` variables and deployments.
 Supports deployments.
 * [src/s3.js](src/s3.js)
 
+## DynamoDB
+Supports `${awsdesc:*}` variables.
+* [src/dynamodb.js](src/dynamodb.js)
+
 ## ACM
 Supports plugin for deployment of certificates.
 * [src/acn.js](src/acm.js)
@@ -25,8 +29,4 @@ Supports plugin for deployment of certificates.
 ## Secrets Manager
 Supports plugin for deployment of secrets.
 * [src/secretsmgr.js](src/secretsmgr.js)
-
-## DynamoDB
-Supports `${awsdesc:*}` variables.
-* [src/dynamodb.js](src/dynamodb.js)
 
