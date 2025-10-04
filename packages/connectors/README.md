@@ -8,12 +8,12 @@ This module provides the connectors for [@Convivio](https://github.com/jgilbert0
 
 ## CloudFormation
 
-# S3
+## S3
 
-# ACM
+## ACM
 
-# Secrets Manager
+## Secrets Manager
 
-# DynamoDB
+## DynamoDB
 
 

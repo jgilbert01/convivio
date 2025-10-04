@@ -1,4 +1,4 @@
-# @convivio/parse
+# @convivio/gen
 
-This module implements the parse phase for [@Convivio](https://github.com/jgilbert01/convivio), which is a drop in replacement for the Serverless Framework (SF) v3.
+This module implements the generation phase for [@Convivio](https://github.com/jgilbert01/convivio), which is a drop in replacement for the Serverless Framework (SF) v3.
 
