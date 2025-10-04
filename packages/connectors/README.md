@@ -7,11 +7,11 @@ Simplifies access to connectors throughout the system.
 * [src/factory.js](src/factory.js)
 
 ## STS/Credentials
-Supports aws variables and assume role credentials.
+Supports `${aws:*}` variables and assume role credentials.
 * [src/sts.js](src/sts.js)
 
 ## CloudFormation
-Supports cf variables and deployments.
+Supports `${cf:*}` variables and deployments.
 * [src/cloudformation.js](src/cloudformation.js)
 
 ## S3
@@ -27,6 +27,6 @@ Supports plugin for deployment of secrets.
 * [src/secretsmgr.js](src/secretsmgr.js)
 
 ## DynamoDB
-Supports awsdesc variables.
+Supports `${awsdesc:*}` variables.
 * [src/dynamodb.js](src/dynamodb.js)
 
