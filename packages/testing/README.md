@@ -44,6 +44,6 @@ The _@convivio/simulator_ provides VCR support for __Remocal Integartion Testing
 To record the integration tests for the `template-bff-service`, run the following command:
 
 ```
-$> REPLAY=record npm run test:int
+$ REPLAY=record npm run test:int
 ```
 
