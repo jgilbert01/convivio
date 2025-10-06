@@ -1,6 +1,6 @@
 # @convivio/connectors
 
-This module provides the connectors for [@Convivio](https://github.com/jgilbert01/convivio), which is a drop in replacement for the Serverless Framework (SF) v3.
+This module provides the ```connectors``` for [@Convivio](https://github.com/jgilbert01/convivio), which is a drop in replacement for the Serverless Framework (SF) v3.
 
 ## Factory
 Simplifies access to connectors throughout the system.
