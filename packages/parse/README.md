@@ -22,7 +22,7 @@ These variables provide access to the environment variables, such as:
 ## `${self:}`
 These variables provide access to the contents of the yaml file itself, such as:
 
-* `self:provider.environment.ENTITY_TABLE_NAME`
+* `${self:provider.environment.ENTITY_TABLE_NAME}`
 
 ## `${param:}`
 These variables automatically apply the STAGE option to simplify the use of the variables throughout the yaml file, such as:
