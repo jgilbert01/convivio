@@ -48,7 +48,7 @@ These variables provide access to the AWS STS caller identity:
 * `${aws:partition}` // @convivio only
 * `${aws:region}`
 
-## `${awsdesc:xyz}`
+## `${awsdesc:}`
 
 These variables provide access to the description of AWS resources, such as `DynamoDB.describeTable`. _(DynamoDB Only so far)_
 
@@ -71,10 +71,10 @@ These variables provide access to AWS ClousFormation stack outputs, such as:
 
 This variable type supports the region argument, such as `${cf(us-west-2):`.
 
-The last argument of all veariables in the default value.
+The last argument of all variables in the default value.
 
 ## `${file:}`
-These variables suppoert decomposing the yaml files into smaller.
+These variables support decomposing the yaml files into smaller files.
 Only yaml files are supported _(so far)_, such as:
 
 ```
