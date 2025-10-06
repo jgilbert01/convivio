@@ -1,6 +1,6 @@
 # @convivio/testing
 
-This module provides client-side support for the `integration testing` of services built with [@Convivio](https://github.com/jgilbert01/convivio), which is a drop in replacement for the Serverless Framework (SF) v3.
+This module provides client-side support for the local offline @convivio/simulator, which allows you to perform `integration testing` on your services that you have built with [@Convivio](https://github.com/jgilbert01/convivio).
 
 ## lambda-test
 This module invokes your Lambda function in the local offline @convivio/simulator:
@@ -20,7 +20,7 @@ describe('listener/index.js', () => {
 
 ```
 
-## jwt
+## JWT
 This module help you create test JWTs that you can use when invoking your API Gateway based Lambda functions in the local offline @convivio/simulator:
 
 ```
@@ -36,3 +36,13 @@ const JWT = createJwt({});
     .expect(200)
 . . .
 ```
+
+## VCR
+The @convivio/simulator provides VCR support for Remocal (remote + local) Integartion Testing, by using [nock](https://www.npmjs.com/package/nock#nock-back) to record and play back the calls to your AWS resources, such as DynamoDB, S3, and EventBridge.
+
+To record the integration tests for the `template-bff-service`, run the following command:
+
+```
+$> REPLAY=record npm run test:int
+```
+
