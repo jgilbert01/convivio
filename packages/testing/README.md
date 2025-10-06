@@ -3,7 +3,7 @@
 This module provides `client-side` support for the __Remocal__ (remote + local) _@convivio/simulator_, which allows you to perform `integration testing` on your services that you have built with [@Convivio](https://github.com/jgilbert01/convivio).
 
 ## lambda-test
-This module invokes your Lambda functions running in the remocal _@convivio/simulator_:
+This module invokes your non-API-Gateway based Lambda functions running in the remocal _@convivio/simulator_, such as listeners and triggers:
 
 ```
 import { toKinesisRecords } from 'aws-lambda-stream';
@@ -29,11 +29,12 @@ import { createJwt } from '@convivio/testing';
 
 const client = supertest('http://localhost:3001');
 const JWT = createJwt({});
-
 . . .
   it('should query', () => client.get('/things')
     .set('Authorization', JWT)
     .expect(200)
+    . . .
+  });
 . . .
 ```
 
