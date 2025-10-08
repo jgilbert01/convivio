@@ -23,11 +23,11 @@ export class SchedulePlugin {
       const schedules = functions
         .filter((f) => f.events)
         .flatMap(({ events, ...f }) => events
+          .filter((e) => e.schedule)
           .map((e) => ({
             function: f,
             schedule: typeof e.schedule === 'object' ? e.schedule : { rate: e.schedule },
           })))
-        .filter((e) => e.schedule)
         .flatMap((e) => (Array.isArray(e.schedule.rate)
           ? e.schedule.rate
             .map((rate) => ({
