@@ -64,6 +64,17 @@ functions:
       # - sqs:
       #     arn:
       #       Fn::GetAtt: [ TriggerQueue, Arn ]
+  # job:
+  #   handler: src/job/index.handle
+  #   events:
+  #     - schedule:
+  #         rate: ${self:custom.cron.${opt:region}}
+  #         input:
+  #           discriminator: job-x
+  #     - schedule:
+  #         rate: ${self:custom.cron.${opt:region}}
+  #         input:
+  #           discriminator: job-y
 
 resources:
   - ${file(cvo/apig.yml):resources}

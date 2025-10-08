@@ -26,6 +26,7 @@ custom:
   # replication: ${file(cvo/s3.yml):replication}
   # secrets: ${file(cvo/secrets.yml):secrets}
   # cfn: ${file(cvo/cfn.yml):cfn}
+  # cron: ${file(cvo/cron.yml):cron}
 
 environment:
   ACCOUNT_NAME: ${param:account}

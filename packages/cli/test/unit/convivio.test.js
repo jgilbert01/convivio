@@ -36,6 +36,7 @@ describe('convivio.js', () => {
         test: {
           handler: 'test/unit/handler.handler',
           key: 'test',
+          name: 'test-bff-service-dev-test',
           handlerEntry: {
             key: 'test/unit/handler',
             value: './test/unit/handler.js',
@@ -65,7 +66,7 @@ describe('convivio.js', () => {
           Type: 'AWS::Logs::LogGroup',
           Properties: {
             LogGroupName: '/aws/lambda/test-bff-service-dev-test',
-            RetentionInDays: undefined,
+            // RetentionInDays: undefined,
           },
         },
         IamRoleLambdaExecution: {
@@ -131,7 +132,7 @@ describe('convivio.js', () => {
               },
             ],
             Path: '/',
-            PermissionsBoundary: undefined,
+            // PermissionsBoundary: undefined,
             RoleName: {
               'Fn::Join': [
                 '-',
@@ -149,11 +150,12 @@ describe('convivio.js', () => {
         },
         TestLambdaFunction: {
           Type: 'AWS::Lambda::Function',
-          Condition: undefined,
+          // Condition: undefined,
           DependsOn: [
             'TestLogGroup',
           ],
           Properties: {
+            FunctionName: 'test-bff-service-dev-test',
             Handler: 'test/unit/handler.handler',
             Runtime: 'nodejs20.x',
             MemorySize: 1024,
@@ -164,12 +166,12 @@ describe('convivio.js', () => {
                 'Arn',
               ],
             },
-            Architectures: undefined,
-            Code: undefined,
-            Description: undefined,
-            Environment: undefined,
-            FunctionName: undefined,
-            VpcConfig: undefined,
+            // Architectures: undefined,
+            // Code: undefined,
+            // Description: undefined,
+            // Environment: undefined,
+            // FunctionName: undefined,
+            // VpcConfig: undefined,
           },
         },
         Bucket: {
