@@ -18,6 +18,7 @@ import {
   ResourcesPlugin,
   StreamPlugin,
   SqsPlugin,
+  SchedulePlugin,
   // TODO standardGenerators ???
 } from '@convivio/gen';
 import {
@@ -75,6 +76,7 @@ export default (convivio, overrides) => ({
 
     new StreamPlugin(convivio.options),
     new SqsPlugin(convivio.options),
+    new SchedulePlugin(convivio.options),
 
     new ResourcesPlugin(convivio.options),
 
