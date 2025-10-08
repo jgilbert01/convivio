@@ -62,23 +62,3 @@ const formatInputTransformer = (inputTransformer) => {
     return undefined;
   }
 };
-
-// "JobEventsRuleSchedule1": {
-//   "Type": "AWS::Events::Rule",
-//   "Properties": {
-//     "ScheduleExpression": "cron(5 7 1 JAN,APR,JUL,OCT ? *)",
-//     "State": "ENABLED",
-//     "Targets": [
-//       {
-//         "Input": "{\"discriminator\":\"job-x\"}",
-//         "Arn": {
-//           "Fn::GetAtt": [
-//             "JobLambdaFunction",
-//             "Arn"
-//           ]
-//         },
-//         "Id": "jobSchedule"
-//       }
-//     ]
-//   }
-// },
