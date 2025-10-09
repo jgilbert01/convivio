@@ -171,6 +171,19 @@ describe('events/schedule/index.js', () => {
             Targets: [
               {
                 Input: '{"discriminator":"job-x"}',
+                InputTransformer: {
+                  InputTemplate: '{"version": <version>, "id" : <id>, "detail-type": <detail-type>, "source": <source>, "account": <account>, "time": <time>, "region": <region>, "resources": <resources>, "discriminator": "job-x"}',
+                  InputPathsMap: {
+                    'version': '$.version',
+                    'id': '$.id',
+                    'detail-type': '$.detail-type',
+                    'source': '$.source',
+                    'account': '$.account',
+                    'time': '$.time',
+                    'region': '$.region',
+                    'resources': '$.resources',
+                  },
+                },
                 Arn: {
                   'Fn::GetAtt': [
                     'JobLambdaFunction',

@@ -75,6 +75,7 @@ functions:
   #         rate: ${self:custom.cron.${opt:region}}
   #         input:
   #           discriminator: job-y
+  #         inputTransformer: ${self:custom.cron.inputTransformer}
 
 resources:
   - ${file(cvo/apig.yml):resources}

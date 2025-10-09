@@ -521,6 +521,19 @@ export const SCHEDULE = {
             input: {
               discriminator: 'job-x',
             },
+            inputTransformer: {
+              inputPathsMap: {
+                'version': '$.version',
+                'id': '$.id',
+                'detail-type': '$.detail-type',
+                'source': '$.source',
+                'account': '$.account',
+                'time': '$.time',
+                'region': '$.region',
+                'resources': '$.resources',
+              },
+              inputTemplate: '{"version": <version>, "id" : <id>, "detail-type": <detail-type>, "source": <source>, "account": <account>, "time": <time>, "region": <region>, "resources": <resources>, "discriminator": "job-x"}',
+            },
           },
         },
       ],
