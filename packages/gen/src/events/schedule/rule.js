@@ -54,10 +54,10 @@ const formatInput = (input) => {
 
 const formatInputTransformer = (inputTransformer) => {
   if (inputTransformer) {
-    return JSON.stringify({
+    return {
       InputTemplate: inputTransformer.inputTemplate,
       InputPathsMap: inputTransformer.inputPathsMap,
-    });
+    };
   } else {
     return undefined;
   }
