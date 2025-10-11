@@ -4,11 +4,10 @@ provider:
   name: aws
   deploymentBucket: ${file(cvo/cfn.yml):deploymentBucket}
   iam:
-    # deploymentRole: ${file(cvo/cfn.yml):deploymentRole}
+    deploymentRole: ${file(cvo/cfn.yml):deploymentRole}
     role: ${file(cvo/iam.yml):role}
   stackTags: ${file(cvo/tags.yml)}
   runtime: nodejs20.x
-  versionFunctions: false
   logRetentionInDays: ${param:logRetentionInDays}
   environment: ${file(cvo/config.yml):environment}
   endpointType: REGIONAL

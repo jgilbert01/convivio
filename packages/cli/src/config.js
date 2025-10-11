@@ -41,7 +41,6 @@ export default (convivio, overrides) => ({
     './serverless.yml',
   ],
   credentials: (overrides?.credentials || cicdCredentials)(convivio, overrides),
-  // TODO factory ???
   resolvers: {
     opt: resolveFromObject(convivio.options),
     env: resolveFromObject(process.env),
