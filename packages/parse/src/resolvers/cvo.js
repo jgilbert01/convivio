@@ -1,11 +1,9 @@
 import _ from 'lodash';
 import debug from 'debug';
 
-import { factory } from '@convivio/connectors';
+const log = debug('cvo:parse:resolvers:cvo');
 
-const log = debug('cvo:parse:resolvers:sls');
-
-export const resolveFromSls = (cvo) =>
+export const resolveFromCvo = (cvo) =>
   async ({ param, address, defaultValue }) => {
     log('%j', { param, address, defaultValue });
 

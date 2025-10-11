@@ -6,7 +6,7 @@ import {
   resolveFromAws,
   resolveFromAwsDesc,
   resolveFromCf,
-  resolveFromSls,
+  resolveFromCvo,
   ParsePlugin,
 } from '@convivio/parse';
 import {
@@ -45,12 +45,12 @@ export default (convivio, overrides) => ({
     env: resolveFromObject(process.env),
     self: resolveFromSelf(convivio),
     param: resolveFromParam(convivio),
-    sls: resolveFromSls(convivio),
+    cvo: resolveFromCvo(convivio),
+    sls: resolveFromCvo(convivio),
     file: resolveFromFile(process.cwd()),
     aws: resolveFromAws(convivio),
     awsdesc: resolveFromAwsDesc(convivio),
     cf: resolveFromCf(convivio),
-
     ...(overrides?.resolvers || {}),
   },
   plugins: overrides?.plugins || [
