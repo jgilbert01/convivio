@@ -6,7 +6,7 @@ export default (metadata, convivio, ctx) => {
   ctx.lambdaPermissionLogicalId = `${normalizeResourceName(metadata.function.key)}LambdaPermissionApiGateway`;
   ctx.functionArnGetter = { 'Fn::GetAtt': [ctx.lambdaLogicalId, 'Arn'] };
 
-  ctx.authorizerPermissionLogicalId = getAuthorizerLogicalId(metadata, convivio);
+  ctx.authorizerPermissionLogicalId = getAuthorizerPermissionLogicalId(metadata, convivio);
 
   const Action = 'lambda:InvokeFunction';
   const Principal = 'apigateway.amazonaws.com';
@@ -57,7 +57,7 @@ export default (metadata, convivio, ctx) => {
   };
 };
 
-const getAuthorizerLogicalId = (metadata, convivio) => {
+const getAuthorizerPermissionLogicalId = (metadata, convivio) => {
   if (metadata.http.authorizer?.arn) {
     const { authorizer } = metadata.http;
     // if (!authorizer.name) authorizer.name = extractAuthorizerNameFromArn(authorizer.arn);

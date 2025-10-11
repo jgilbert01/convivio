@@ -4,7 +4,7 @@ import {
 
 export default (metadata, convivio, ctx) => {
   const { authorizer } = metadata.http;
-  if (!authorizer) return;
+  if (!authorizer) return {};
 
   if (!authorizer.name) authorizer.name = extractAuthorizerNameFromArn(authorizer.arn);
   // ctx.lambdaPermissionLogicalId = `${normalizeResourceName(metadata.function.key)}LambdaPermissionApiGateway`;

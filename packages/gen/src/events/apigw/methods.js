@@ -19,6 +19,9 @@ export default (metadata, convivio, ctx) => {
   //   normalizeName(methodName.toLowerCase()),
   //   metadata.http.method
   // );
+  // const getMethodLogicalId = (resourceId, methodName) => {
+  //   return `ApiGatewayMethod${resourceId}${this.normalizeMethodName(methodName)}`;
+  // };
 
   ctx.lambdaLogicalId = `${normalizeResourceName(metadata.function.key)}LambdaFunction`;
   // ctx.lambdaAliasName = metadata.targetAlias && metadata.targetAlias.name;
@@ -26,14 +29,16 @@ export default (metadata, convivio, ctx) => {
   //   metadata.targetAlias && metadata.targetAlias.logicalId;
   ctx.apiGatewayPermission = `${normalizeResourceName(metadata.function.key)}LambdaPermissionApiGateway`;
 
+  const authorizer = getMethodAuthorization(metadata, ctx);
+
   return {
     Resources: {
       [ctx.methodLogicalId]: {
         Type: 'AWS::ApiGateway::Method',
-        DependsOn: [ctx.apiGatewayPermission],
+        DependsOn: [ctx.apiGatewayPermission, ...authorizer.DependsOn],
         Properties: {
           ApiKeyRequired: metadata.http.private || false,
-          ...getMethodAuthorization(metadata, convivio, ctx),
+          ...authorizer.Properties,
           HttpMethod: metadata.http.method.toUpperCase(),
           Integration: getMethodIntegration(metadata.http, {
             lambdaLogicalId: ctx.lambdaLogicalId,
@@ -59,10 +64,6 @@ export default (metadata, convivio, ctx) => {
     },
   };
 };
-
-// const getMethodLogicalId = (resourceId, methodName) => {
-//   return `ApiGatewayMethod${resourceId}${this.normalizeMethodName(methodName)}`;
-// };
 
 const normalizeMethodName = (methodName) => normalizeName(methodName.toLowerCase());
 
@@ -96,50 +97,74 @@ const getMethodIntegration = (http, { lambdaLogicalId, lambdaAliasName }) => {
   return integration;
 };
 
-const getMethodAuthorization = ({ http }) => {
+const extractAuthorizerNameFromArn = (functionArn) => {
+  const splitArn = functionArn.split(':');
+  // TODO the following two lines assumes default function naming?  Is there a better way?
+  // TODO (see ~/lib/classes/service.js:~155)
+  const splitName = splitArn[splitArn.length - 1].split('-');
+  return splitName[splitName.length - 1];
+};
+
+const getMethodAuthorization = ({ http }, ctx) => {
   if (http.authorizer?.type === 'AWS_IAM') {
     return {
       Properties: {
         AuthorizationType: 'AWS_IAM',
       },
+      DependsOn: [],
     };
   }
 
   if (http.authorizer) {
-    if (http.authorizer.type && http.authorizer.authorizerId) {
-      const authorizationType = (
-        http.authorizer.type.toUpperCase() === 'TOKEN'
-        || http.authorizer.type.toUpperCase() === 'REQUEST'
-      )
-        ? 'CUSTOM'
-        : http.authorizer.type;
+    // if (http.authorizer.type && http.authorizer.authorizerId) {
+    //   const authorizationType = (
+    //     http.authorizer.type.toUpperCase() === 'TOKEN'
+    //     || http.authorizer.type.toUpperCase() === 'REQUEST'
+    //   )
+    //     ? 'CUSTOM'
+    //     : http.authorizer.type;
 
-      return {
-        Properties: {
-          AuthorizationType: authorizationType,
-          AuthorizerId: http.authorizer.authorizerId,
-          AuthorizationScopes: (
-            http.authorizer.type.toUpperCase() === 'COGNITO_USER_POOLS'
-            && http.authorizer.scopes
-            && http.authorizer.scopes.length
-          )
-            ? http.authorizer.scopes
-            : undefined,
-        },
-      };
+    //   return {
+    //     // Properties: {
+    //     AuthorizationType: authorizationType,
+    //     AuthorizerId: http.authorizer.authorizerId,
+    //     AuthorizationScopes: (
+    //       http.authorizer.type.toUpperCase() === 'COGNITO_USER_POOLS'
+    //       && http.authorizer.scopes
+    //       && http.authorizer.scopes.length
+    //     )
+    //       ? http.authorizer.scopes
+    //       : undefined,
+    //     // },
+    //   };
+    // }
+
+    if (!http.authorizer.name && http.authorizer.arn) {
+      http.authorizer.name = extractAuthorizerNameFromArn(http.authorizer.arn);
     }
+    // if (http.authorizer.name && !http.authorizer.arn) {
+    //   http.authorizer.arn = extractAuthorizerNameFromArn(http.authorizer.arn);
+    //   // if (authorizerFunctionName) {
+    //   //   const authorizerFunctionObj = this.serverless.service.getFunction(authorizerFunctionName);
+    //   //   arn = resolveLambdaTarget(authorizerFunctionName, authorizerFunctionObj);
+    //   //   if (authorizerFunctionObj.targetAlias) {
+    //   //     logicalId = authorizerFunctionObj.targetAlias.logicalId;
+    //   //   }
+    //   // }
+    // }
 
-    const authorizerLogicalId = ''; // this.provider.naming.getAuthorizerLogicalId(http.authorizer.name);
+    // const authorizerLogicalId = ''; // this.provider.naming.getAuthorizerLogicalId(http.authorizer.name);
+    ctx.authorizerLogicalId = `${normalizeResourceName(http.authorizer.name)}ApiGatewayAuthorizer`;
 
-    const authorizerArn = http.authorizer.arn;
+    // const authorizerArn = http.authorizer.arn;
 
-    const authorizationType = 'CUSTOM';
+    // const authorizationType = 'CUSTOM';
     return {
       Properties: {
-        AuthorizationType: authorizationType,
-        AuthorizerId: { Ref: authorizerLogicalId },
+        AuthorizationType: 'CUSTOM',
+        AuthorizerId: { Ref: ctx.authorizerLogicalId },
       },
-      DependsOn: authorizerLogicalId,
+      DependsOn: [ctx.authorizerLogicalId],
     };
   }
 
@@ -147,6 +172,7 @@ const getMethodAuthorization = ({ http }) => {
     Properties: {
       AuthorizationType: 'NONE',
     },
+    DependsOn: [],
   };
 };
 

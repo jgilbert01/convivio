@@ -29,7 +29,7 @@ export default (convivio, ctx) => {
               {
                 Ref: ctx.restApiLogicalId,
               },
-              // '-vpce-08f919c6a30701764.execute-api.',
+              // '-vpce-123456789012.execute-api.',
               '.execute-api.',
               { Ref: 'AWS::Region' },
               '.',

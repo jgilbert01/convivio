@@ -36,13 +36,14 @@ const convivio = {
 
 convivio.config.plugins.forEach((p) => p.apply(convivio));
 
-describe.only('events/apigw/index.js', () => {
+describe('events/apigw/index.js', () => {
   afterEach(sinon.restore);
 
   it('should generate template', async () => {
     await convivio.hooks.generate.promise(convivio);
 
-    console.log(JSON.stringify({ json: convivio.json }, null, 2));
+    // console.log(JSON.stringify({ json: convivio.json }, null, 2));
+    // TODO rerun template to check json
 
     expect(convivio.json).to.deep.equal({
       AWSTemplateFormatVersion: '2010-09-09',
@@ -51,7 +52,7 @@ describe.only('events/apigw/index.js', () => {
         ApiGatewayRestApi: {
           Type: 'AWS::ApiGateway::RestApi',
           Properties: {
-            Name: 'dev-my-bff-service',
+            Name: 'dev-my-bff-service', // TODO fix naming ???
             BinaryMediaTypes: [
               '*/*',
             ],
@@ -100,7 +101,7 @@ describe.only('events/apigw/index.js', () => {
                 'RootResourceId',
               ],
             },
-            PathPart: 'things',
+            PathPart: 'things', // TODO hybrid config
             RestApiId: {
               Ref: 'ApiGatewayRestApi',
             },
