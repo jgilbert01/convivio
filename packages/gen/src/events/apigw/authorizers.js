@@ -7,7 +7,6 @@ export default (metadata, convivio, ctx) => {
   if (!authorizer) return {};
 
   if (!authorizer.name) authorizer.name = extractAuthorizerNameFromArn(authorizer.arn);
-  // ctx.lambdaPermissionLogicalId = `${normalizeResourceName(metadata.function.key)}LambdaPermissionApiGateway`;
   ctx.authorizerLogicalId = `${normalizeResourceName(authorizer.name)}ApiGatewayAuthorizer`;
 
   return {
@@ -16,8 +15,6 @@ export default (metadata, convivio, ctx) => {
         Type: 'AWS::ApiGateway::Authorizer',
         Properties: {
           AuthorizerResultTtlInSeconds: authorizer.resultTtlInSeconds || 300,
-          //   resultTtlInSeconds = Number.parseInt(authorizer.resultTtlInSeconds, 10);
-          //   resultTtlInSeconds = Number.isNaN(resultTtlInSeconds) ? 300 : resultTtlInSeconds;
           AuthorizerUri: {
             'Fn::Join': [
               '',
@@ -46,36 +43,6 @@ export default (metadata, convivio, ctx) => {
 
 const extractAuthorizerNameFromArn = (functionArn) => {
   const splitArn = functionArn.split(':');
-  // TODO the following two lines assumes default function naming?  Is there a better way?
-  // TODO (see ~/lib/classes/service.js:~155)
   const splitName = splitArn[splitArn.length - 1].split('-');
   return splitName[splitName.length - 1];
 };
-
-// const _ = require('lodash');
-// const awsArnRegExs = require('../../../../../utils/arn-regular-expressions');
-
-//       if (event.http.authorizer && event.http.authorizer.arn) {
-//         const { authorizer } = event.http;
-
-//         if (typeof authorizer.identityValidationExpression === 'string') {
-//           Object.assign(authorizerProperties, {
-//             IdentityValidationExpression: authorizer.identityValidationExpression,
-//           });
-//         }
-
-//         const authorizerLogicalId = this.provider.naming.getAuthorizerLogicalId(authorizer.name);
-
-//         if (
-//           (authorizer.type || '').toUpperCase() === 'COGNITO_USER_POOLS'
-//           || (typeof authorizer.arn === 'string'
-//             && awsArnRegExs.cognitoIdpArnExpr.test(authorizer.arn))
-//         ) {
-//           authorizerProperties.Type = 'COGNITO_USER_POOLS';
-//           authorizerProperties.ProviderARNs = [authorizer.arn];
-//         } else {
-//         }
-//       }
-//     });
-//   },
-// };

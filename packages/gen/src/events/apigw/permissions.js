@@ -31,12 +31,8 @@ export default (metadata, convivio, ctx) => {
     Resources: {
       [ctx.lambdaPermissionLogicalId]: {
         Type: 'AWS::Lambda::Permission',
-        // DependsOn: lambdaAliasLogicalId || undefined,
         Properties: {
           FunctionName: ctx.functionArnGetter,
-          //   FunctionName: ctx.lambdaAliasName
-          //     ? { 'Fn::Join': [':', [ctx.functionArnGetter, ctx.lambdaAliasName]] }
-          //     : ctx.functionArnGetter,
           Action,
           Principal,
           SourceArn,
@@ -60,7 +56,6 @@ export default (metadata, convivio, ctx) => {
 const getAuthorizerPermissionLogicalId = (metadata, convivio) => {
   if (metadata.http.authorizer?.arn) {
     const { authorizer } = metadata.http;
-    // if (!authorizer.name) authorizer.name = extractAuthorizerNameFromArn(authorizer.arn);
     const authorizerPermissionLogicalId = `${normalizeResourceName(authorizer.name)}LambdaPermissionApiGateway`;
 
     if (convivio.json[authorizerPermissionLogicalId]) return undefined;
@@ -68,8 +63,6 @@ const getAuthorizerPermissionLogicalId = (metadata, convivio) => {
 
     if (
       (authorizer.type || '').toUpperCase() === 'COGNITO_USER_POOLS'
-      // || (typeof authorizer.arn === 'string'
-      //   && awsArnRegExs.cognitoIdpArnExpr.test(authorizer.arn))
     ) {
       return undefined;
     }

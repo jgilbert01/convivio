@@ -42,17 +42,12 @@ export class ApiGatewayPlugin {
 
       http.forEach((e) => {
         mergeResources(convivio.json, resources(e, convivio, ctx));
-        // cors
         mergeResources(convivio.json, methods(e, convivio, ctx));
         mergeResources(convivio.json, authorizers(e, convivio, ctx));
         mergeResources(convivio.json, permissions(e, convivio, ctx));
       });
 
       mergeResources(convivio.json, deployment(convivio, ctx));
-      // usage + api key
-      // domains
-      // gateway responses
-      // other
     });
   }
 }

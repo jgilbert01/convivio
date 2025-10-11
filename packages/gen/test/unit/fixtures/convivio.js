@@ -549,9 +549,8 @@ export const APIGW = {
       events: [
         {
           http: {
-            path: 'things/{proxy+}',
+            path: '{proxy+}',
             method: 'any',
-            // cors: ${file(cvo/apig.yml):cors}
             authorizer: {
               arn: 'arn:aws:lambda:us-west-2:123456789012:function:my-idm-service-dev-authorizer',
             },

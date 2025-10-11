@@ -43,7 +43,6 @@ describe('events/apigw/index.js', () => {
     await convivio.hooks.generate.promise(convivio);
 
     // console.log(JSON.stringify({ json: convivio.json }, null, 2));
-    // TODO rerun template to check json
 
     expect(convivio.json).to.deep.equal({
       AWSTemplateFormatVersion: '2010-09-09',
@@ -92,7 +91,7 @@ describe('events/apigw/index.js', () => {
             },
           },
         },
-        ApiGatewayResourceThings: {
+        ApiGatewayResourceProxyVar: {
           Type: 'AWS::ApiGateway::Resource',
           Properties: {
             ParentId: {
@@ -101,129 +100,18 @@ describe('events/apigw/index.js', () => {
                 'RootResourceId',
               ],
             },
-            PathPart: 'things', // TODO hybrid config
-            RestApiId: {
-              Ref: 'ApiGatewayRestApi',
-            },
-          },
-        },
-        ApiGatewayResourceThingsProxyVar: {
-          Type: 'AWS::ApiGateway::Resource',
-          Properties: {
-            ParentId: {
-              Ref: 'ApiGatewayResourceThings',
-            },
             PathPart: '{proxy+}',
             RestApiId: {
               Ref: 'ApiGatewayRestApi',
             },
           },
         },
-        // ApiGatewayMethodProxyVarOptions: {
-        //   Type: 'AWS::ApiGateway::Method',
-        //   Properties: {
-        //     AuthorizationType: 'NONE',
-        //     HttpMethod: 'OPTIONS',
-        //     MethodResponses: [
-        //       {
-        //         StatusCode: '200',
-        //         ResponseParameters: {
-        //           'method.response.header.Access-Control-Allow-Origin': true,
-        //           'method.response.header.Access-Control-Allow-Headers': true,
-        //           'method.response.header.Access-Control-Allow-Methods': true,
-        //           'method.response.header.Access-Control-Max-Age': true,
-        //           'method.response.header.Cache-Control': true,
-        //         },
-        //         ResponseModels: {},
-        //       },
-        //     ],
-        //     RequestParameters: {},
-        //     Integration: {
-        //       Type: 'MOCK',
-        //       RequestTemplates: {
-        //         'application/json': '{statusCode:200}',
-        //       },
-        //       ContentHandling: 'CONVERT_TO_TEXT',
-        //       IntegrationResponses: [
-        //         {
-        //           StatusCode: '200',
-        //           ResponseParameters: {
-        //             'method.response.header.Access-Control-Allow-Origin': "'*'",
-        //             'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
-        //             'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
-        //             'method.response.header.Access-Control-Max-Age': "'86400'",
-        //             'method.response.header.Cache-Control': "'max-age=86400, s-maxage=86400'",
-        //           },
-        //           ResponseTemplates: {
-        //             'application/json': '',
-        //           },
-        //         },
-        //       ],
-        //     },
-        //     ResourceId: {
-        //       Ref: 'ApiGatewayResourceProxyVar',
-        //     },
-        //     RestApiId: {
-        //       Ref: 'ApiGatewayRestApi',
-        //     },
-        //   },
-        // },
-        // ApiGatewayMethodProxyVarAny: {
-        //   Type: 'AWS::ApiGateway::Method',
-        //   Properties: {
-        //     HttpMethod: 'ANY',
-        //     // RequestParameters: {},
-        //     ResourceId: {
-        //       Ref: 'ApiGatewayResourceProxyVar',
-        //     },
-        //     RestApiId: {
-        //       Ref: 'ApiGatewayRestApi',
-        //     },
-        //     ApiKeyRequired: false,
-        //     AuthorizationType: 'CUSTOM',
-        //     AuthorizerId: {
-        //       Ref: 'AuthorizerApiGatewayAuthorizer',
-        //     },
-        //     Integration: {
-        //       IntegrationHttpMethod: 'POST',
-        //       Type: 'AWS_PROXY',
-        //       Uri: {
-        //         'Fn::Join': [
-        //           '',
-        //           [
-        //             'arn:',
-        //             {
-        //               Ref: 'AWS::Partition',
-        //             },
-        //             ':apigateway:',
-        //             {
-        //               Ref: 'AWS::Region',
-        //             },
-        //             ':lambda:path/2015-03-31/functions/',
-        //             {
-        //               'Fn::GetAtt': [
-        //                 'RestLambdaFunction',
-        //                 'Arn',
-        //               ],
-        //             },
-        //             '/invocations',
-        //           ],
-        //         ],
-        //       },
-        //     },
-        //     // MethodResponses: [],
-        //   },
-        //   DependsOn: [
-        //     'AuthorizerApiGatewayAuthorizer',
-        //   ],
-        // },
-        ApiGatewayMethodThingsProxyVarAny: {
+        ApiGatewayMethodProxyVarAny: {
           Type: 'AWS::ApiGateway::Method',
           Properties: {
             HttpMethod: 'ANY',
-            // RequestParameters: {},
             ResourceId: {
-              Ref: 'ApiGatewayResourceThingsProxyVar',
+              Ref: 'ApiGatewayResourceProxyVar',
             },
             RestApiId: {
               Ref: 'ApiGatewayRestApi',
@@ -260,7 +148,6 @@ describe('events/apigw/index.js', () => {
                 ],
               },
             },
-            // MethodResponses: [],
           },
           DependsOn: [
             'RestLambdaPermissionApiGateway',
@@ -305,10 +192,6 @@ describe('events/apigw/index.js', () => {
             },
             StageName: 'dev',
           },
-          // DependsOn: [
-          //   'ApiGatewayMethodProxyVarOptions',
-          //   'ApiGatewayMethodProxyVarAny',
-          // ],
         },
         RestLambdaPermissionApiGateway: {
           Type: 'AWS::Lambda::Permission',
