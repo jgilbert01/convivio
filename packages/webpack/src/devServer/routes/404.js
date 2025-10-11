@@ -9,7 +9,7 @@ export default (devServer) => {
     res.status(404).send({
       // FunctionError: 'ResourceNotFoundException',
       // Payload: {
-        Message: `Function not found: ${url.replace('/2015-03-31/functions/', '').replace('/invocations', '')}`,
+      Message: `Function not found: ${url.replace('/2015-03-31/functions/', '').replace('/invocations', '')}`,
       //   Type: 'User',
       // },
       // StatusCode: 404,

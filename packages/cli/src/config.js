@@ -18,6 +18,7 @@ import {
   ResourcesPlugin,
   StreamPlugin,
   SqsPlugin,
+  SchedulePlugin,
   // TODO standardGenerators ???
 } from '@convivio/gen';
 import {
@@ -40,6 +41,7 @@ export default (convivio, overrides) => ({
     './serverless.yml',
   ],
   credentials: (overrides?.credentials || cicdCredentials)(convivio, overrides),
+  // TODO factory ???
   resolvers: {
     opt: resolveFromObject(convivio.options),
     env: resolveFromObject(process.env),
@@ -75,6 +77,7 @@ export default (convivio, overrides) => ({
 
     new StreamPlugin(convivio.options),
     new SqsPlugin(convivio.options),
+    new SchedulePlugin(convivio.options),
 
     new ResourcesPlugin(convivio.options),
 

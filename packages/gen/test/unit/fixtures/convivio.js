@@ -4,7 +4,7 @@ export const CORE = {
     name: 'aws',
     runtime: 'nodejs18.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
     environment: {
       ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
     },
@@ -198,7 +198,7 @@ export const LAMBDA = {
     name: 'aws',
     runtime: 'nodejs18.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
     environment: {
       ENTITY_TABLE_NAME: 'my-bff-service-dev-entities',
     },
@@ -339,7 +339,7 @@ export const STREAM = {
     name: 'aws',
     runtime: 'nodejs18.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
   },
   package: {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
@@ -405,7 +405,7 @@ export const SQS = {
     name: 'aws',
     runtime: 'nodejs18.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
   },
   package: {
     artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
@@ -455,7 +455,7 @@ export const ALB = {
     name: 'aws',
     runtime: 'nodejs20.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
   },
   package: {
     artifactDirectoryName: 'convivio/my-ui-main/dev/1725248162835-2024-09-02T03:36:02.835Z',
@@ -495,7 +495,7 @@ export const APIGW = {
     name: 'aws',
     runtime: 'nodejs20.x',
     region: 'us-west-2',
-    deploymentBucket: 'my-deploy-bucket',
+    deploymentBucket: { name: 'my-deploy-bucket' },
     endpointType: 'PRIVATE',
     apiGateway: {
       binaryMediaTypes: [
@@ -554,6 +554,58 @@ export const APIGW = {
             // cors: ${file(cvo/apig.yml):cors}
             authorizer: {
               arn: 'arn:aws:lambda:us-west-2:123456789012:function:my-idm-service-dev-authorizer',
+            },
+          },
+        },
+      ],
+    },
+  },
+};
+
+export const SCHEDULE = {
+  service: 'my-bff-service',
+  provider: {
+    name: 'aws',
+    runtime: 'nodejs18.x',
+    region: 'us-west-2',
+    deploymentBucket: { name: 'my-deploy-bucket' },
+  },
+  package: {
+    artifactDirectoryName: 'convivio/my-bff-service/dev/1725248162835-2024-09-02T03:36:02.835Z',
+  },
+  custom: {
+    subsys: 'my',
+    stage: 'dev',
+    region: 'us-west-2',
+  },
+  functions: {
+    job: {
+      handler: 'src/job/index.handle',
+
+      key: 'job',
+      name: 'my-bff-service-dev-job',
+      handlerEntry: { key: 'src/job/index', value: './src/job/index.js' },
+      package: { artifact: './.webpack/job.zip' },
+
+      events: [
+        {
+          schedule: {
+            rate: ['cron(5 7 1 JAN,APR,JUL,OCT ? *)'],
+            input: {
+              discriminator: 'job-x',
+            },
+            inputTransformer: {
+              inputPathsMap: {
+                'version': '$.version',
+                'id': '$.id',
+                'detail-type': '$.detail-type',
+                'source': '$.source',
+                'account': '$.account',
+                'time': '$.time',
+                'region': '$.region',
+                'resources': '$.resources',
+              },
+              inputTemplate: '{"version": <version>, "id" : <id>, "detail-type": <detail-type>, "source": <source>, "account": <account>, "time": <time>, "region": <region>, "resources": <resources>, "discriminator": "job-x"}',
             },
           },
         },

@@ -4,10 +4,11 @@ provider:
   name: aws
   deploymentBucket: ${file(cvo/cfn.yml):deploymentBucket}
   iam:
-    deploymentRole: ${file(cvo/cfn.yml):deploymentRole}
+    # deploymentRole: ${file(cvo/cfn.yml):deploymentRole}
     role: ${file(cvo/iam.yml):role}
   stackTags: ${file(cvo/tags.yml)}
   runtime: nodejs20.x
+  versionFunctions: false
   logRetentionInDays: ${param:logRetentionInDays}
   environment: ${file(cvo/config.yml):environment}
   endpointType: REGIONAL
@@ -64,6 +65,18 @@ functions:
       # - sqs:
       #     arn:
       #       Fn::GetAtt: [ TriggerQueue, Arn ]
+  # job:
+  #   handler: src/job/index.handle
+  #   events:
+  #     - schedule:
+  #         rate: ${self:custom.cron.${opt:region}}
+  #         input:
+  #           discriminator: job-x
+  #     - schedule:
+  #         rate: ${self:custom.cron.${opt:region}}
+  #         input:
+  #           discriminator: job-y
+  #         inputTransformer: ${self:custom.cron.inputTransformer}
 
 resources:
   - ${file(cvo/apig.yml):resources}
