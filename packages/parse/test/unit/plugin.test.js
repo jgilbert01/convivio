@@ -91,6 +91,7 @@ describe('plugin.js', () => {
             },
           ],
           key: 'rest',
+          name: 'my-bff-service-dev-rest',
           handlerEntry: {
             key: 'src/rest/index',
             value: './src/rest/index.js',
@@ -123,6 +124,7 @@ describe('plugin.js', () => {
             },
           ],
           key: 'listener',
+          name: 'my-bff-service-dev-listener',
           handlerEntry: {
             key: 'src/listener/index',
             value: './src/listener/index.js',
