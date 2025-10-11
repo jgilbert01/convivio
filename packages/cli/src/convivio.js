@@ -37,6 +37,8 @@ class Convivio {
     };
 
     this.config.plugins.forEach((p) => p.apply(this));
+
+    this.instanceId = new Date().getTime().toString();
   }
 
   async print() {
