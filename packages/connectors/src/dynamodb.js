@@ -15,6 +15,7 @@ class Connector {
     debug,
     timeout = 18000,
     credentials,
+    region,
   }) {
     this.debug = (msg) => debug('%j', msg);
     this.client = DynamoDBDocumentClient.from(new DynamoDBClient({
@@ -24,6 +25,7 @@ class Connector {
       }),
       logger: defaultDebugLogger(debug),
       credentials,
+      region,
     }));
   }
 

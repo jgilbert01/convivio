@@ -11,13 +11,13 @@ const log = debug('cvo:connectors:factory');
 
 const connectors = {};
 const factories = {
-  CloudFormation: (credentials) => new CloudFormationConnector({ debug: log, credentials }),
-  DynamoDB: (credentials) => new DynamoDBConnector({ debug: log, credentials }),
-  STS: (credentials) => new StsConnector({ debug: log, credentials }),
-  S3: (credentials) => new S3Connector({ debug: log, credentials }),
+  CloudFormation: (credentials, region) => new CloudFormationConnector({ debug: log, credentials, region }),
+  DynamoDB: (credentials, region) => new DynamoDBConnector({ debug: log, credentials, region }),
+  STS: (credentials, region) => new StsConnector({ debug: log, credentials, region }),
+  S3: (credentials, region) => new S3Connector({ debug: log, credentials, region }),
   // DMS
-  SecretsManager: (credentials) => new SecretsManagerConnector({ debug: log, credentials }),
-  CertificateManager: (credentials) => new CertificateManagerConnector({ debug: log, credentials }),
+  SecretsManager: (credentials, region) => new SecretsManagerConnector({ debug: log, credentials, region }),
+  CertificateManager: (credentials, region) => new CertificateManagerConnector({ debug: log, credentials, region }),
 };
 
 export const factory = (credentials, region, service) => {
@@ -29,7 +29,7 @@ export const factory = (credentials, region, service) => {
 
   let connector = r[service];
   if (!connector) {
-    connector = r[service] = factories[service](credentials); // TODO assert
+    connector = r[service] = factories[service](credentials, region); // TODO assert
     // connector = r[service];
   }
 
