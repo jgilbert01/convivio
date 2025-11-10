@@ -47,10 +47,10 @@ export const deploy = async (plugin, convivio, progress) => {
     RoleARN: convivio.yaml.provider.iam?.deploymentRole,
     Tags: Object.entries({
       STAGE: convivio.options.stage,
-      ...convivio.yaml.provider.stackTags
+      ...convivio.yaml.provider.stackTags,
     }).map(([Key, Value]) => ({
       Key,
-      Value
+      Value,
     })),
     TemplateBody,
     TemplateURL,

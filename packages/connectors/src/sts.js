@@ -12,6 +12,7 @@ class Connector {
     debug,
     timeout = 18000,
     credentials,
+    region,
   }) {
     this.debug = (msg) => debug('%j', msg);
     this.client = new STSClient({
@@ -21,6 +22,7 @@ class Connector {
       }),
       logger: defaultDebugLogger(debug),
       credentials,
+      region,
     });
   }
 
