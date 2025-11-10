@@ -22,6 +22,11 @@ const sqs = (metadata, convivio) => ({
       Enabled: metadata.sqs.enabled || true,
 
       MaximumBatchingWindowInSeconds: metadata.sqs.batchWindow, // Integer
+      ...(metadata.sqs.maximumConcurrency && {
+        ScalingConfig: {
+          MaximumConcurrency: metadata.sqs.maximumConcurrency, // Integer
+        },
+      }),
 
       EventSourceArn: metadata.sqs.arn,
 

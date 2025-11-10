@@ -17,7 +17,7 @@ export class SecretsManagerPlugin {
 
 let updated = false;
 
-const putSecrets = (pre) => (convivio) => {
+const putSecrets = (pre) => async (convivio) => {
   log('%j', { convivio });
 
   if (!convivio.yaml.custom?.secrets) return;

@@ -3,6 +3,7 @@ import {
   DeleteObjectsCommand,
   HeadBucketCommand,
   ListObjectsV2Command,
+  PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
@@ -49,6 +50,10 @@ class Connector {
     });
 
     return upload.done();
+  }
+
+  putObject(params) {
+    return this._sendCommand(new PutObjectCommand(params));
   }
 
   headBucket(params) {
