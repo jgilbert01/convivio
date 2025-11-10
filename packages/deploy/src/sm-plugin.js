@@ -17,7 +17,7 @@ export class SecretsManagerPlugin {
 
 let updated = false;
 
-const putSecrets = (pre) => async (convivio) => {
+const putSecrets = (pre) => (convivio) => {
   log('%j', { convivio });
 
   if (!convivio.yaml.custom?.secrets) return;
@@ -28,13 +28,13 @@ const putSecrets = (pre) => async (convivio) => {
 
   try {
     const config = {
-      secretId: `${convivio.yaml.service}/${options.stage}`,
+      secretId: `${convivio.yaml.service}/${convivio.options.stage}`,
       ...convivio.yaml.custom.secrets,
     };
 
     if (
-      config.variableNames === undefined ||
-      config.variableNames.length === 0
+      config.variableNames === undefined
+      || config.variableNames.length === 0
     ) {
       console.log('secrets-mgr-plugin: variableNames not defined. Skipping secrets upload.');
       return;
@@ -59,11 +59,11 @@ const putSecrets = (pre) => async (convivio) => {
     return connector.listSecrets({
       Filters: [{
         Key: 'name',
-        Values: [config.secretId]
-      }]
+        Values: [config.secretId],
+      }],
     })
       .then((data) => {
-        if (config.debug) console.log(data);
+        log(data);
 
         const found = data.SecretList.find((e) => e.Name === config.secretId);
 
@@ -72,9 +72,9 @@ const putSecrets = (pre) => async (convivio) => {
             SecretId: config.secretId,
             SecretString: Buffer.from(JSON.stringify(secrets)).toString('base64'),
           })
-            .then((data) => {
+            .then((data2) => {
               updated = true;
-              console.log('putSecretValue: %j', data);
+              log('putSecretValue: %j', data2);
             });
         }
       });

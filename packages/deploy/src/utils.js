@@ -98,7 +98,7 @@ export const getArtifactDirectoryName = (convivio) => {
   if (!convivio.yaml.package) {
     convivio.yaml.package = {};
   }
-  
+
   if (!convivio.yaml.package.artifactDirectoryName) {
     const date = new Date();
     const serviceStage = `${convivio.yaml.service}/${convivio.options.stage}`;
