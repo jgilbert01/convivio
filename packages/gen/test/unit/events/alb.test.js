@@ -102,6 +102,14 @@ describe('events/alb/index.js', () => {
                   '/*',
                 ],
               },
+              {
+                Field: 'http-request-method',
+                HttpRequestMethodConfig: {
+                  Values: [
+                    'GET',
+                  ],
+                },
+              },
             ],
             ListenerArn: 'arn:aws:elasticloadbalancing:us-west-2:123456789012:listener/app/my-global-resources-stg/1234567890123456/6543210987654321',
             Priority: 40000,

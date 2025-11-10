@@ -17,14 +17,14 @@ export class ResourcesPlugin {
   apply(cvo) {
     cvo.hooks.generate.tapPromise(ResourcesPlugin.name, async (convivio) => {
       log('%j', { convivio });
-      if (!convivio.yaml.resources) return;
-
-      if (Array.isArray(convivio.yaml.resources)) {
-        convivio.yaml.resources.forEach((r) => {
-          mergeResources(convivio.json, r);
-        });
-      } else {
-        mergeResources(convivio.json, convivio.yaml.resources);
+      if (convivio.yaml.resources) {
+        if (Array.isArray(convivio.yaml.resources)) {
+          convivio.yaml.resources.forEach((r) => {
+            mergeResources(convivio.json, r);
+          });
+        } else {
+          mergeResources(convivio.json, convivio.yaml.resources);
+        }
       }
 
       writeFileSync('./.convivio/cloudformation-template.json', convivio.json);

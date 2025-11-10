@@ -1,3 +1,5 @@
+const toArray = (v) => (Array.isArray(v) ? v : [v]);
+
 export default (metadata, convivio, ctx) => {
   // let Order = 0;
   const Actions = [];
@@ -16,14 +18,14 @@ export default (metadata, convivio, ctx) => {
   if (metadata.alb.conditions.path) {
     Conditions.push({
       Field: 'path-pattern',
-      Values: [metadata.alb.conditions.path],
+      Values: toArray(metadata.alb.conditions.path),
     });
   }
   if (metadata.alb.conditions.host) {
     Conditions.push({
       Field: 'host-header',
       HostHeaderConfig: {
-        Values: [metadata.alb.conditions.host],
+        Values: toArray(metadata.alb.conditions.host),
       },
     });
   }
@@ -31,7 +33,7 @@ export default (metadata, convivio, ctx) => {
     Conditions.push({
       Field: 'http-request-method',
       HttpRequestMethodConfig: {
-        Values: [metadata.alb.conditions.method],
+        Values: toArray(metadata.alb.conditions.method),
       },
     });
   }
@@ -59,7 +61,7 @@ export default (metadata, convivio, ctx) => {
     Conditions.push({
       Field: 'source-ip',
       SourceIpConfig: {
-        Values: [metadata.alb.conditions.ip],
+        Values: toArray(metadata.alb.conditions.ip),
       },
     });
   }

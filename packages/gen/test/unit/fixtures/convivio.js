@@ -481,6 +481,7 @@ export const ALB = {
             priority: 40000,
             conditions: {
               path: '/*',
+              method: ['GET'],
             },
           },
         },
