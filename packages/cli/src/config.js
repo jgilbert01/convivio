@@ -26,6 +26,7 @@ import {
   DeployPlugin,
   CertificateManagerPlugin,
   SecretsManagerPlugin,
+  S3DeployPlugin,
 } from '@convivio/deploy';
 import { WebpackPlugin } from '@convivio/webpack';
 
@@ -74,5 +75,6 @@ export default (convivio, overrides) => ({
     new DeployPlugin(convivio.options),
     new CertificateManagerPlugin(convivio.options),
     new SecretsManagerPlugin(convivio.options),
+    new S3DeployPlugin(convivio.options),
   ],
 });
