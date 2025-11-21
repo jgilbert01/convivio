@@ -1,9 +1,9 @@
 import {
   DynamoDBClient,
+  DescribeTableCommand,
 } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient,
-  DescribeTableCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { NodeHttpHandler } from '@smithy/node-http-handler';
 import Promise from 'bluebird';
