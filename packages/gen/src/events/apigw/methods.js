@@ -87,7 +87,7 @@ const getMethodAuthorization = ({ http }, ctx) => {
 
   if (http.authorizer) {
     // local authorizer function
-    if (!http.authorizer.name && !http.authorizer.arn) {
+    if (typeof http.authorizer === 'string') {
       http.authorizer = {
         name: http.authorizer,
         arn: {
