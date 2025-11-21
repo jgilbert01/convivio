@@ -1,6 +1,6 @@
 {
   "name": "@convivio/deploy",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
@@ -73,7 +73,7 @@
     "@aws-sdk/client-cloudformation": "^3.632.0",
     "@aws-sdk/client-s3": "^3.633.0",
     "@aws-sdk/lib-storage": "^3.633.0",
-    "@convivio/connectors": "^0.0.22",
+    "@convivio/connectors": "^0.0.23",
     "@smithy/node-http-handler": "^3.1.4",
     "bluebird": "^3.7.1",
     "debug": "^4.1.1",
