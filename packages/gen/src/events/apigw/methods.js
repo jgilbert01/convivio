@@ -15,6 +15,7 @@ export default (metadata, convivio, ctx) => {
   ctx.methodLogicalId = `ApiGatewayMethod${ctx.resourceName}${normalizeMethodName(ctx.methodName.toLowerCase())}`;
   ctx.lambdaLogicalId = `${normalizeResourceName(metadata.function.key)}LambdaFunction`;
   ctx.apiGatewayPermission = `${normalizeResourceName(metadata.function.key)}LambdaPermissionApiGateway`;
+  ctx.apiGatewayMethodLogicalIds = [...(ctx.apiGatewayMethodLogicalIds || []), ctx.methodLogicalId];
 
   const authorizer = getMethodAuthorization(metadata, ctx);
 
@@ -93,9 +94,9 @@ const getMethodAuthorization = ({ http }, ctx) => {
         arn: {
           'Fn::GetAtt': [
             `${normalizeResourceName(http.authorizer)}LambdaFunction`,
-            'Arn'
-          ]
-        }
+            'Arn',
+          ],
+        },
       };
     }
 
