@@ -15,33 +15,42 @@ export const deploy = async (plugin, convivio, progress) => {
   // this is just for example projects and bootstrapping <subsys>-pipeline-resources
   const TemplateBody = TemplateURL ? undefined : JSON.stringify(convivio.json);
 
+  // auto import or manual import
+  // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/import-resources.html
+  const ImportExistingResources = convivio.options.import && !convivio.yaml.provider.resourcesToImport;
+  const ResourcesToImport = convivio.options.import && convivio.yaml.provider.resourcesToImport;
+
   const connector = factory(convivio.config.credentials, convivio.options.region, 'CloudFormation');
 
   // TODO validateTemplate ??? whole template ???
 
-  const ChangeSetType = await connector.describeStacks({
-    StackName,
-  })
-    .then(async () => {
-      await connector.deleteChangeSet({
-        StackName,
-        ChangeSetName,
-      });
-
-      return 'UPDATE';
+  const ChangeSetType = ResourcesToImport ?
+    'IMPORT' :
+    await connector.describeStacks({
+      StackName,
     })
-    .catch((err) => {
-      if (err.message.indexOf('does not exist') > -1) {
-        return 'CREATE';
-      }
+      .then(async () => {
+        await connector.deleteChangeSet({
+          StackName,
+          ChangeSetName,
+        });
 
-      throw err;
-    });
+        return 'UPDATE';
+      })
+      .catch((err) => {
+        if (err.message.indexOf('does not exist') > -1) {
+          return 'CREATE';
+        }
+
+        throw err;
+      });
 
   await connector.createChangeSet({
     StackName,
     ChangeSetName,
     ChangeSetType,
+    ImportExistingResources,
+    ResourcesToImport,
     Capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
     Parameters: [],
     RoleARN: convivio.yaml.provider.iam?.deploymentRole,
@@ -61,7 +70,6 @@ export const deploy = async (plugin, convivio, progress) => {
 
   writeFileSync('./.convivio/change-set.json', changeSetDescription);
 
-  // TODO --force ???
   if (convivio.options.dryrun || isChangeSetWithoutChanges(changeSetDescription)) {
     await connector.deleteChangeSet({
       StackName,

@@ -1,0 +1,16 @@
+{
+  "name": "auto-import-example",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf -rf .convivio/ .webpack/",
+    "test:cvo": "cvo package -r us-west-2 -s dev",
+    "dp:dev:w": "cvo deploy -r us-west-2 -s dev",
+    "dp:dev:w:di": "cvo deploy -r us-west-2 -s dev --dryrun --import",
+    "dp:dev:w:i": "cvo deploy -r us-west-2 -s dev --import"
+  },
+  "devDependencies": {
+    "@convivio/cli": "file:../../node_modules/@convivio/cli"
+  },
+  "dependencies": {
+  }
+}

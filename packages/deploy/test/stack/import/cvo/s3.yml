@@ -1,0 +1,8 @@
+resources:
+  Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: RetainExceptOnCreate
+      Properties:
+        BucketName: ${self:service}-${opt:stage}-${opt:region}
+        AccessControl: Private

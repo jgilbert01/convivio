@@ -1,0 +1,15 @@
+service: my-cvo-auto-import-test
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  deploymentBucket: ${file(cvo/cfn.yml):deploymentBucket}
+
+functions:
+  test:
+    handler: src/test/index.handle
+
+# toggle commenting these out to setup import scenario
+resources:
+  - ${file(cvo/dynamodb.yml):resources}
+  - ${file(cvo/s3.yml):resources}

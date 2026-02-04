@@ -1,0 +1,20 @@
+resources:
+  Resources:
+    EntitiesTable:
+      Type: AWS::DynamoDB::GlobalTable
+      DeletionPolicy: RetainExceptOnCreate
+      Properties:
+        TableName: ${self:service}-${opt:stage}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        Replicas:
+          - Region: ${opt:region} # when not replicating
+        BillingMode: PAY_PER_REQUEST
