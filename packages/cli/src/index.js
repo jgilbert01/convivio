@@ -41,6 +41,7 @@ program
 program
   .command('deploy')
   .option('--dryrun')
+  .option('--import')
   .action(async (options) => {
     const main = new Convivio({ ...program.opts(), ...options });
     await main.deploy();

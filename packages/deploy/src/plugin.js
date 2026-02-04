@@ -14,13 +14,9 @@ export class DeployPlugin {
     cvo.hooks.deploy.tapPromise(DeployPlugin.name, async (convivio, progress) => {
       log('%j', { convivio });
 
-      try {
-        await upload(this, convivio, progress);
-        await deploy(this, convivio, progress);
-        // await cleanup(this, convivio);
-      } catch (err) {
-        console.log(err);
-      }
+      await upload(this, convivio, progress);
+      await deploy(this, convivio, progress);
+      // await cleanup(this, convivio);
     });
   }
 }
