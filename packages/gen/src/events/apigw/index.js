@@ -4,6 +4,7 @@ import { mergeResources } from '../../utils';
 
 import restApi from './rest-api';
 import resources from './resources';
+import cors from './cors';
 import methods from './methods';
 import authorizers from './authorizers';
 import permissions from './permissions';
@@ -42,6 +43,7 @@ export class ApiGatewayPlugin {
 
       http.forEach((e) => {
         mergeResources(convivio.json, resources(e, convivio, ctx));
+        mergeResources(convivio.json, cors(e, convivio, ctx));
         mergeResources(convivio.json, methods(e, convivio, ctx));
         mergeResources(convivio.json, authorizers(e, convivio, ctx));
         mergeResources(convivio.json, permissions(e, convivio, ctx));

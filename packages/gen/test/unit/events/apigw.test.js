@@ -106,6 +106,55 @@ describe('events/apigw/index.js', () => {
             },
           },
         },
+        ApiGatewayMethodProxyVarOptions: {
+          Type: 'AWS::ApiGateway::Method',
+          Properties: {
+            AuthorizationType: 'NONE',
+            HttpMethod: 'OPTIONS',
+            MethodResponses: [
+              {
+                StatusCode: '200',
+                ResponseParameters: {
+                  'method.response.header.Access-Control-Allow-Origin': true,
+                  'method.response.header.Access-Control-Allow-Headers': true,
+                  'method.response.header.Access-Control-Allow-Methods': true,
+                  'method.response.header.Access-Control-Max-Age': true,
+                  'method.response.header.Cache-Control': true,
+                },
+                ResponseModels: {},
+              },
+            ],
+            RequestParameters: {},
+            Integration: {
+              Type: 'MOCK',
+              RequestTemplates: {
+                'application/json': '{statusCode:200}',
+              },
+              ContentHandling: 'CONVERT_TO_TEXT',
+              IntegrationResponses: [
+                {
+                  StatusCode: '200',
+                  ResponseParameters: {
+                    'method.response.header.Access-Control-Allow-Origin': "'*'",
+                    'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                    'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
+                    'method.response.header.Access-Control-Max-Age': "'86400'",
+                    'method.response.header.Cache-Control': "'max-age=86400, s-maxage=86400'",
+                  },
+                  ResponseTemplates: {
+                    'application/json': '',
+                  },
+                },
+              ],
+            },
+            ResourceId: {
+              Ref: 'ApiGatewayResourceProxyVar',
+            },
+            RestApiId: {
+              Ref: 'ApiGatewayRestApi',
+            },
+          },
+        },
         ApiGatewayMethodProxyVarAny: {
           Type: 'AWS::ApiGateway::Method',
           Properties: {
@@ -192,6 +241,10 @@ describe('events/apigw/index.js', () => {
             },
             StageName: 'dev',
           },
+          DependsOn: [
+            'ApiGatewayMethodProxyVarOptions',
+            'ApiGatewayMethodProxyVarAny',
+          ],
         },
         RestLambdaPermissionApiGateway: {
           Type: 'AWS::Lambda::Permission',
