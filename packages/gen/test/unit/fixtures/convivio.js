@@ -552,6 +552,10 @@ export const APIGW = {
           http: {
             path: '{proxy+}',
             method: 'any',
+            cors: {
+              maxAge: 86400,
+              cacheControl: 'max-age=86400, s-maxage=86400',
+            },
             authorizer: {
               arn: 'arn:aws:lambda:us-west-2:123456789012:function:my-idm-service-dev-authorizer',
             },
