@@ -1,6 +1,6 @@
 {
   "name": "@convivio/webpack",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "Build, Test, and Deploy AWS Lambda-based serverless autonomous services.",
   "keywords": [
     "serverless",
