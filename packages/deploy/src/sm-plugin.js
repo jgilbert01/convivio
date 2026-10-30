@@ -56,27 +56,19 @@ const putSecrets = (pre) => async (convivio) => {
 
     const connector = factory(convivio.config.credentials, convivio.options.region, 'SecretsManager');
 
-    return connector.listSecrets({
-      Filters: [{
-        Key: 'name',
-        Values: [config.secretId],
-      }],
+    return connector.putSecretValue({
+      SecretId: config.secretId,
+      SecretString: Buffer.from(JSON.stringify(secrets)).toString('base64'),
     })
-      .then((data) => {
-        log(data);
-
-        const found = data.SecretList.find((e) => e.Name === config.secretId);
-
-        if (found) {
-          return connector.putSecretValue({
-            SecretId: config.secretId,
-            SecretString: Buffer.from(JSON.stringify(secrets)).toString('base64'),
-          })
-            .then((data2) => {
-              updated = true;
-              log('putSecretValue: %j', data2);
-            });
+      .then((data2) => {
+        updated = true;
+        log('putSecretValue: %j', data2);
+      })
+      .catch((err) => {
+        if (err.name === 'ResourceNotFoundException') {
+          return {};
         }
+        return Promise.reject(err);
       });
   } catch (err) {
     console.log(err);
