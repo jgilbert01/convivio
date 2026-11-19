@@ -34,6 +34,7 @@ class Convivio {
       predeploy: new AsyncSeriesHook(['convivio', 'progress']),
       deploy: new AsyncSeriesHook(['convivio', 'progress']),
       postdeploy: new AsyncSeriesHook(['convivio', 'progress']),
+      s3Deploy: new AsyncSeriesHook(['convivio', 'progress']),
     };
 
     this.config.plugins.forEach((p) => p.apply(this));
@@ -74,6 +75,11 @@ class Convivio {
     await this.hooks.postdeploy.promise(this, progress);
 
     progress.updateProgress();
+  }
+
+  async s3Deploy() {
+    await this.hooks.parse.promise(this, progress);
+    await this.hooks.s3Deploy.promise(this, progress);
   }
 }
 

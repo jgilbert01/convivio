@@ -66,7 +66,10 @@ export class S3DeployPlugin {
   }
 
   apply(cvo) {
+    // plugin support - cvo deploy
     cvo.hooks.predeploy.tapPromise(S3DeployPlugin.name, deploy);
+    // independent cli support - cvo s3-deploy
+    cvo.hooks.s3Deploy.tapPromise(S3DeployPlugin.name, deploy);
   }
 }
 

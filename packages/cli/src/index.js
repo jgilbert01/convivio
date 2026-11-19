@@ -47,6 +47,13 @@ program
     await main.deploy();
   });
 
+  program
+  .command('s3-deploy')
+  .action(async (options) => {
+    const main = new Convivio({ ...program.opts(), ...options });
+    await main.s3Deploy();
+  });
+
 program
   .command('print')
   .action(async () => {
