@@ -37,6 +37,7 @@ export default (metadata, convivio) => ({
         ReservedConcurrentExecutions: metadata.reservedConcurrency, // Integer
         TracingConfig: tracingConfig(metadata, convivio),
         VpcConfig: vpcConfig(get(metadata, convivio, 'vpc')),
+        Layers: get(metadata, convivio, 'layers'),
 
         //         CodeSigningConfigArn : String,
         //         DeadLetterConfig : DeadLetterConfig,
