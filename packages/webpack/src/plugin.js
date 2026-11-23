@@ -1,6 +1,9 @@
+import fs from 'fs';
+import path from 'path';
 import debug from 'debug';
 
 import { compile } from './compile';
+import { pack } from './pack';
 import { start } from './devServer';
 
 const log = debug('cvo:webpack:plugin');
@@ -36,6 +39,8 @@ const startHook = async (convivio, progress) => {
 const packageHook = async (convivio, progress) => {
   log('%j', { convivio });
 
+  await packageLayers(convivio);
+
   if (!convivio.yaml.functions) return;
 
   try {
@@ -52,4 +57,15 @@ const packageHook = async (convivio, progress) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+const packageLayers = async (convivio) => {
+  const { basedir } = convivio.config;
+  await Promise.all(Object.values(convivio.yaml.layers || {}).map(async (layer) => {
+    const directory = path.resolve(basedir, layer.path);
+    if (!fs.existsSync(directory)) throw new Error(`Layer "${layer.key}" path not found: ${directory}`);
+    const artifactFilePath = path.resolve(basedir, layer.package.artifact);
+    fs.mkdirSync(path.dirname(artifactFilePath), { recursive: true });
+    await pack({ directory, artifactFilePath });
+  }));
 };
