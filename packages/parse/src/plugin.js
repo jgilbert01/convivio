@@ -20,6 +20,7 @@ export class ParsePlugin {
       convivio.yaml = await load(convivio.config.basedir, filename(convivio.config.basedir, convivio.config.config));
       convivio.yaml = await resolveAll(convivio.yaml, convivio.config.resolvers);
       fattenFunctions(convivio);
+      fattenLayers(convivio);
       writeFileSync('./.convivio/state.json', convivio.yaml);
     });
   }
@@ -64,4 +65,12 @@ const fattenFunctions = (convivio) => {
         },
       },
     }), {});
+};
+const fattenLayers = (convivio) => {
+  Object.entries(convivio.yaml.layers || {})
+    .forEach(([key, layer]) => {
+      layer.key = key;
+      layer.name = layer.name || `${convivio.yaml.service}-${convivio.options.stage}-${key}`;
+      layer.package = { artifact: `./.webpack/${key}-layer.zip` };
+    });
 };
