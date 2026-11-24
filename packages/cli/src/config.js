@@ -17,6 +17,7 @@ import {
   ApiGatewayPlugin,
   CorePlugin,
   LambdaPlugin,
+  LayerPlugin,
   ResourcesPlugin,
   StreamPlugin,
   SqsPlugin,
@@ -60,6 +61,7 @@ export default (convivio, overrides) => ({
 
     new CorePlugin(convivio.options),
     new LambdaPlugin(convivio.options),
+    new LayerPlugin(convivio.options),
 
     new AlbPlugin(convivio.options),
     new ApiGatewayPlugin(convivio.options),

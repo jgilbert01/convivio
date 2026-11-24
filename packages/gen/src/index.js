@@ -1,5 +1,6 @@
 export * from './core';
 export * from './lambda';
+export * from './layers';
 export * from './resources';
 export * from './events/alb';
 export * from './events/apigw';

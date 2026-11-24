@@ -28,6 +28,7 @@ export const upload = async (plugin, convivio) => {
 
   await uploadCloudFormationTemplate(connector, plugin, convivio);
   await uploadFunctions(connector, plugin, convivio);
+  await uploadLayers(connector, plugin, convivio);
 };
 
 const checkIfBucketExists = async (connector, bucketName) => {
@@ -75,6 +76,11 @@ const uploadCloudFormationTemplate = (connector, plugin, convivio) => {
 const uploadFunctions = async (connector, plugin, convivio) => {
   await Promise.all(Object.values(convivio.yaml.functions || [])
     .map((f) => uploadZipFile(connector, plugin, convivio, f)));
+};
+
+const uploadLayers = async (connector, plugin, convivio) => {
+  await Promise.all(Object.values(convivio.yaml.layers || {})
+    .map((l) => uploadZipFile(connector, plugin, convivio, l)));
 };
 
 const uploadZipFile = async (connector, plugin, convivio, f) => {
