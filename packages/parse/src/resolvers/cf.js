@@ -24,6 +24,6 @@ export const resolveFromCf = (cvo) => async ({ param, address, defaultValue }) =
   if (!result) return dv;
 
   const outputs = result.Stacks[0].Outputs;
-  const output = outputs.find((x) => x.OutputKey === outputLogicalId);
+  const output = (outputs || []).find((x) => x.OutputKey === outputLogicalId);
   return _.get(output, 'OutputValue', dv);
 };
