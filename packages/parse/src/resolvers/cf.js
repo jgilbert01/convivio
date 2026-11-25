@@ -15,10 +15,15 @@ export const resolveFromCf = (cvo) => async ({ param, address, defaultValue }) =
   log('%j', { stackName, outputLogicalId });
 
   const connector = factory(cvo.config.credentials, param || cvo.options.region, 'CloudFormation');
-  const result = await connector.describeStacks({ StackName: stackName });
-  if (!result) return defaultValue;
+  const result = await connector
+    .describeStacks({ StackName: stackName })
+    .catch(() => false); // TODO check error type
+
+  const dv = _.trim(defaultValue, "'"); // TODO double quotes ?
+
+  if (!result) return dv;
 
   const outputs = result.Stacks[0].Outputs;
-  const output = outputs.find((x) => x.OutputKey === outputLogicalId);
-  return _.get(output, 'OutputValue', defaultValue);
+  const output = (outputs || []).find((x) => x.OutputKey === outputLogicalId);
+  return _.get(output, 'OutputValue', dv);
 };

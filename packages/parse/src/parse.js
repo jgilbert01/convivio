@@ -3,7 +3,7 @@ import debug from 'debug';
 const log = debug('cvo:parse:parse');
 
 export const parse = async (value, resolvers) => {
-  const stack = [{ result: value.length ? [] : [value.length] }]; // empty string
+  const stack = [{ result: value.length ? [] : [value] }]; // empty string
   const setter = ['result'];
   let variable;
   let src;
@@ -68,7 +68,7 @@ export const parse = async (value, resolvers) => {
             c = undefined;
           }
 
-          if (!c) { // prepare for pass 2
+          if (!c && c !== false) { // prepare for pass 2
             c = `\$\{${variable.src}`;
             if (variable.param) {
               c = `${c}(${variable.param})`;

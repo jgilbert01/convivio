@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import debug from 'debug';
 
-const log = debug('cvo:parse:resolvers:self');
+const log = debug('cvo:parse:resolvers:param');
 
 export const resolveFromParam = (cvo) =>
   async ({ address, defaultValue }) => {
